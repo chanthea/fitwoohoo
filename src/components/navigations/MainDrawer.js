@@ -2,29 +2,26 @@ import React, { Component } from 'react';
 import { DrawerNavigator, DrawerItems, SafeAreaView} from 'react-navigation';
 import {Profile , Fitbit} from '../../containers';
 import MainTab from './MainTab';
-import {Container,Content, Header,Icon, Body} from 'native-base';
-import {StyleSheet, Image} from 'react-native';
+import {Container,Content, Text, Button, Icon} from 'native-base';
+import {StyleSheet, Image, TouchableOpacity, ImageBackground, View} from 'react-native';
 import Global from '../../globals/Globals';
+import ProfileDrawer from '../ProfileDrawer';
+import MenuDrawer from '../MenuDrawer';
 
 const CustomDrawerContentComponent = (props) => (
     <Container>
-      <Header style={styles.drawerHeader}>
-        <Body>
-          <Image
-            style={styles.drawerImage}
-            source={require('../../images/icon.png')} />
-        </Body>
-      </Header>
-      <Content>
+        <ProfileDrawer/>
+        <MenuDrawer />
+      {/* <Content>
         <DrawerItems {...props} />
-      </Content>
+        </Content> */}
     </Container>
   
   );
 
 const MainDrawer = DrawerNavigator({
-    // Profile : { screen : Profile},
-    // Fitbit : {screen : Fitbit},
+    Profile : { screen : Profile},
+    Fitbit : {screen : Fitbit},
     HomePage : {
         screen : MainTab,
         navigationOptions: {
@@ -50,21 +47,6 @@ const MainDrawer = DrawerNavigator({
 
 const styles = StyleSheet.create({
 
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-    drawerHeader: {
-      height: 200,
-      backgroundColor: Global.COLOR.MAIN
-    },
-    drawerImage: {
-      height: 150,
-      width: 150,
-      borderRadius: 75
-    }
-  
-  })
+  });
 
 export default MainDrawer;

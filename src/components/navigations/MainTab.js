@@ -1,7 +1,7 @@
 import React from 'react';
 import { TabNavigator,TabBarBottom, StackNavigator } from 'react-navigation';
 import {Icon} from 'native-base';
-import {Newswall, Chat, Notification, Request, Setting, Location } from '../../containers';
+import {Newswall, Chat, Notification, Request, Setting, Location, Profile } from '../../containers';
 import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,31 +10,34 @@ import Global from '../../globals/Globals';
 const RootNavLoggedTab = TabNavigator({
     NewsWall : {screen  : Newswall},
     Location : {screen : Location},
-    Chat : {screen : Chat},
     Request : {screen : Request},
+    FitnessWellness : {screen : Chat},
   //  Notification : {screen : Notification},
-    Setting : {screen : Setting}
+    //Setting : {screen : Setting},
+    Profile : {screen : Profile}
   },{
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
         let iconName;
-        let type = '';
+        let type;
+        let colors;
         
         if (routeName === 'NewsWall') {
           iconName = `ios-home${focused ? '' : '-outline'}`;
         } else if (routeName === 'Location') {
-          iconName = `ios-map${focused ? '' : '-outline'}`;
-        }else if (routeName === 'Chat') {
-          iconName = `ios-chatbubbles${focused ? '' : '-outline'}`;
+         iconName = focused ? 'location-on' : 'location';
+          type = focused ? 'MaterialIcons' : 'EvilIcons';
+          colors = focused ? {color : tintColor} : {color : 'rgba(0,0,0,0.4)'};
+          return <Icon name={iconName} type={type} size={25}   style={colors}/>;
         }else if (routeName === 'Request') {
-          iconName = `ios-people${focused ? '' : '-outline'}`;
-        // }else if (routeName === 'Notification') {
-        //   iconName = `ios-notifications${focused ? '' : '-outline'}`;
-        }else if (routeName === 'Setting') {
-          iconName = `ios-settings${focused ? '' : '-outline'}`;
+            iconName = `ios-add-circle${focused ? '' : '-outline'}`;
+        }else if (routeName === 'FitnessWellness') {
+          iconName = `ios-navigate${focused ? '' : '-outline'}`;
+        }else if (routeName === 'Profile') {
+          iconName = `ios-person${focused ? '' : '-outline'}`;
         }
-        return <Ionicons name={iconName} size={25} type={type}  color={tintColor} />;
+        return <Ionicons name={iconName} size={25}   color={tintColor} />;
       },
     }),
     tabBarOptions: {
@@ -49,13 +52,13 @@ const RootNavLoggedTab = TabNavigator({
     swipeEnabled: true,
   });
 
-  const  RootNavLoggedStack = StackNavigator({
-    Nice : {
-        screen : RootNavLoggedTab,
-        navigationOptions: {
-          header :<Search />
-        },
-      }
-  });
+//   const  RootNavLoggedStack = StackNavigator({
+//     Nice : {
+//         screen : RootNavLoggedTab,
+//         navigationOptions: {
+//           header :<Search />
+//         },
+//       }
+//   });
 
 export default RootNavLoggedTab;

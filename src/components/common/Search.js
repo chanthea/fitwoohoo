@@ -13,15 +13,15 @@ class Search extends Component {
           marginTop : _paddingAndroid(), 
           flexDirection : 'row'}}
         > 
-          <Item style={{flexGrow :1}}>
-            <Icon name="ios-search" />
-            <Input small placeholder="Search..." />
+          <Item style={{backgroundColor : 'rgba(0,0,0,0.4)', flex :1}}>
+            <Icon name="ios-search" style={{color: 'white'}}/>
+            <Input small  placeholder="Search" placeholderTextColor='rgba(255,255,255,0.7)' />
           </Item>
-          <Button onPress={this.props.notificationPressed} transparent style={[styles.buttonStyle,{marginLeft : 5}]} >
+          {/* <Button onPress={this.props.notificationPressed} transparent style={[styles.buttonStyle,{marginLeft : 5}]} >
                 <Icon style={styles.iconStyle}  name="ios-notifications"/>
-          </Button>
-          <Button onPress={this.props.menuPressed} transparent style={[styles.buttonStyle,{marginRight : -5}]} >
-                <Icon style={styles.iconStyle} name="ios-options"/>
+          </Button> */}
+          <Button onPress={this.props.menuPressed} transparent style={[styles.buttonStyle,{marginRight : -10}]} >
+                <Icon style={styles.iconStyle} name="md-options"/>
           </Button>
         </Header>
     );
@@ -29,15 +29,12 @@ class Search extends Component {
 }
 const styles = StyleSheet.create({
   iconStyle : {
-    paddingTop: 10,
      marginLeft: 0,
      marginRight : 0, 
-     paddingBottom : 10,
-     color:'#ffffff'
-
+     color:'#ffffff', 
   },
   buttonStyle : {
-    width: 40,
+    width: 50,
     height : 40
   }
 });

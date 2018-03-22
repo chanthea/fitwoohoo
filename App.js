@@ -72,8 +72,8 @@ export default class App extends React.Component {
     });
     return (
 
-       //<MainTab/>
-       <RootStack/>
+      <MainDrawer/>
+      //<RootStack/>
     );
   }
 }

@@ -6,8 +6,7 @@ class Fitbit extends Component{
 
     static navigationOptions = {
         drawerLabel: 'Profile',
-        drawerIcon: ({ tintColor }) => (
-          <Icon name="ios-arrow-back"/> ),
+        drawerIcon: ({ tintColor }) => (<Icon name="ios-arrow-back"/> ),
       };
     
       render() {
