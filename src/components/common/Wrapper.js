@@ -6,7 +6,6 @@ class Wrapper extends Component {
   render() {
     return (
       <View style={{flex :1, backgroundColor : Global.COLOR.MAIN}}>
-
           {this.props.children}
       </View>
     );

@@ -1,23 +1,22 @@
-import React, { Component} from 'react';
-import {Image} from 'react-native';
-import {Button , Icon} from 'native-base';
+import React, {Component} from 'react';
+import {Text}  from 'react-native';
+import { HeaderTab } from '../components/common';
+import { Icon } from 'native-base';
 
-class Profile extends Component{
 
-    static navigationOptions = {
-        drawerLabel: 'Profile',
-        drawerIcon: ({ tintColor }) => (
-          <Icon name="ios-arrow-back"/> ),
-      };
-    
-      render() {
-        return (
-          <Button
-          onPress={() => this.props.navigation.goBack()}
-            title="Go to notifications"
-          />
+
+class Profile extends Component {
+    render(){
+        return(
+            <HeaderTab 
+            goBackPressed = {()=>this.props.navigation.goBack()}
+            menuPressed = {()=>this.props.navigation.navigate('DrawerOpen')}
+            title='Profile'
+            >
+                <Text>Hello</Text>
+            </HeaderTab>
         );
-      }
+    }
 }
-export {Profile};
 
+export  { Profile };

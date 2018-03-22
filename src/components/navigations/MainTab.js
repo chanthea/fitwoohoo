@@ -1,7 +1,15 @@
 import React from 'react';
 import { TabNavigator,TabBarBottom, StackNavigator } from 'react-navigation';
 import {Icon} from 'native-base';
-import {Newswall, Chat, Notification, Request, Setting, Location, Profile } from '../../containers';
+import {
+  Newswall, 
+  Chat, 
+  Notification, 
+  Request, 
+  Setting, 
+  Location, 
+  Profile,
+  FitnessWellness } from '../../containers';
 import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,8 +18,8 @@ import Global from '../../globals/Globals';
 const RootNavLoggedTab = TabNavigator({
     NewsWall : {screen  : Newswall},
     Location : {screen : Location},
-    Request : {screen : Request},
-    FitnessWellness : {screen : Chat},
+    // Request : {screen : Request},
+    FitnessWellness : {screen : FitnessWellness},
   //  Notification : {screen : Notification},
     //Setting : {screen : Setting},
     Profile : {screen : Profile}
