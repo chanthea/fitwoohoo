@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "fitwoohoo",
+    "description": "This project is really great.",
+    "slug": "fitwoohoo",
+    "privacy": "public",
+    "sdkVersion": "25.0.0",
+    "platforms": ["ios", "android"],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#556b2f"
+    },
+    "ios": {
+      "supportsTablet": true
+    }
+  }
+}
