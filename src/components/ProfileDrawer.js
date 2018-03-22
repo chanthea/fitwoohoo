@@ -13,7 +13,8 @@ const profileDrawer = ()=> (
                 <Left>
                     <Image
                         style={[styles.drawerImage]}
-                        source={require('../images/profile.jpg')} />
+                        source={require('../images/profile.jpg')}
+                        resizeMode='contain' />
                 </Left>
                 <Body style={{paddingLeft : 40}}>
                     <Text style={styles.name}>Chanthea Tai</Text>
@@ -33,9 +34,16 @@ const profileDrawer = ()=> (
 const styles = StyleSheet.create({
     backgroundImage: {
         flex: 1,
-        resizeMode: 'cover', // or 'stretch'
-        position : 'absolute'
+       // resizeMode: 'stretch',
+        position : 'absolute',
+        
       },
+    //   backgroundImage : {
+    //     height: 150,
+    //     alignSelf: "stretch",
+    //     justifyContent: "center",
+    //     alignItems: "center"
+    //   },
     drawerHeader: {
       height: 150,
       backgroundColor:'transparent',

@@ -34,10 +34,11 @@ const RootNavLoggedTab = TabNavigator({
         if (routeName === 'NewsWall') {
           iconName = `ios-home${focused ? '' : '-outline'}`;
         } else if (routeName === 'Location') {
-         iconName = focused ? 'location-on' : 'location';
-          type = focused ? 'MaterialIcons' : 'EvilIcons';
-          colors = focused ? {color : tintColor} : {color : 'rgba(0,0,0,0.4)'};
-          return <Icon name={iconName} type={type} size={25}   style={colors}/>;
+        //  iconName = focused ? 'location-on' : 'location';
+        //   type = focused ? 'MaterialIcons' : 'EvilIcons';
+        //   colors = focused ? {color : tintColor} : {color : 'rgba(0,0,0,0.4)'};
+        //   return <Icon name={iconName} type={type} size={25}   style={colors}/>;
+        iconName = `ios-pin${focused ? '' : '-outline'}`;
         }else if (routeName === 'Request') {
             iconName = `ios-add-circle${focused ? '' : '-outline'}`;
         }else if (routeName === 'FitnessWellness') {

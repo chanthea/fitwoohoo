@@ -33,7 +33,7 @@ export default class MenuDrawer extends Component {
    _getMenuList(objects){
    let menu =  objects.map((item,index)=>{
         return  <TouchableOpacity key={index}>
-            <ListItem icon >
+            <ListItem icon style={{marginTop:3, marginBottom : 3}}>
                 <View style={[styles.iconCircle,{backgroundColor : item.background}]}>
                     <Icon type={item.type} style={styles.listIcon} name={item.icon} />
                 </View>   
@@ -90,9 +90,9 @@ const styles = StyleSheet.create({
     iconCircle : {
         alignItems:'center',
         justifyContent:'center',
-        width:37,
-        height:37,
-        borderRadius:37,
+        width:40,
+        height:40,
+        borderRadius:40/2,
     },
     listItemBody :{paddingLeft : 15,  borderBottomWidth : 0},
     bodyText :{color : 'rgba(0,0,0,0.6)', fontSize : 15},
