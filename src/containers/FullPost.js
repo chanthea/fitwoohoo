@@ -99,7 +99,7 @@ export default class FullPost extends Component {
                 {this._emojiButton(ButtonEmoji)}
                 <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-chatbubbles-outline" />
-                  <Text style={styles.iconText} uppercase={false}>Comment</Text>
+                  <Text style={[styles.iconText,styles.commentPadding]} uppercase={false}>Comment</Text>
                 </Button>
                 <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-redo-outline" />
@@ -145,7 +145,7 @@ export default class FullPost extends Component {
                 {this._emojiButton(ButtonEmoji)}
                 <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-chatbubbles-outline" />
-                  <Text style={styles.iconText} uppercase={false}>Comment</Text>
+                  <Text style={[styles.iconText,styles.commentPadding]} uppercase={false}>Comment</Text>
                 </Button>
                 <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-redo-outline" />
@@ -191,7 +191,7 @@ export default class FullPost extends Component {
                 {this._emojiButton(ButtonEmoji)}
                 <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-chatbubbles-outline" />
-                  <Text style={styles.iconText} uppercase={false}>Comment</Text>
+                  <Text style={[styles.iconText,styles.commentPadding]} uppercase={false}>Comment</Text>
                 </Button>
                 <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-redo-outline" />
@@ -237,7 +237,7 @@ export default class FullPost extends Component {
                 {this._emojiButton(ButtonEmoji)}
                 <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-chatbubbles-outline" />
-                  <Text style={styles.iconText} uppercase={false}>Comment</Text>
+                  <Text style={[styles.iconText,styles.commentPadding]} uppercase={false}>Comment</Text>
                 </Button>
                 <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-redo-outline" />
@@ -245,101 +245,6 @@ export default class FullPost extends Component {
                 </Button>
             </CardItem>
           </Card>
-          <Card style={styles.cardStyle}>
-            <CardItem>
-              <Left>
-                <Thumbnail small  source={require('../images/profile.jpg')} />
-                <Body>
-                  <Text style={styles.name}>Nguon Lykhim</Text>
-                  <View style={{flexDirection : 'row'}}>
-                  <View style={{flexDirection : 'row'}}>
-                    <Icon name="ios-globe-outline"
-                     style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
-                     /> 
-                    <Text note style={styles.time}>Colleagues</Text>
-                   </View>
-                    <View style={{flexDirection : 'row'}}>
-                        <Icon name="ios-clock-outline"
-                         style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
-                         /> 
-                        <Text note style={styles.time}>9 minutes ago</Text>
-                    </View>
-                  </View>
-                </Body>
-              </Left>
-            </CardItem>
-            <CardItem cardBody>
-              <Image source={require('../images/cover.jpeg')} style={{height: 200, width: null, flex: 1}}/>
-            </CardItem>
-            <CardItem>
-              <Text style={styles.postText}>
-              A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll.
-                </Text>
-            </CardItem>
-            <ListItem icon style={styles.listItemStyle}>
-              {this._emojiButtonCount(EmojiCount)}
-            </ListItem>
-            <CardItem style={styles.cardButtonStyle}>
-                {this._emojiButton(ButtonEmoji)}
-                <Button style={styles.buttonStyle} small transparent>
-                  <Icon style={styles.icon} name="ios-chatbubbles-outline" />
-                  <Text style={styles.iconText} uppercase={false}>Comment</Text>
-                </Button>
-                <Button style={styles.buttonStyle} small transparent>
-                  <Icon style={styles.icon} name="ios-redo-outline" />
-                  <Text style={styles.iconText} uppercase={false}>Share</Text>
-                </Button>
-            </CardItem>
-          </Card>
-          <Card style={styles.cardStyle}>
-            <CardItem>
-              <Left>
-                <Thumbnail small  source={require('../images/profile.jpg')} />
-                <Body>
-                  <Text style={styles.name}>Nguon Lykhim</Text>
-                  <View style={{flexDirection : 'row'}}>
-                  <View style={{flexDirection : 'row'}}>
-                    <Icon name="ios-globe-outline"
-                     style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
-                     /> 
-                    <Text note style={styles.time}>Colleagues</Text>
-                   </View>
-                    <View style={{flexDirection : 'row'}}>
-                        <Icon name="ios-clock-outline"
-                         style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
-                         /> 
-                        <Text note style={styles.time}>9 minutes ago</Text>
-                    </View>
-                  </View>
-                </Body>
-              </Left>
-            </CardItem>
-            <CardItem cardBody>
-              <Image source={require('../images/cover.jpeg')} style={{height: 200, width: null, flex: 1}}/>
-            </CardItem>
-            <CardItem>
-              <Text style={styles.postText}>
-              A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll.
-                </Text>
-            </CardItem>
-            <ListItem icon style={styles.listItemStyle}>
-              {this._emojiButtonCount(EmojiCount)}
-            </ListItem>
-            <CardItem style={styles.cardButtonStyle}>
-                {this._emojiButton(ButtonEmoji)}
-                <Button style={styles.buttonStyle} small transparent>
-                  <Icon style={styles.icon} name="ios-chatbubbles-outline" />
-                  <Text style={styles.iconText} uppercase={false}>Comment</Text>
-                </Button>
-                <Button style={styles.buttonStyle} small transparent>
-                  <Icon style={styles.icon} name="ios-redo-outline" />
-                  <Text style={styles.iconText} uppercase={false}>Share</Text>
-                </Button>
-            </CardItem>
-          </Card>
-
-        
-
         </Content>
     );
   }
@@ -403,6 +308,7 @@ const styles = StyleSheet.create({
         paddingTop : 5
       
     },
+    commentPadding : {paddingLeft : 3, paddingRight : 3},
     iconSmall : {
         fontSize : 11, 
         color : 'rgba(0,0,0,0.6)', 
