@@ -40,7 +40,6 @@ class Newswall extends Component {
                         </Button>
                     </Fab>
                 </View>
-                
             </Wrapper>
         );
     }

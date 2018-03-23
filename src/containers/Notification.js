@@ -1,14 +1,20 @@
 import React, {Component} from 'react';
 import {Text}  from 'react-native';
-import { HomeWrapper } from './index';
+import { HeaderTab } from '../components/common';
+import { Icon } from 'native-base';
+
 
 
 class Notification extends Component {
     render(){
         return(
-            <HomeWrapper>
-                <Text>Hello</Text>
-            </HomeWrapper>
+            <HeaderTab 
+            goBackPressed = {()=>this.props.navigation.goBack()}
+            menuPressed = {()=>this.props.navigation.navigate('DrawerOpen')}
+            title='Notifications'
+            >
+                <Text>Notification</Text>
+            </HeaderTab>
         );
     }
 }

@@ -12,15 +12,15 @@ class HeaderTab extends Component {
                 <Header style={{marginTop : _paddingAndroid(), backgroundColor : Global.COLOR.MAIN}}>
                 <Left>
                     <Button transparent onPress={this.props.goBackPressed}>
-                    <Icon name='arrow-back' />
+                    <Icon  style={{color : '#ffffff'}} name='arrow-back' />
                     </Button>
                 </Left>
                 <Body>
-                    <Title>{this.props.title}</Title>
+                    <Title style={{color : '#ffffff'}}>{this.props.title}</Title>
                 </Body>
                 <Right>
                     <Button transparent onPress={this.props.menuPressed}>
-                    <Icon name='md-options' />
+                    <Icon  style={{color : '#ffffff'}} name='md-options' />
                     </Button>
                 </Right>
                 </Header>

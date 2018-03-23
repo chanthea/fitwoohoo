@@ -1,6 +1,7 @@
 import React from 'react';
 import { TabNavigator,TabBarBottom, StackNavigator } from 'react-navigation';
 import {Icon} from 'native-base';
+import IconBadge from 'react-native-icon-badge';
 import {
   Newswall, 
   Chat, 
@@ -19,8 +20,8 @@ const RootNavLoggedTab = TabNavigator({
     NewsWall : {screen  : Newswall},
     Location : {screen : Location},
     // Request : {screen : Request},
+    Notification : {screen : Notification},
     FitnessWellness : {screen : FitnessWellness},
-  //  Notification : {screen : Notification},
     //Setting : {screen : Setting},
     Profile : {screen : Profile}
   },{
@@ -42,9 +43,27 @@ const RootNavLoggedTab = TabNavigator({
         }else if (routeName === 'Request') {
             iconName = `ios-add-circle${focused ? '' : '-outline'}`;
         }else if (routeName === 'FitnessWellness') {
-          iconName = `ios-navigate${focused ? '' : '-outline'}`;
+         // iconName = `ios-navigate${focused ? '' : '-outline'}`;
+          iconName = `ios-compass${focused ? '' : '-outline'}`;
         }else if (routeName === 'Profile') {
           iconName = `ios-person${focused ? '' : '-outline'}`;
+        }else if (routeName === 'Notification') {
+          iconName = `ios-notifications${focused ? '' : '-outline'}`;
+
+         return <IconBadge
+          MainElement={<Ionicons name={iconName} size={25} color={tintColor} />}
+          BadgeElement={<Text style={{ color: 'white', fontSize : 8, fontWeight : 'bold' }}>20</Text>}
+          IconBadgeStyle={{
+            width:17,
+            height:17,
+            minWidth:17,
+            marginRight : -9,
+            marginTop : -7,
+            borderRadius :17/2 
+          }}
+          /*Hidden={screenProps.unreadMessagesCount === 0}*/
+        />
+
         }
         return <Ionicons name={iconName} size={25}   color={tintColor} />;
       },
