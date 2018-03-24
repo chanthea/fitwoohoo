@@ -14,11 +14,10 @@ class Newswall extends Component {
     }
 
     _onPressPost = ()=> {
-        this.props.navigation.navigate('PostPage');
         this.setState({
             active : false
         });
-        console.log(123);
+        this.props.navigation.navigate('PostPage');
     };
 
     render(){

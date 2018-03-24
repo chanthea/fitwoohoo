@@ -6,6 +6,19 @@ import Global from '../../globals/Globals';
 import { Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
 
 class HeaderTab extends Component {
+    constructor(props){
+        super(props);
+
+    }
+    _checkNewMenu(){
+        if(this.props.actionButton){
+            return this.props.actionButton;
+        }
+        return (<Button transparent onPress={this.props.menuPressed}>
+                    <Icon  style={{color : '#ffffff'}}  name='md-options' />
+                </Button>);
+    }
+
     render(){
         return(
             <Wrapper>
@@ -15,13 +28,11 @@ class HeaderTab extends Component {
                     <Icon  style={{color : '#ffffff'}} name='arrow-back' />
                     </Button>
                 </Left>
-                <Body>
+                <Body style={{flex :2}}>
                     <Title style={{color : '#ffffff'}}>{this.props.title}</Title>
                 </Body>
                 <Right>
-                    <Button transparent onPress={this.props.menuPressed}>
-                    <Icon  style={{color : '#ffffff'}} name='md-options' />
-                    </Button>
+                    {this._checkNewMenu()}
                 </Right>
                 </Header>
                 <View style={{flex : 1, backgroundColor : '#ffffff'}}>

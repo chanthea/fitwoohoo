@@ -1,10 +1,25 @@
 import React, {Component} from 'react';
-import { View, TextInput}  from 'react-native';
+import { View, StyleSheet, Platform, TouchableOpacity}  from 'react-native';
 import { Wrapper } from '../components/common';
 import { _paddingAndroid } from '../helpers';
 import Global from '../globals/Globals';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
-import { Header, Left, Body, Right, Button, Icon, Title,Text, List, ListItem, Thumbnail } from 'native-base';
+import { 
+    Header, 
+    Left, 
+    Body, 
+    Right, 
+    Button, 
+    Icon, 
+    Title,
+    List,
+    ListItem,
+    Text, 
+    Thumbnail, 
+    Content, 
+    Footer, 
+    FooterTab,
+     } from 'native-base';
 
 
 
@@ -13,7 +28,7 @@ class PostPage extends Component {
     constructor(props){
         super(props);
         this.state = {
-            text : null
+            textValue: null
         }
     }
 
@@ -22,6 +37,14 @@ class PostPage extends Component {
         drawerLockMode: 'locked-closed',
         swipeEnabled : false
     }
+    _onChange(event) {
+        this.setState({ textValue: event.nativeEvent.text || '' });
+      }
+    
+      _resetTextInput() {
+        this._textInput.clear();
+        this._textInput.resetHeightToMin();
+      }
     render(){
         return(
             <Wrapper>
@@ -31,12 +54,12 @@ class PostPage extends Component {
                 <Icon  style={{color : '#ffffff'}} name='arrow-back' />
                 </Button>
             </Left>
-            <Body>
-                <Title style={{color : '#ffffff'}}>Post new post</Title>
+            <Body style={{flex :2}}>
+                <Title style={{color : '#ffffff', fontSize: 17}}>Update new status</Title>
             </Body>
             <Right>
                 <Button small iconRight transparent style={{borderColor : '#ffffff'}} onPress={this.props.menuPressed}>
-                    <Text style={{color : '#ffffff', fontSize : 15, paddingRight:0}}>Post</Text>
+                    <Text style={{color : '#ffffff', fontSize : 15, paddingRight:0}} uppercase={false}>Post</Text>
                 </Button>
             </Right>
             </Header>
@@ -47,34 +70,92 @@ class PostPage extends Component {
                         <Thumbnail small source={require('../images/profile.jpg')} />
                     </Left>
                     <Body style={{borderColor : 'transparent'}}>
-                        <Text>Gguon Lykhim</Text>
-                        <Text note>Doing what you like will always keep you happy . .</Text>
+                        <Text style={styles.name}>Gguon Lykhim</Text>
+                        <View style={{flexDirection : 'row'}}>
+                            <Icon name="ios-globe-outline"
+                            style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
+                            /> 
+                            <Text note style={styles.privacy}>Colleagues</Text>
+                        </View>
                     </Body>
                     </ListItem>
                 </List>
-                <View>
-                {/* <TextInput
-    multiline={true}
-    numberOfLines={4}
-    onChangeText={(text) => this.setState({text})}
-    value={this.state.text}
-    style={{height}}/> */}
-                <AutoGrowingTextInput 
-                minHeight={40}
-                maxHeight={maxHeight} // this is a flexible value that I set in my 
-                    // component, where I use this reusable component, same below, unless specified the other
-                onChangeText={onChangeText}
-                placeholder={placeholder}
-                placeholderTextColor='#C7C7CD'
-                style={inputStyle}
-                value={value}
-            />
-                        </View>
+                <View style={styles.textInputContainer}>
+                <AutoGrowingTextInput
+                    value={this.state.textValue}
+                    onChange={(event) => this._onChange(event)}
+                    style={styles.textInput}
+                    placeholder='Tell them how you feel today....'
+                    placeholderTextColor='#66737C'
+                    maxHeight={200}
+                    minHeight={20}
+                    enableScrollToCaret
+                    underlineColorAndroid= 'transparent'
+                    ref={(r) => { this._textInput = r; }}
+                />
+                </View>
+                <Footer >
+                    <FooterTab style={{backgroundColor : Global.COLOR.MAIN}}>
+                        <Button vertical>
+                        <Icon style={{color:'white'}} name="ios-images" />
+                        <Text style={{color:'white'}}>Photos</Text>
+                        </Button>
+                        <Button vertical>
+                        <Icon style={{color:'white'}} name="ios-videocam" />
+                        <Text style={{color:'white'}}>Videos</Text>
+                        </Button>
+                        <Button vertical>
+                        <Icon style={{color:'white'}} name="ios-musical-notes" />
+                        <Text style={{color:'white'}}>Audios</Text>
+                        </Button>
+                    </FooterTab>
+                </Footer>   
             </View>
+            
         </Wrapper>
 
         );
     }
 }
+const IsIOS = Platform.OS === 'ios';
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      backgroundColor: '#76c6ff'
+    },
+    textInputContainer: {
+      flexDirection: 'row',
+      paddingLeft: 8,
+      paddingRight: 8,
+      flex: 3
+    },
+    textInput: {
+      paddingLeft: 10,
+      fontSize: 17,
+      flex: 1,
+      backgroundColor: 'white',
+      borderWidth: 0,
+      borderRadius: IsIOS ? 4 : 0,
+      textAlignVertical: "top"
+    },
+    button: {
+      paddingLeft: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+    }, 
+    iconSmall : {
+        fontSize : 11, 
+        color : 'rgba(0,0,0,0.6)', 
+        paddingRight : 2, 
+       
+    },
+    privacy : {
+        fontSize : 10
+    },
+    name : {
+        fontSize : 14
+    },
+  });
 
 export  { PostPage };

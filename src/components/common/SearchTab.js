@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Left, Container, Header,Right, Item, Input, Icon, Button} from 'native-base';
+import {Left, Container, Header,Right, Item, Input, Icon, Button, Body, Title} from 'native-base';
 import IconBadge from 'react-native-icon-badge';
 import { _paddingAndroid } from '../../helpers';
 import Global from '../../globals/Globals';
@@ -17,7 +17,11 @@ class SearchTab extends Component {
           <Button onPress={this.props.menuPressed} transparent style={[styles.buttonStyle,{marginLeft : -10}]} >
                 <Icon style={styles.iconStyle} name="md-options"/>
           </Button>
-          <Button small light transparent block
+          <Body>
+            <Title>Newswall</Title>
+          </Body>
+        
+          {/* <Button small light transparent block
         style={{
           flexDirection : 'row', 
           flex :1,
@@ -34,7 +38,10 @@ class SearchTab extends Component {
             <Icon name='ios-search' style={{marginLeft : 10,color: 'white', fontSize : 20 }}/>
             <Text style={{color : 'rgba(255,255,255,0.7)', fontSize:16, fontWeight : 'normal'}} 
             uppercase={false}>Search</Text>
-          </Button>        
+          </Button>         */}
+          <Button  onPress={this.props.searchPressed} transparent style={[styles.buttonStyle,{marginRight : -10}]} >
+                <Icon style={styles.iconStyle} name="ios-search"/>
+          </Button>
           <Button onPress={this.props.menuPressed} transparent style={[styles.buttonStyle,{marginRight : -10}]} >
                 <IconBadge
           MainElement={<Icon style={styles.iconStyle} name="ios-chatbubbles"/>}
