@@ -1,3 +1,3 @@
 export * from './Wrapper';
-export * from './Search';
+export * from './SearchTab';
 export * from './HeaderTab';

@@ -303,9 +303,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between', 
         borderTopWidth : 0.5, 
         borderColor : '#eeeeee',
-      //  backgroundColor : 'transparent',
         paddingBottom : 5,
-        paddingTop : 5
+        paddingTop : 5,
+        marginLeft : -10,
+        marginRight : -10
       
     },
     commentPadding : {paddingLeft : 3, paddingRight : 3},

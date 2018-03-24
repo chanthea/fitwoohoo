@@ -9,4 +9,6 @@ export * from './HomeWrapper';
 export * from './Fitbit';
 export * from './Profile';
 export * from './FitnessWellness';
+export * from './GeneralSearch';
+export * from './PostPage';
 

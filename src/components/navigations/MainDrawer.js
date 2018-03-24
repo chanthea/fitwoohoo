@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { DrawerNavigator, DrawerItems, SafeAreaView} from 'react-navigation';
-import {Profile , Fitbit} from '../../containers';
+import { StackNavigator, DrawerNavigator, DrawerItems, SafeAreaView} from 'react-navigation';
+import {Profile , Fitbit, GeneralSearch} from '../../containers';
 import MainTab from './MainTab';
 import {Container,Content, Text, Button, Icon} from 'native-base';
 import {StyleSheet, Image, TouchableOpacity, ImageBackground, View} from 'react-native';
 import Global from '../../globals/Globals';
 import ProfileDrawer from '../ProfileDrawer';
 import MenuDrawer from '../MenuDrawer';
+
 
 const CustomDrawerContentComponent = (props) => (
     <Container>
@@ -32,7 +33,7 @@ const MainDrawer = DrawerNavigator({
 },{
     initialRouteName : "HomePage",
     contentComponent: CustomDrawerContentComponent,
-},{
+// },{
     contentOptions: {
         activeTintColor: '#e91e63',
         itemsContainerStyle: {
@@ -42,7 +43,6 @@ const MainDrawer = DrawerNavigator({
           opacity: 1
         },
       }
-      
 });
 
 const styles = StyleSheet.create({

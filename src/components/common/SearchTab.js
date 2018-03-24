@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import {Left, Container, Header,Right, Item, Input, Icon, Button, Badge} from 'native-base';
+import {Left, Container, Header,Right, Item, Input, Icon, Button} from 'native-base';
 import IconBadge from 'react-native-icon-badge';
 import { _paddingAndroid } from '../../helpers';
 import Global from '../../globals/Globals';
-import {StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
-class Search extends Component {
+class SearchTab extends Component {
   render() {
     return (
         <Header searchBar rounded 
@@ -17,16 +17,25 @@ class Search extends Component {
           <Button onPress={this.props.menuPressed} transparent style={[styles.buttonStyle,{marginLeft : -10}]} >
                 <Icon style={styles.iconStyle} name="md-options"/>
           </Button>
-          <Item style={{backgroundColor : 'rgba(0,0,0,0.4)', flex :1}}>
-            <Icon name="ios-search" style={{color: 'white'}}/>
-            <Input small  placeholder="Search" placeholderTextColor='rgba(255,255,255,0.7)' />
-          </Item>
-          {/* <Button onPress={this.props.notificationPressed} transparent style={[styles.buttonStyle,{marginLeft : 5}]} >
-                <Icon style={styles.iconStyle}  name="ios-notifications"/>
-          </Button> */}
+          <Button small light transparent block
+        style={{
+          flexDirection : 'row', 
+          flex :1,
+          justifyContent : 'flex-start',
+          height : 40,
+          paddingBottom : 0,
+          borderBottomWidth : 0.5, 
+          marginTop : 5,
+          borderColor : 'rgba(255,255,255,0.4)'
+          
+        }}
+        onPress={this.props.searchPressed}
+        >
+            <Icon name='ios-search' style={{marginLeft : 10,color: 'white', fontSize : 20 }}/>
+            <Text style={{color : 'rgba(255,255,255,0.7)', fontSize:16, fontWeight : 'normal'}} 
+            uppercase={false}>Search</Text>
+          </Button>        
           <Button onPress={this.props.menuPressed} transparent style={[styles.buttonStyle,{marginRight : -10}]} >
-              {/* <Badge ><Text>51</Text></Badge>
-                <Icon style={styles.iconStyle} name="ios-chatbubbles"/> */}
                 <IconBadge
           MainElement={<Icon style={styles.iconStyle} name="ios-chatbubbles"/>}
           BadgeElement={<Text style={{ color: 'white', fontSize : 8, fontWeight : 'bold' }}>20</Text>}
@@ -57,4 +66,4 @@ const styles = StyleSheet.create({
 
 });
 
-export { Search };
+export { SearchTab };

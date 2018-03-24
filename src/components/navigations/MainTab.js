@@ -15,9 +15,22 @@ import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Global from '../../globals/Globals';
+import { GeneralSearch, PostPage} from '../../containers';
 
 const RootNavLoggedTab = TabNavigator({
-    NewsWall : {screen  : Newswall},
+    NewsWall : {screen  : StackNavigator({
+      NewsWallHome : {screen : Newswall},
+      GeneralSearch : {screen :  GeneralSearch,} ,
+      PostPage:  {screen : PostPage}
+    },
+    {
+        mode: 'modal',
+        headerMode: 'none',
+        header : null,
+        initialRouteName : 'NewsWallHome'
+      }
+    )
+  },
     Location : {screen : Location},
     // Request : {screen : Request},
     Notification : {screen : Notification},

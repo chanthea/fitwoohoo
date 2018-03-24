@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Search, Wrapper } from '../components/common';
+import { SearchTab, Wrapper } from '../components/common';
 import { Content, Container, Header, View, Fab, Button, Icon, Text } from 'native-base';
 import FullPost from '../containers/FullPost';
 import Global from '../globals/Globals';
@@ -13,11 +13,20 @@ class Newswall extends Component {
         };
     }
 
+    _onPressPost = ()=> {
+        this.props.navigation.navigate('PostPage');
+        this.setState({
+            active : false
+        });
+        console.log(123);
+    };
 
     render(){
         return(
             <Wrapper>
-                <Search menuPressed={()=>this.props.navigation.navigate('DrawerOpen')}/>
+                <SearchTab  
+                searchPressed ={()=>this.props.navigation.navigate('GeneralSearch')}
+                 menuPressed={()=>this.props.navigation.navigate('DrawerOpen')}/>
 
                 <View style={{ flex: 1, backgroundColor : '#ffffff' }}>
                     <FullPost/>
@@ -27,8 +36,12 @@ class Newswall extends Component {
                         containerStyle={{ }}
                         style={{ backgroundColor: Global.COLOR.LIGHTMAIN }}
                         position="bottomRight"
-                        onPress={() => this.setState({ active: !this.state.active })}>
+                        onPress={this._onPressPost}
+                        onLongPress={() => this.setState({ active: !this.state.active })}>
                         <Icon name="plus" type='FontAwesome'/>
+                        <Button style={{ backgroundColor: '#95a5a6' }}>
+                        <Icon name="ios-paper-outline" />
+                        </Button>
                         <Button style={{ backgroundColor: '#2980b9' }}>
                         <Icon name="ios-image" />
                         </Button>
@@ -38,6 +51,7 @@ class Newswall extends Component {
                         <Button  style={{ backgroundColor: '#e67e22' }}>
                         <Icon name="ios-musical-notes" />
                         </Button>
+                        
                     </Fab>
                 </View>
             </Wrapper>

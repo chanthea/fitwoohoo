@@ -14,7 +14,7 @@ const profileDrawer = ()=> (
                 <Left>
                 <Thumbnail square source={require('../images/profile.jpg')}/>
                 </Left>
-                <Body>
+                <Body style={{justifyContent : 'flex-start'}}>
                     <Text style={styles.name}>Emmanuel Niyenzima</Text>
                     <Text style={styles.viewProfile}>View your profile </Text>
                 </Body>
