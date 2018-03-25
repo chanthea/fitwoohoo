@@ -3,7 +3,7 @@ import {Text, View}  from 'react-native';
 import { Wrapper } from './index';
 import { _paddingAndroid } from '../../helpers';
 import Global from '../../globals/Globals';
-import { Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
+import { Header, Left, Body, Right, Button, Icon, Title} from 'native-base';
 
 class HeaderTab extends Component {
     constructor(props){
@@ -19,10 +19,14 @@ class HeaderTab extends Component {
                 </Button>);
     }
 
+
     render(){
         return(
             <Wrapper>
-                <Header style={{marginTop : _paddingAndroid(), backgroundColor : Global.COLOR.MAIN}}>
+                <Header hasTabs={this.props.isFitnessWellness} style={{
+                    marginTop : _paddingAndroid(), 
+                    backgroundColor : Global.COLOR.MAIN,
+                    }}>
                 <Left>
                     <Button transparent onPress={this.props.goBackPressed}>
                     <Icon  style={{color : '#ffffff'}} name='arrow-back' />
