@@ -20,9 +20,8 @@ import {
     Footer, 
     FooterTab,
      } from 'native-base';
-
-
-
+     
+import { NavigationActions } from 'react-navigation';
 class PostPage extends Component {
 
     constructor(props){
@@ -46,7 +45,9 @@ class PostPage extends Component {
         this._textInput.resetHeightToMin();
       }
     render(){
+
         return(
+            
             <Wrapper>
             <Header style={{marginTop : _paddingAndroid(), backgroundColor : Global.COLOR.MAIN}}>
             <Left>

@@ -33,7 +33,6 @@ const MainDrawer = DrawerNavigator({
 },{
     initialRouteName : "HomePage",
     contentComponent: CustomDrawerContentComponent,
-// },{
     contentOptions: {
         activeTintColor: '#e91e63',
         itemsContainerStyle: {

@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import { SearchTab, Wrapper } from '../components/common';
-import { Content, Container, Header, View, Fab, Button, Icon, Text } from 'native-base';
+import { Content, Container, Header, View, Button, Icon, Text } from 'native-base';
 import FullPost from '../containers/FullPost';
 import Global from '../globals/Globals';
+import Fab from '../components/Fab';
 
 
 class Newswall extends Component {
@@ -12,7 +13,6 @@ class Newswall extends Component {
           active: false
         };
     }
-
     _onPressPost = ()=> {
         this.setState({
             active : false
@@ -29,29 +29,11 @@ class Newswall extends Component {
 
                 <View style={{ flex: 1, backgroundColor : '#ffffff' }}>
                     <FullPost/>
-                    <Fab
-                        active={this.state.active}
-                        direction="up"
-                        containerStyle={{ }}
-                        style={{ backgroundColor: Global.COLOR.LIGHTMAIN }}
-                        position="bottomRight"
-                        onPress={this._onPressPost}
-                        onLongPress={() => this.setState({ active: !this.state.active })}>
-                        <Icon name="plus" type='FontAwesome'/>
-                        <Button style={{ backgroundColor: '#95a5a6' }}>
-                        <Icon name="ios-paper-outline" />
-                        </Button>
-                        <Button style={{ backgroundColor: '#2980b9' }}>
-                        <Icon name="ios-image" />
-                        </Button>
-                        <Button style={{ backgroundColor: '#27ae60' }}>
-                        <Icon name="ios-videocam" />
-                        </Button>
-                        <Button  style={{ backgroundColor: '#e67e22' }}>
-                        <Icon name="ios-musical-notes" />
-                        </Button>
-                        
-                    </Fab>
+                    <Fab 
+              postPressed = {this._onPressPost}
+              active = {this.state.active}
+              longPressed = {() => this.setState({ active: !this.state.active })}
+              />       
                 </View>
             </Wrapper>
         );

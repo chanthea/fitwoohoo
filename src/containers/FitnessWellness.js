@@ -6,12 +6,12 @@ import {StyleSheet} from 'react-native';
 import Global from '../globals/Globals';
 
 const items = [
-    { name: 'Trainers', icon :'universal-access', code: '#1abc9c', type : 'FontAwesome' }, 
-    { name: 'Nutritionists', icon :'balance-scale', code: '#2ecc71', type : 'FontAwesome' },
-    { name: 'M. Therapists', icon :'bed', code: '#3498db', type : 'FontAwesome' },
-     { name: 'Yoga Instructors', icon : 'child', code: '#9b59b6', type : 'FontAwesome' },
-    { name: 'Gyms', icon : 'bicycle',code: '#34495e', type : 'FontAwesome' }, 
-    { name: 'Massage/SPA', icon :'hand-paper-o', code: '#16a085', type : 'FontAwesome' }
+    { name: 'Trainers',type : 'FontAwesome' }, 
+    { name: 'Nutritionists', type : 'FontAwesome' },
+    { name: 'M. Therapists', type : 'FontAwesome' },
+     { name: 'Yoga Instructors', type : 'FontAwesome' },
+    { name: 'Gyms', type : 'FontAwesome' }, 
+    { name: 'Massage/SPA', type : 'FontAwesome' }
   ];
 
 
@@ -24,10 +24,38 @@ class FitnessWellness extends Component {
     _renderTabMenu(object){
         let menu = object.map((item,i)=>{
             return (
-            <Tab  ref={item.name} key={i} heading={<TabHeading  ref={item.name} style={styles.TabStyle} >
-            <Icon name={item.icon} type={item.type} /><Text>{item.name}</Text></TabHeading>}>
+            // <Tab  
+          
+            // ref={item.name} 
+         
+            // ref={item.name} key={i} 
+            //  heading={
+            //  <TabHeading 
+            //  activeTabStyle={styles.TabStyle} 
+            //  tabStyle={styles.TabStyle} 
+            //  activeTextStyle={{color : '#ffffff'}}
+            //  textStyle={{color : 'rgba(255,255,255,0.8)'}}
+            //  >
+            // <Icon name={item.icon} type={item.type} />
+            // <Text >{item.name}</Text>
+            // </TabHeading>}>
+            //     <FitnessWellnessTab />
+            // </Tab>
+
+            <Tab
+            activeTabStyle={styles.TabStyle} 
+            tabStyle={styles.TabStyle} 
+            ref={item.name} 
+            activeTextStyle={{color : '#ffffff'}}
+            textStyle={{color : 'rgba(255,255,255,0.8)'}}
+            ref={item.name} key={i} 
+            heading={item.name}>
                 <FitnessWellnessTab />
-            </Tab>);
+            </Tab>
+            
+        );
+
+        
         });
         return menu;
     }
@@ -64,6 +92,7 @@ class FitnessWellness extends Component {
 const styles = StyleSheet.create({
     TabStyle : {
         backgroundColor : Global.COLOR.MAIN,
+       // color : '#ffffff'
     }, 
     activeTabStyle : {
         backgroundColor : Global.COLOR.MAIN

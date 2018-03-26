@@ -36,8 +36,20 @@ const RootNavLoggedTab = TabNavigator({
     Notification : {screen : Notification},
     FitnessWellness : {screen : FitnessWellness},
     //Setting : {screen : Setting},
-    Profile : {screen : Profile}
+    Profile : {
+      screen : StackNavigator({
+        ProfileIndex : {screen : Profile},
+        PostPage:  {screen : PostPage}
+      },
+      {
+          mode: 'modal',
+          headerMode: 'none',
+          header : null,
+          initialRouteName : 'ProfileIndex'
+        })
+    }
   },{
+    initialRouteName : 'Profile',
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
