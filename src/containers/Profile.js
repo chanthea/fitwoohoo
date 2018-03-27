@@ -1,61 +1,89 @@
 import React, {Component} from 'react';
 import {
     Text,
-     View, 
-     StyleSheet, 
-     Image, 
-     ImageBackground, 
-     Dimensions,
-      ScrollView ,
-      Animated,
-      TouchableOpacity
-      
+    View, 
+    StyleSheet, 
+    Image, 
+    ImageBackground, 
+    Dimensions,
+    ScrollView ,
+    Animated,
+    TouchableOpacity
 }  from 'react-native';
-
+import FullPost from './FullPost';
 import { _paddingAndroid } from '../helpers';
 import Global from '../globals/Globals';
-import { Header, Left, Body, Right, Button, Icon, Title} from 'native-base';
+import { Header, Left, Body, Right, Button, Icon, Title, List, ListItem, Switch, Text as NBText} from 'native-base';
 import Fab from '../components/Fab';
-import { NavigationActions } from 'react-navigation';
+import Menu, {
+    MenuProvider,
+    MenuOptions,
+    MenuOption,
+    MenuTrigger,
+    renderers,
+  } from 'react-native-popup-menu';
 
 
 
+// Menu.debug = true;
 class Profile extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          active: false
+          active: false,
+          expanded    : false,
+          animation   : new Animated.Value(0),
+          icon : 'ios-more-outline'
         };
     }
 
-    _onPressPost = (navigateAction)=> {
+    _toggle(){
+        if(this.state.expanded){
+            value = 0;
+        }else{
+            value = 100
+        }
+        Animated.spring(
+            this.state.animation,
+            {
+                toValue: value,
+                velocity: 3,
+                tension: 2,
+                friction: 8,
+            }
+        ).start();
+        this.setState({
+            expanded : !this.state.expanded,
+            icon : this.state.expanded ? 'ios-more-outline' : 'ios-more'
+        });
+    }
+    _onPressPost = ()=> {
         this.setState({
             active : false
         });
-        this.props.navigation.navigate('PostPage',{name :this.props.navigation.state.key});
-        //this.props.navigation.dispatch(navigateAction);
+        this.props.navigation.navigate('PostPage');
+    
     };
-
     _renderLabel = ()=>{
         return (
         <View style = {styles.tabBar}>
           <View style={styles.tabRow}>
             <TouchableOpacity style={styles.labelContainer}>
-            <Animated.Text style={styles.tabLabelNumber}>
+            <Text style={styles.tabLabelNumber}>
               150
-            </Animated.Text>
-            <Animated.Text style={styles.tabLabelText}>
+            </Text>
+            <Text style={styles.tabLabelText}>
               Followers
-            </Animated.Text>
+            </Text>
             </TouchableOpacity>
             
              <TouchableOpacity style={styles.labelContainer}>
-            <Animated.Text style={styles.tabLabelNumber}>
+            <Text style={styles.tabLabelNumber}>
               200 
-            </Animated.Text>
-            <Animated.Text style={styles.tabLabelText}>
+            </Text>
+            <Text style={styles.tabLabelText}>
             Following
-            </Animated.Text>
+            </Text>
             </TouchableOpacity> 
             <TouchableOpacity style={styles.optionContainer}>
                 <Icon name="align-right" style={{textAlign : 'center', color: 'rgba(0,0,0,0.5)'}} type='Foundation' />
@@ -91,51 +119,185 @@ class Profile extends Component {
           </View>
         )
       }
+    _renderMenu = () =>{
+        const IconOption = ({iconName, text, value}) => (
+            <MenuOption customStyles={optionStyles} onSelect={() => console.log(123)} value={value}>
+                <Icon style= {styles.popUpMenuIcon} name={iconName} />
+                <Text style= {styles.popUpMenuText}>
+                {text}
+                </Text>
+            </MenuOption>
+          )
+
+        const {menuContainer, menuButton, menuIcon, menuText} = styles;
+        return (
+            <View style={menuContainer}>
+                <TouchableOpacity onPress={()=>this.props.navigation.navigate('PostPage')} style={menuButton}  >
+                    <Icon style={menuIcon} name='ios-add-circle-outline' />
+                    <Text style={menuText}>Post</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={menuButton}  >
+                    <Icon style={menuIcon} name='ios-book-outline' />
+                    <Text style={menuText}>Library</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={menuButton}  >
+                    <Icon style={menuIcon} name='ios-bicycle-outline' />
+                    <Text style={menuText}>Activities</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={menuButton}  >
+                    <Icon style={menuIcon} name='ios-calendar-outline' />
+                    <Text style={menuText}>Schedule</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={menuButton}  >
+
+                    <Menu>
+                    <MenuTrigger customStyles={triggerStyles}>
+                        <Icon style={menuIcon} name='ios-apps-outline' />
+                        <Text style={menuText}>More</Text>
+                    </MenuTrigger>
+                    <MenuOptions customStyles={optionsStyles}>
+                        <IconOption
+                       
+                        value={3} iconName='ios-aperture-outline' text='Tool Generator' />
+                        <IconOption value={3} iconName='ios-aperture-outline' text='Tool Generator' />
+                    </MenuOptions>
+                </Menu>
+                
+                  
+                </TouchableOpacity>
+            </View>
+        );
+    }
+    _renderAbout = () =>{
+        const {listItemBody,listItemStyle, listItemIcon, listItemText}  = styles;
+        return(
+                <View style={{flexDirection : 'column', justifyContent :'center'}}>   
+                    <Button style={{marginBottom : 0}}  onPress={this._toggle.bind(this)} small block transparent light>
+                        <Icon style={{color :'rgba(0,0,0,0.6)'}} name={this.state.icon}/>
+                    </Button>  
+                    <Animated.View 
+                    style={{overflow : 'hidden',marginTop  : -13,height: this.state.animation}} >
+                        <List>
+                            <ListItem style={listItemStyle} icon >
+                                <Left>
+                                    <Icon style={listItemIcon} name="ios-quote-outline" />
+                                </Left>
+                                <Body style={listItemBody}>
+                                    <NBText style={listItemText}>Today is really nice </NBText>
+                                </Body>
+                            </ListItem>
+                            <ListItem style={listItemStyle} icon>
+                                <Left>
+                                    <Icon style={listItemIcon} name="ios-pin-outline" />
+                                </Left>
+                                <Body style={listItemBody}>
+                                    <NBText style={listItemText}>Chbar Ampov II, Phnom Penh, Cambodia</NBText>
+                                </Body>
+                            </ListItem>
+                            <ListItem style={listItemStyle} icon>
+                                <Left>
+                                    <Icon style={listItemIcon} name="ios-phone-portrait-outline" />
+                                </Left>
+                                <Body style={listItemBody}>
+                                    <NBText style={listItemText}>+855 98 33 97 62</NBText>
+                                </Body>
+                            </ListItem>
+                           
+                        </List> 
+                </Animated.View>
+            </View >
+        );
+    }
 
 
     render(){
-        
-        
-        const navigateAction = NavigationActions.navigate({
-            routeName: 'PostPage',
-            action: NavigationActions.navigate({ routeName: 'ProfileIndex' }),
-       
-           });
-   
-           const resetAction = NavigationActions.reset({
-               index: 1,
-               actions: [
-                 NavigationActions.navigate({ routeName: 'Profile' }),
-                 NavigationActions.navigate({ routeName: 'Settings' }),
-               ],
-             });
-   
-          
-           const previousRoute = this.props.navigation;
-           const backAction = NavigationActions.back({
-               key: previousRoute,
-             });
      
-        
         return (
-        <View style={{flex : 1, flexDirection : 'column', backgroundColor  : '#ffffff'}}>
-
-            {this._renderContactHeader()}
-            {this._renderLabel()}
-            <View style={{flexGrow :1,  backgroundColor : 'transparent'}}>
-              <Fab 
-              postPressed = {()=>this._onPressPost(navigateAction)}
-              active = {this.state.active}
-              longPressed = {() => this.setState({ active: !this.state.active })}
-              />       
-            </View>
-        </View>
+            <MenuProvider customStyles={menuProviderStyles}>
+                <ScrollView style={{flex :1 }}>
+                
+                            {/* <Fab 
+                        postPressed = {this._onPressPost}
+                        active = {this.state.active}
+                        longPressed = {() => this.setState({ active: !this.state.active })}
+                        /> */}
+                    <View style={styles.mainContainer}>
+                        {this._renderContactHeader()}
+                        {this._renderLabel()}
+                        <View style={{flexGrow :1,  backgroundColor : 'transparent', marginTop : -13}}>
+                            {this._renderMenu()}
+                            {this._renderAbout()}
+                            <View style={{marginTop : 15, flex: 1, backgroundColor : '#eeeeee'}}>
+                                <FullPost />
+                            </View>
+                        </View>
+                    </View>
+                </ScrollView>
+            </MenuProvider>
           );
     }
 }
 
-const styles = StyleSheet.create({
 
+
+const styles = StyleSheet.create({
+        popUpMenuButton : {
+            flexDirection  :'row',
+            alignItems : 'center',
+            justifyContent : 'flex-start',
+
+        },
+        popUpMenuText : {
+            color : 'rgba(0,0,0,0.6)',
+            paddingLeft : 15
+        },
+        popUpMenuIcon :{
+            color : 'rgba(0,0,0,0.6)',
+            fontSize : 25
+        },
+        listItemStyle : {
+            height : 35
+        },
+        listItemBody  : {
+           borderBottomWidth : 0
+        },
+        listItemIcon :{
+            fontSize : 20
+        },
+        listItemText : {
+            fontSize : 14,
+            color : 'rgba(0,0,0,0.6)'
+        },
+        mainContainer : {
+            flex : 1, 
+            flexDirection : 'column', 
+           backgroundColor  : '#ffffff'
+        },
+        menuContainer : {
+            flexDirection : 'row', 
+            justifyContent : 'center',
+            borderColor : 'rgba(0,0,0,0.1)',
+            borderTopWidth : 0.4,
+           // backgroundColor  :'red',
+            paddingTop : 10,
+
+        },
+        menuButton : {
+            flexDirection: 'column',
+            alignItems : 'center',
+            flex: 1,
+            justifyContent : 'center'
+        },
+        menuIcon :{
+            color : 'rgba(0,0,0,0.6)',
+            fontSize : 18
+            // fontWeight : 'bold'
+        }, 
+        menuText : {
+            color : 'rgba(0,0,0,0.6)',
+            fontSize : 12
+            // fontWeight : 'bold'
+        },
         coverBio: {
           color: '#FFF',
           fontSize: 15,
@@ -176,17 +338,6 @@ const styles = StyleSheet.create({
           alignItems: 'center',
           backgroundColor: '#FFF',
         },
-        indicatorTab: {
-          backgroundColor: 'transparent',
-        },
-        mansonryContainer: {
-          alignItems: 'center',
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          marginLeft: 0,
-          marginRight: 0,
-        },
         profileImage: {
           borderColor: '#FFF',
           borderRadius: 55,
@@ -199,27 +350,14 @@ const styles = StyleSheet.create({
           left: 10,
           position: 'absolute',
         },
-        sceneContainer: {
-          marginTop: 10,
-        },
-        scroll: {
-          backgroundColor: '#FFF',
-        },
         tabBar: {
           backgroundColor: 'transparent',
           marginBottom: 20,
           marginLeft: 130,
-          marginTop: -53,
+          marginTop: -50,
           position: 'relative',
           zIndex: 10,
 
-        },
-        tabContainer: {
-          flex: 1,
-          marginBottom: 12,
-          marginTop: -55,
-          position: 'relative',
-          zIndex: 10,
         },
         tabRow: {
           flexWrap: 'wrap',
@@ -247,4 +385,70 @@ const styles = StyleSheet.create({
             justifyContent : 'center'
         }
 });
+
+
+
+const triggerStyles = {
+    triggerWrapper: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  };
+  
+  const optionsStyles = {
+    optionsContainer: {
+      backgroundColor: '#ffffff',
+      padding: 5,
+    },
+    optionsWrapper: {
+    //   backgroundColor: 'purple',
+    },
+    optionWrapper: {
+      backgroundColor: 'transparent',
+      margin: 5,
+    },
+    optionTouchable: {
+      underlayColor: 'gold',
+      activeOpacity: 70,
+    },
+    optionText: {
+      color: 'brown',
+    },
+  };
+  
+  const optionStyles = {
+    optionTouchable: {
+      underlayColor: 'transparent',
+      activeOpacity: 40,
+    },
+    optionWrapper: {
+      backgroundColor: 'transparent',
+      margin: 5,
+      flexDirection  :'row',
+      alignItems : 'center',
+      justifyContent : 'flex-start',
+    },
+    optionText: {
+      color: 'black',
+    },
+  };
+
+const menuProvider = StyleSheet.create({
+//   container: {
+//     flexDirection: 'column',
+//     padding: 30,
+//   },
+  backdrop: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    opacity: 0.5,
+  },
+  anchorStyle: {
+    backgroundColor: 'blue',
+  },
+});
+
+const menuProviderStyles = {
+  //menuProviderWrapper: menuProvider.container,
+  backdrop: menuProvider.backdrop,
+};
 export  { Profile };

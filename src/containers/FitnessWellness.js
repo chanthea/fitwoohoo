@@ -17,9 +17,9 @@ const items = [
 
 class FitnessWellness extends Component {
     static navigationOptions = {
-        tabBarVisible : false,
+        //tabBarVisible : false,
         drawerLockMode: 'locked-closed',
-        //  swipeEnabled : false
+          //swipeEnabled : false
     }
     _renderTabMenu(object){
         let menu = object.map((item,i)=>{

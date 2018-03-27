@@ -62,15 +62,11 @@ export default class FitnessWellnessTab extends Component {
     
   }
   render() {
-
-  
-
     return (
       <Container>
         <Content>
           <List>
             {this._renderFollow(items)}
-           
           </List>
         </Content>
       </Container>
