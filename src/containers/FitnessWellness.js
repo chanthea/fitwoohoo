@@ -43,12 +43,13 @@ class FitnessWellness extends Component {
             // </Tab>
 
             <Tab
+            tabBarUnderlineStyle={{color :'#ffffff'}}
             activeTabStyle={styles.TabStyle} 
             tabStyle={styles.TabStyle} 
-            ref={item.name} 
             activeTextStyle={{color : '#ffffff'}}
             textStyle={{color : 'rgba(255,255,255,0.8)'}}
-            ref={item.name} key={i} 
+            ref={item.name} 
+            key={i} 
             heading={item.name}>
                 <FitnessWellnessTab />
             </Tab>

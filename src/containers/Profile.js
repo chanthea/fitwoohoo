@@ -23,10 +23,42 @@ import Menu, {
     renderers,
   } from 'react-native-popup-menu';
 
+  let MoreButtons = [
+    {text : 'Create Activity', icon : 'ios-stats-outline', value : 'createclass'},
+    {text : 'Tool Generator', icon : 'ios-aperture-outline', value : 'tool'},
+    {text : 'User Setting', icon : 'ios-settings-outline', value : 'setting'},
+  ];
+  let PhotoButtons = [
+    {text : 'Update Cover Photo', icon : 'ios-images-outline', value : 'cover'},
+    {text : 'Update Profile Photo', icon : 'ios-contact-outline', value : 'profile'},
+    {text : 'Update About Detail', icon : 'ios-information-circle-outline', value : 'about'},
+  ];
 
+  let FollowCounts = [
+    {count : '52', text : 'Followers'}, 
+    {count : '100', text : 'Following'}, 
+  ];
+
+  let ListButtons = [
+    {text : 'Post', icon : 'ios-add-circle-outline', value : 'post', page  : 'PostPage'},
+    {text : 'Library', icon : 'ios-book-outline', value : 'library', page : 'Library'},
+    {text : 'Activities', icon : 'ios-stats-outline', value : 'activity'},
+    {text : 'Schedule', icon : 'ios-calendar-outline', value : 'schedule'},
+    {text : 'Classes', icon : 'ios-calendar-outline', value : 'class'},
+  ];
+
+  const IconOption = ({iconName, text, value}) => (
+    <MenuOption customStyles={optionStyles} onSelect={() => console.log(123)} value={value}>
+        <Icon style= {styles.popUpMenuIcon} name={iconName} />
+        <Text style= {styles.popUpMenuText}>
+        {text}
+        </Text>
+    </MenuOption>
+  )
 
 // Menu.debug = true;
 class Profile extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -68,25 +100,25 @@ class Profile extends Component {
         return (
         <View style = {styles.tabBar}>
           <View style={styles.tabRow}>
-            <TouchableOpacity style={styles.labelContainer}>
-            <Text style={styles.tabLabelNumber}>
-              150
-            </Text>
-            <Text style={styles.tabLabelText}>
-              Followers
-            </Text>
-            </TouchableOpacity>
-            
-             <TouchableOpacity style={styles.labelContainer}>
-            <Text style={styles.tabLabelNumber}>
-              200 
-            </Text>
-            <Text style={styles.tabLabelText}>
-            Following
-            </Text>
-            </TouchableOpacity> 
+            {FollowCounts.map((val, i)=>{
+                return (<TouchableOpacity key={i} style={styles.labelContainer}>
+                    <Text style={styles.tabLabelNumber}>{val.count}</Text>
+                    <Text style={styles.tabLabelText}>{val.text}</Text>
+            </TouchableOpacity>);
+            })}
             <TouchableOpacity style={styles.optionContainer}>
-                <Icon name="align-right" style={{textAlign : 'center', color: 'rgba(0,0,0,0.5)'}} type='Foundation' />
+                <Menu>
+                    <MenuTrigger customStyles={triggerStyles}>
+                    <Icon name="ios-create-outline" style={{textAlign : 'center', color: 'rgba(0,0,0,0.5)'}}/>
+                    </MenuTrigger>
+                    <MenuOptions customStyles={optionsStyles}>
+                        {PhotoButtons.map((item,i)=>{
+                          return  <IconOption key={i} value={item.value} iconName={item.icon} text={item.text} />
+                        })}
+                        
+                    </MenuOptions>
+                </Menu>
+               
             </TouchableOpacity> 
           </View>
         </View>
@@ -120,50 +152,31 @@ class Profile extends Component {
         )
       }
     _renderMenu = () =>{
-        const IconOption = ({iconName, text, value}) => (
-            <MenuOption customStyles={optionStyles} onSelect={() => console.log(123)} value={value}>
-                <Icon style= {styles.popUpMenuIcon} name={iconName} />
-                <Text style= {styles.popUpMenuText}>
-                {text}
-                </Text>
-            </MenuOption>
-          )
-
+     
         const {menuContainer, menuButton, menuIcon, menuText} = styles;
         return (
             <View style={menuContainer}>
-                <TouchableOpacity onPress={()=>this.props.navigation.navigate('PostPage')} style={menuButton}  >
-                    <Icon style={menuIcon} name='ios-add-circle-outline' />
-                    <Text style={menuText}>Post</Text>
-                </TouchableOpacity>
+                {ListButtons.map((val, i)=>{
+                    return(
+                        <TouchableOpacity key={i} onPress={()=>this.props.navigation.navigate(val.page)} style={menuButton}  >
+                        <Icon style={menuIcon} name={val.icon} />
+                        <Text style={menuText}>{val.text}</Text>
+                    </TouchableOpacity>
+                    ); 
+                })}
+                
                 <TouchableOpacity style={menuButton}  >
-                    <Icon style={menuIcon} name='ios-book-outline' />
-                    <Text style={menuText}>Library</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={menuButton}  >
-                    <Icon style={menuIcon} name='ios-bicycle-outline' />
-                    <Text style={menuText}>Activities</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={menuButton}  >
-                    <Icon style={menuIcon} name='ios-calendar-outline' />
-                    <Text style={menuText}>Schedule</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={menuButton}  >
-
                     <Menu>
                     <MenuTrigger customStyles={triggerStyles}>
                         <Icon style={menuIcon} name='ios-apps-outline' />
                         <Text style={menuText}>More</Text>
                     </MenuTrigger>
                     <MenuOptions customStyles={optionsStyles}>
-                        <IconOption
-                       
-                        value={3} iconName='ios-aperture-outline' text='Tool Generator' />
-                        <IconOption value={3} iconName='ios-aperture-outline' text='Tool Generator' />
+                    {MoreButtons.map((item,i)=>{
+                          return  <IconOption key={i} value={item.value} iconName={item.icon} text={item.text} />
+                        })}
                     </MenuOptions>
                 </Menu>
-                
-                  
                 </TouchableOpacity>
             </View>
         );
@@ -426,7 +439,7 @@ const triggerStyles = {
       margin: 5,
       flexDirection  :'row',
       alignItems : 'center',
-      justifyContent : 'flex-start',
+        justifyContent : 'flex-start',
     },
     optionText: {
       color: 'black',

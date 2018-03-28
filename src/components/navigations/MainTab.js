@@ -15,15 +15,18 @@ import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Global from '../../globals/Globals';
-import { GeneralSearch, PostPage} from '../../containers';
+import { GeneralSearch, PostPage, Library } from '../../containers';
+import PhotoDetail from '../ImageGallery';
+import LibraryStack from './LibraryStack';
+
+
 
 const RootNavLoggedTab = TabNavigator({
     NewsWall : {screen  : StackNavigator({
       NewsWallHome : {screen : Newswall},
       GeneralSearch : {screen :  GeneralSearch,} ,
       PostPage:  {screen : PostPage}
-    },
-    {
+    },{
         mode: 'modal',
         headerMode: 'none',
         header : null,
@@ -38,14 +41,25 @@ const RootNavLoggedTab = TabNavigator({
     //Setting : {screen : Setting},
     Profile : {
       screen : StackNavigator({
-        ProfileIndex : {screen : Profile},
-        PostPage:  {screen : PostPage}
-      },
-      {
+        ProfileIndex : {
+          screen : Profile,
+          navigationOptions: {
+            header: null,
+          }
+        },
+        PostPage:  {
+          screen : PostPage,
+          navigationOptions: {
+            header: null,
+          }},
+        Library : {
+          screen : Library ,
+          navigationOptions: {
+            header: null,
+          }},
+        PhotoDetail : {screen : PhotoDetail}
+      },{
           mode: 'modal',
-          headerMode: 'none',
-          header : null,
-          initialRouteName : 'ProfileIndex'
         })
     }
   },{
