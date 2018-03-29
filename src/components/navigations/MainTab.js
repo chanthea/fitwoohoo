@@ -42,7 +42,7 @@ const RootNavLoggedTab = TabNavigator({
     Profile : {
       screen : StackNavigator({
         ProfileIndex : {
-          screen : Profile,
+          screen : Profile/*ActivityList*/,
           navigationOptions: {
             header: null,
           }
