@@ -10,11 +10,10 @@ import {
     Animated,
     TouchableOpacity
 }  from 'react-native';
-import FullPost from './FullPost';
-import { _paddingAndroid } from '../helpers';
-import Global from '../globals/Globals';
+import FullPost from '../FullPost';
+import { _paddingAndroid } from '../../helpers';
+import Global from '../../globals/Globals';
 import { Header, Left, Body, Right, Button, Icon, Title, List, ListItem, Switch, Text as NBText} from 'native-base';
-import Fab from '../components/Fab';
 import Menu, {
     MenuProvider,
     MenuOptions,
@@ -42,7 +41,7 @@ import Menu, {
   let ListButtons = [
     {text : 'Post', icon : 'ios-add-circle-outline', value : 'post', page  : 'PostPage'},
     {text : 'Library', icon : 'ios-book-outline', value : 'library', page : 'Library'},
-    {text : 'Activities', icon : 'ios-stats-outline', value : 'activity'},
+    {text : 'Activities', icon : 'ios-stats-outline', value : 'activity', page : 'ActivityList'},
     {text : 'Schedule', icon : 'ios-calendar-outline', value : 'schedule'},
     {text : 'Classes', icon : 'ios-calendar-outline', value : 'class'},
   ];
@@ -94,8 +93,7 @@ class Profile extends Component {
             active : false
         });
         this.props.navigation.navigate('PostPage');
-    
-    };
+    }
     _renderLabel = ()=>{
         return (
         <View style = {styles.tabBar}>
@@ -126,11 +124,12 @@ class Profile extends Component {
       }
 
     _renderContactHeader = () => {
+        
         return (
           <View style={styles.headerContainer}>
             <View style={styles.coverContainer}>
               <ImageBackground
-               source={require('../images/cover.jpeg')}
+               source={require('../../images/cover.jpeg')}
                 style={styles.coverImage}
               >
                 <View style={styles.coverTitleContainer}>
@@ -144,7 +143,7 @@ class Profile extends Component {
             </View>
             <View style={styles.profileImageContainer}>
               <Image
-               source={require('../images/profile.jpg')}
+               source={require('../../images/profile.jpg')}
                 style={styles.profileImage}
               />
             </View>
@@ -182,14 +181,13 @@ class Profile extends Component {
         );
     }
     _renderAbout = () =>{
-        const {listItemBody,listItemStyle, listItemIcon, listItemText}  = styles;
+        const {listItemBody,listItemStyle, listItemIcon, listItemText, animatedView}  = styles;
         return(
                 <View style={{flexDirection : 'column', justifyContent :'center'}}>   
                     <Button style={{marginBottom : 0}}  onPress={this._toggle.bind(this)} small block transparent light>
                         <Icon style={{color :'rgba(0,0,0,0.6)'}} name={this.state.icon}/>
                     </Button>  
-                    <Animated.View 
-                    style={{overflow : 'hidden',marginTop  : -13,height: this.state.animation}} >
+                    <Animated.View style={{overflow : 'hidden',marginTop  : -13,height: this.state.animation}} >
                         <List>
                             <ListItem style={listItemStyle} icon >
                                 <Left>
@@ -228,12 +226,6 @@ class Profile extends Component {
         return (
             <MenuProvider customStyles={menuProviderStyles}>
                 <ScrollView style={{flex :1 }}>
-                
-                            {/* <Fab 
-                        postPressed = {this._onPressPost}
-                        active = {this.state.active}
-                        longPressed = {() => this.setState({ active: !this.state.active })}
-                        /> */}
                     <View style={styles.mainContainer}>
                         {this._renderContactHeader()}
                         {this._renderLabel()}
@@ -398,8 +390,6 @@ const styles = StyleSheet.create({
             justifyContent : 'center'
         }
 });
-
-
 
 const triggerStyles = {
     triggerWrapper: {

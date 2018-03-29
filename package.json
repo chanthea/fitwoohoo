@@ -2,10 +2,12 @@
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "dependencies": {
+    "@expo/videoplayer": "^0.4.0",
     "expo": "^25.0.0",
     "native-base": "^2.3.10",
     "react": "16.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz",
+    "react-native-af-video-player": "^0.1.7",
     "react-native-autogrow-textinput": "^5.1.1",
     "react-native-easy-grid": "^0.1.17",
     "react-native-elements": "^0.19.0",
@@ -13,10 +15,15 @@
     "react-native-grid-list": "^1.0.6",
     "react-native-icon-badge": "^1.1.3",
     "react-native-image-gallery": "^2.1.5",
+    "react-native-keep-awake": "^3.0.1",
+    "react-native-linear-gradient": "^2.4.0",
     "react-native-modal-datetime-picker": "^4.13.0",
+    "react-native-orientation": "^3.1.3",
     "react-native-popup-menu": "^0.12.3",
     "react-native-super-grid": "^2.0.2",
     "react-native-vector-icons": "^4.5.0",
+    "react-native-video": "^2.0.0",
+    "react-native-video-player": "^0.9.1",
     "react-navigation": "^1.5.7"
   }
 }

@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import { SearchTab, Wrapper } from '../components/common';
+import { SearchTab, Wrapper } from '../../components/common';
 import { Content, Container, Header, View, Button, Icon, Text } from 'native-base';
-import FullPost from '../containers/FullPost';
-import Global from '../globals/Globals';
-import Fab from '../components/Fab';
+import FullPost from '../../containers/FullPost';
+import Global from '../../globals/Globals';
+import Fab from '../../components/Fab';
 
 
 class Newswall extends Component {
@@ -26,7 +26,6 @@ class Newswall extends Component {
                 <SearchTab  
                 searchPressed ={()=>this.props.navigation.navigate('GeneralSearch')}
                  menuPressed={()=>this.props.navigation.navigate('DrawerOpen')}/>
-
                 <View style={{ flex: 1, backgroundColor : '#ffffff' }}>
                     <FullPost/>
                     <Fab 
@@ -40,4 +39,4 @@ class Newswall extends Component {
     }
 }
 
-export  { Newswall };
+export { Newswall };

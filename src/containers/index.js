@@ -1,15 +1,16 @@
 
 export * from './Chat';
-export * from './Location';
-export * from './Newswall';
-export * from './Request';
-export * from './Notification';
+export * from './Location/Location';
+export * from './Newswall/Newswall';
+export * from './Request/Request';
+export * from './Notification/Notification';
 export * from './Setting';
 export * from './HomeWrapper';
 export * from './Fitbit';
-export * from './Profile';
-export * from './FitnessWellness';
+export * from './Profile/Profile';
+export * from './FitnessWellness/FitnessWellness';
 export * from './GeneralSearch';
-export * from './PostPage';
+export * from './PostPage/PostPage';
 export * from './Library';
+export * from './ActivityList/ActivityList';
 

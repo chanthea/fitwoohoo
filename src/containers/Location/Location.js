@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform} from 'react-native'
-import { HeaderTab } from '../components/common';
+import { HeaderTab } from '../../components/common';
 import {Icon,Root, Container, Header, Button, Content, ActionSheet, Text } from "native-base";
 let BUTTONS;
 if(Platform.OS === 'android'){
@@ -14,13 +14,8 @@ if(Platform.OS === 'android'){
 }else{
     BUTTONS = ["Option 0", "Option 1", "Option 2", "Delete", "Cancel"];
 }
-
-
-
-
 const DESTRUCTIVE_INDEX = 3;
 const CANCEL_INDEX = 4;
-
 class Location extends Component {
     constructor(props) {
         super(props);
@@ -57,5 +52,4 @@ class Location extends Component {
         );
     }
 }
-
 export  { Location };

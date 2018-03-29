@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, StyleSheet, Platform}  from 'react-native';
-import { HeaderTab } from '../components/common';
+import { HeaderTab } from '../../components/common';
 import { Icon, Thumbnail, Left, Right, List, ListItem, Body } from 'native-base';
 
 
@@ -16,7 +16,7 @@ class Notification extends Component {
                 <List style={{flex :1}}>
                     <ListItem button onPress={()=>console.log(123)} avatar style={[styles.listItemStyle, styles.unRead]}>
                         <Left>
-                            <Thumbnail small source={require('../images/profile.jpg')} />
+                            <Thumbnail small source={require('../../images/profile.jpg')} />
                         </Left>
                         <Body style={styles.bodyStyle}>
                             <View style={{flexDirection : 'row'}}>
@@ -33,7 +33,7 @@ class Notification extends Component {
                     </ListItem>
                     <ListItem avatar button onPress={()=>console.log(123)} style={[styles.listItemStyle]}>
                         <Left>
-                            <Thumbnail small source={require('../images/profile.jpg')} />
+                            <Thumbnail small source={require('../../images/profile.jpg')} />
                         </Left>
                         <Body style={styles.bodyStyle}>
                             <View style={{flexDirection : 'row'}}>
@@ -50,7 +50,7 @@ class Notification extends Component {
                     </ListItem>
                     <ListItem avatar onPress={()=>console.log(123)} style={[styles.listItemStyle]}>
                         <Left>
-                            <Thumbnail small source={require('../images/profile.jpg')} />
+                            <Thumbnail small source={require('../../images/profile.jpg')} />
                         </Left>
                         <Body style={styles.bodyStyle}>
                             <View style={{flexDirection : 'row'}}>
@@ -67,7 +67,7 @@ class Notification extends Component {
                     </ListItem>
                     <ListItem avatar onPress={()=>console.log(123)} style={[styles.listItemStyle]}>
                         <Left>
-                            <Thumbnail small source={require('../images/profile.jpg')} />
+                            <Thumbnail small source={require('../../images/profile.jpg')} />
                         </Left>
                         <Body style={styles.bodyStyle}>
                             <View style={{flexDirection : 'row'}}>
@@ -117,6 +117,4 @@ const styles = StyleSheet.create({
         color : 'rgba(0,0,0,0.6)'
     }
   });
-
-
 export  { Notification };

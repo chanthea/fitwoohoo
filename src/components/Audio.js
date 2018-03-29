@@ -1,26 +1,29 @@
 import React, { PureComponent } from 'react';
 import { Text, ScrollView, Image, StyleSheet, View, TouchableOpacity } from 'react-native';
+import {Icon } from 'native-base';
 import GridList from 'react-native-grid-list'; // 1.0.5
 
-export default class Photo extends PureComponent {
 
+export default class Audio extends PureComponent {
   componentDidMount(){
-    console.log('PHoto Page Component Did Mount');
+     // console.log(NativeModules.UIManager);
+    console.log('Audio Page Component Did Mount');
   }
-
   renderItemAnimationAndSeparator = ({ item, i,animation }) => (
-    <TouchableOpacity onPress={this.props.PhotoDetail}>
+    <TouchableOpacity onPress={this.props.AudioDetail}>
     <Image
-      style={styles.imageRadius}
+      style={styles.image}
       source={item.thumbnail}
       onLoad={() => animation.start()}
     />
+     <Icon name="play-circle-outline" type="MaterialIcons" 
+     style={{ position: 'absolute', top: '43%', left: '43%', color :'#ffffff' }} />
     </TouchableOpacity>
   );
+
   render() {
     return (
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* AnimationAndSeparator */}
         <View style={styles.girdAnimationAndSeparator}>
           <GridList
             showAnimation
@@ -52,11 +55,6 @@ const styles = StyleSheet.create({
   girdSeparator: {
     borderWidth: 1,
   },
-  imageRadius: {
-    width: '100%',
-    height: '100%',
-    // borderRadius: 10,
-  },
   image: {
     width: '100%',
     height: '100%',
@@ -72,15 +70,7 @@ const newImage = {
   5: 'fashion',
   6: 'people',
   7: 'nature',
-  8: 'animals',
-  9: 'imageUrl',
-  10: 'business',
-  11: 'cats',
-  12: 'city',
-  13: 'food',
-  14: 'nightlife',
-  15: 'fashion',
-  16: 'people',
+
 };
 
 const image = index => ({
@@ -90,10 +80,7 @@ const image = index => ({
     }`,
   },
 });
-console.log(image);
-
-
-const itemsAnimationAndSeparator = Array.from(Array(16)).map((_, index) =>
+const itemsAnimationAndSeparator = Array.from(Array(8)).map((_, index) =>
   image(index),
 );
 

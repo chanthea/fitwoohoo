@@ -4,14 +4,10 @@ import Global from '../globals/Globals';
 import Photo from './Photo';
 import { Tabs,Tab } from 'native-base';
 
-
-
 class LibraryPhoto extends Component {
-
     constructor(props){
         super(props);
     }
-
     static navigationOptions = {
         tabBarVisible : false,
         drawerLockMode: 'locked-closed',
@@ -36,7 +32,6 @@ class LibraryPhoto extends Component {
     }
    
     render(){
-        console.log('123'+this.props.PhotoDetail);
         const PhotoItems = [
             {heading : 'Profile Photos', component : <Photo PhotoDetail={this.props.PhotoDetail}/>},
             {heading :'Cover Photos', component : <Photo PhotoDetail={this.props.PhotoDetail}/>},

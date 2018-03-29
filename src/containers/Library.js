@@ -4,6 +4,9 @@ import { Wrapper } from '../components/common';
 import { _paddingAndroid } from '../helpers';
 import Global from '../globals/Globals';
 import LibraryPhoto from '../components/LibraryPhoto';
+import Photo from '../components/Photo';
+import Video from '../components/Video';
+import Audio from '../components/Audio';
 import { 
     Header, 
     Left, 
@@ -72,9 +75,9 @@ class Library extends Component {
    
     render(){
         const items = [
-            {heading : 'Photos', component : <LibraryPhoto PhotoDetail={()=>this.props.navigation.navigate('PhotoDetail',{id :123})}/>},
-            {heading :'Videos', component : <LibraryPhoto PhotoDetail={()=>this.props.navigation.navigate('PhotoDetail',{id :123})}/>},
-            {heading : 'Audio', component : <LibraryPhoto PhotoDetail={()=>this.props.navigation.navigate('PhotoDetail',{id :123})}/>}
+            {heading : 'Photos', component : <LibraryPhoto PhotoDetail={()=>this.props.navigation.navigate('PhotoDetail')}/>},
+            {heading :'Videos', component : <Video VideoDetail={()=>this.props.navigation.navigate('VideoDetail')}/>},
+            {heading : 'Audio', component : <Audio AudioDetail={()=>this.props.navigation.navigate('AudioDetail')}/>}
         ];
        
         return(
@@ -107,7 +110,6 @@ const styles = StyleSheet.create({
     TabBarStyle : {flex : 1, backgroundColor : '#ffffff'},
     TabStyle : {
         backgroundColor : '#ffffff',
-        //color : Global.COLOR.MAIN
     }, 
     activeTabStyle : {
         backgroundColor : Global.COLOR.MAIN

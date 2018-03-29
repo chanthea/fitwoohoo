@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import { View, StyleSheet, Platform, TouchableOpacity}  from 'react-native';
-import { Wrapper } from '../components/common';
-import { _paddingAndroid } from '../helpers';
-import Global from '../globals/Globals';
+import { Wrapper } from '../../components/common';
+import { _paddingAndroid } from '../../helpers';
+import Global from '../../globals/Globals';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import { 
     Header, 
@@ -68,7 +68,7 @@ class PostPage extends Component {
                 <List >
                     <ListItem avatar>
                     <Left>
-                        <Thumbnail small source={require('../images/profile.jpg')} />
+                        <Thumbnail small source={require('../../images/profile.jpg')} />
                     </Left>
                     <Body style={{borderColor : 'transparent'}}>
                         <Text style={styles.name}>Gguon Lykhim</Text>

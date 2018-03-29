@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Text}  from 'react-native';
-import { HomeWrapper } from './index';
+import { HomeWrapper } from '../index';
 
 
 class Request extends Component {

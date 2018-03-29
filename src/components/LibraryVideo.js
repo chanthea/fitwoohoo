@@ -37,9 +37,9 @@ class LibraryVideo extends Component {
    
     render(){
         const PhotoItems = [
-            {heading : 'Profile Photos', component : <Photo/>},
-            {heading :'Cover Photos', component : <Photo/>},
-            {heading : 'Post Photos', component : <Photo/>}
+            {heading : 'Profile Photos', component : <Photo PhotoDetail={this.props.PhotoDetail}/>},
+            {heading :'Cover Photos', component : <Photo PhotoDetail={this.props.PhotoDetail}/>},
+            {heading : 'Post Photos', component : <Photo PhotoDetail={this.props.PhotoDetail}/>}
         ];
         return(
             <Tabs 
@@ -67,4 +67,4 @@ const styles = StyleSheet.create({
         backgroundColor : Global.COLOR.MAIN
     }
 });
-export  default LibraryVideo;
+export default LibraryVideo;

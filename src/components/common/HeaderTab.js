@@ -35,9 +35,11 @@ class HeaderTab extends Component {
                 <Body style={{flex :2}}>
                     <Title style={{color : '#ffffff'}}>{this.props.title}</Title>
                 </Body>
-                <Right>
-                    {this._checkNewMenu()}
-                </Right>
+                {this.props.noRight &&
+                 <Right>
+                 {this._checkNewMenu()}
+                </Right> }
+               
                 </Header>
                 <View style={{flex : 1, backgroundColor : '#ffffff'}}>
                     {this.props.children}
