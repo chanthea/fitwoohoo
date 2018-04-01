@@ -13,4 +13,7 @@ export * from './GeneralSearch';
 export * from './PostPage/PostPage';
 export * from './Library';
 export * from './ActivityList/ActivityList';
+export * from './ScheduleList/ScheduleList';
+export * from './ClassList/ClassList';
+// export * from './NewswallPost';
 

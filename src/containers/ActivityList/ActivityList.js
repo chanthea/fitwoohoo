@@ -9,6 +9,9 @@ import { Icon, Thumbnail, Left, Right, List, ListItem, Body, Content } from 'nat
 
 class ActivityList extends Component {
   static navigationOptions = {
+    tabBarVisible : false,
+    drawerLockMode: 'locked-closed',
+    swipeEnabled : false,
     header : null
   }
     render(){

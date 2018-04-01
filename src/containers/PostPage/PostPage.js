@@ -23,7 +23,11 @@ import {
      
 import { NavigationActions } from 'react-navigation';
 class PostPage extends Component {
-
+    static navigationOptions = {
+        tabBarVisible : false,
+        drawerLockMode: 'locked-closed',
+        swipeEnabled : false
+    }
     constructor(props){
         super(props);
         this.state = {
@@ -31,11 +35,7 @@ class PostPage extends Component {
         }
     }
 
-    static navigationOptions = {
-        tabBarVisible : false,
-        drawerLockMode: 'locked-closed',
-        swipeEnabled : false
-    }
+    
     _onChange(event) {
         this.setState({ textValue: event.nativeEvent.text || '' });
       }

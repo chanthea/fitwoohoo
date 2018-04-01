@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, Platform } from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Image, Platform} from 'react-native';
 import { 
   Container, 
   Header, 
@@ -14,7 +14,7 @@ import {
   Left, 
   Body,
   ListItem } from 'native-base';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
+
 
 const ButtonEmoji = [
   {icon : 'ios-thumbs-up-outline', title : 'Good'},

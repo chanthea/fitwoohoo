@@ -1,20 +1,31 @@
 import React from 'react';
-import { StyleSheet, Text, View, StatusBar } from 'react-native';
-import { StackNavigator, DrawerNavigator, TabNavigator,TabBarBottom } from 'react-navigation';
+import { SwitchNavigator  } from 'react-navigation';
+import store from './src/store';
+import { Provider } from 'react-redux';
 import Expo from "expo";
-import {Icon} from 'native-base';
-import {Search} from './src/components/common';
-
-import LoginScreen from './src/screens/LoginScreen';
-import WelcomeScreen from './src/screens/WelcomeScreen';
-import RegisterScreen from './src/screens/RegisterScreen';
-import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
-import SearchNameScreen from './src/screens/SearchNameScreen';
-import GooglePlaceScreen from './src/screens/GooglePlaceInput/GooglePlaceInput';
-
-import Global from './src/globals/Globals';
-import MainTab from './src/components/navigations/MainTab';
 import MainDrawer from './src/components/navigations/MainDrawer';
+import AuthStack from './src/components/navigations/AuthStack';
+import AuthLoadingScreen from './src/screens/AuthLoadingScreen';
+// import axios from 'axios';
+
+// axios.defaults.baseURL = 'https://jsonplaceholder.typicode.com/';
+// axios.defaults.headers.common['Authorization'] = 'AUTH_TOKEN';
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+// axios.interceptors.request.use(request =>{
+//   return request;
+// }, error => {
+//   return Promise.reject(error);
+// });
+
+// axios.interceptors.response.use(response => {
+//   return response;
+// }, error => {
+//   return Promise.reject(error);
+// });
+
+
+
 
 
 
@@ -33,55 +44,25 @@ export default class App extends React.Component {
     this.setState({ loadingFont: false });
   }
 
-
   render() {
     if (this.state.loadingFont) {
       return <Expo.AppLoading />;
     }
-
-    const RootStack = StackNavigator({
-      Welcome : {screen : WelcomeScreen},
-      Login : {screen : LoginScreen },
-      Register : {
-        screen : StackNavigator({
-          Register : {screen : RegisterScreen },
-          GooglePlace : {screen : GooglePlaceScreen}
-        }),
+    const RootStack  = SwitchNavigator(
+      {
+        AuthLoading: AuthLoadingScreen,
+        App: MainDrawer,
+        Auth: AuthStack,
       },
-      ResetPassword : {screen : ResetPasswordScreen },
-      SearchName : {screen : SearchNameScreen},
-      Main : {
-        screen : MainDrawer,
-        navigationOptions: {
-          header :null
-        },
+      {
+        initialRouteName: 'AuthLoading',
       }
-      
-    },{
-      initialRouteName: 'Welcome',
-    },{
-      navigationOptions : ({navigation})=>({
-        headerStyle : {
-          elevation: 0,
-          shadowOpacity: 0,
-          shadowColor: 'transparent',
-          borderBottomWidth: 0,
-        }
-      })
-
-    });
+    );
     return (
-
-      <MainDrawer/>
-      //<RootStack/>
+      <Provider store={store}>
+        <RootStack/>
+      </Provider>
+      
     );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

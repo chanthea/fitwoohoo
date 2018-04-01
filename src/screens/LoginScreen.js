@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Image,TouchableOpacity,ImageBackground,KeyboardAvoidingView, Platform } from 'react-native';
-import { Button, Text } from 'native-base';
+import { Button, Text, Root } from 'native-base';
 import LoginForm from '../components/LoginForm';
 import AuthHeader from './AuthHeader/AuthHeader';
 import Global from '../globals/Globals';
 
 class LoginScreen extends Component{
+   
+
     static navigationOptions = {
         headerTransparent:true,
         headerTintColor: 'white',
@@ -16,9 +18,9 @@ class LoginScreen extends Component{
             borderBottomWidth: 0,
           }
       };
-
     render(){
         return(
+            <Root>
             <View style={styles.container}>
                 <View style={styles.titleContainer}>
                     <AuthHeader 
@@ -28,8 +30,8 @@ class LoginScreen extends Component{
                 </View>
                 <View style={{flex : 3}}>
                 <LoginForm 
-                loginPressed={()=>this.props.navigation.navigate('Main')}
-                 resetPasswordFormPressed = {()=> this.props.navigation.navigate('ResetPassword')} 
+                    loginPressed={()=>this.props.navigation.navigate('Main')}
+                    resetPasswordFormPressed = {()=> this.props.navigation.navigate('ResetPassword')} 
                  />
                 <View style={styles.otherOption}>
                     <View style={styles.createAccount}>
@@ -48,6 +50,7 @@ class LoginScreen extends Component{
                 </View>
                 
             </View>
+            </Root>
         );
     }
     

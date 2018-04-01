@@ -42,8 +42,8 @@ import Menu, {
     {text : 'Post', icon : 'ios-add-circle-outline', value : 'post', page  : 'PostPage'},
     {text : 'Library', icon : 'ios-book-outline', value : 'library', page : 'Library'},
     {text : 'Activities', icon : 'ios-stats-outline', value : 'activity', page : 'ActivityList'},
-    {text : 'Schedule', icon : 'ios-calendar-outline', value : 'schedule'},
-    {text : 'Classes', icon : 'ios-calendar-outline', value : 'class'},
+    {text : 'Schedule', icon : 'ios-calendar-outline', value : 'schedule', page : 'ScheduleList'},
+    {text : 'Classes', icon : 'ios-calendar-outline', value : 'class',page : 'ClassList'},
   ];
 
   const IconOption = ({iconName, text, value}) => (

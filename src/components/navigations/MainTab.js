@@ -15,7 +15,7 @@ import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Global from '../../globals/Globals';
-import { GeneralSearch, PostPage, Library, ActivityList } from '../../containers';
+import { GeneralSearch, PostPage, Library, ActivityList, ScheduleList, ClassList } from '../../containers';
 import PhotoDetail from '../PhotoDetail';
 import VideoDetail from '../VideoDetail';
 import AudioDetail from '../AudioDetail';
@@ -60,15 +60,16 @@ const RootNavLoggedTab = TabNavigator({
         PhotoDetail : {screen : PhotoDetail},
         VideoDetail : {screen : VideoDetail},
         AudioDetail : {screen : AudioDetail},
-
-        ActivityList : {screen : ActivityList}
+        ActivityList : {screen : ActivityList},
+        ScheduleList : {screen : ScheduleList},
+        ClassList : {screen : ClassList}
       },{
           mode: 'modal',
         })
     }
   },{
     initialRouteName : 'Profile',
-    navigationOptions: ({ navigation }) => ({
+      navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
         let iconName;
