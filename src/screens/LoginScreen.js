@@ -4,6 +4,7 @@ import { Button, Text, Root } from 'native-base';
 import LoginForm from '../components/LoginForm';
 import AuthHeader from './AuthHeader/AuthHeader';
 import Global from '../globals/Globals';
+import { NavigationActions } from 'react-navigation';
 
 class LoginScreen extends Component{
    
@@ -19,6 +20,17 @@ class LoginScreen extends Component{
           }
       };
     render(){
+
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+              NavigationActions.navigate({
+                routeName: "Main",
+              })
+            ],
+            key : null
+          });
+         
         return(
             <Root>
             <View style={styles.container}>
@@ -30,7 +42,7 @@ class LoginScreen extends Component{
                 </View>
                 <View style={{flex : 3}}>
                 <LoginForm 
-                    loginPressed={()=>this.props.navigation.navigate('Main')}
+                    loginPressed={()=> this.props.navigation.dispatch(resetAction)}
                     resetPasswordFormPressed = {()=> this.props.navigation.navigate('ResetPassword')} 
                  />
                 <View style={styles.otherOption}>

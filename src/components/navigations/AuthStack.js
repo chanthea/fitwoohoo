@@ -27,7 +27,8 @@ const AuthStack = StackNavigator({
       Main : {
         screen : MainDrawer,
         navigationOptions: {
-          header :null
+          header :null,
+          // gesturesEnabled: false
         },
       }
       

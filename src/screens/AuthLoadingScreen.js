@@ -9,6 +9,7 @@ import {
 import { connect } from 'react-redux';
 import axios from '../config/axios/axiosNoAuth';
 import {StoreUserAction} from '../redux/actions/StoreUserAction';
+import setDefaultParam from '../config/axios/setDefaultParam';
 
 class AuthLoadingScreen extends React.Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class AuthLoadingScreen extends React.Component {
       .then(res =>{
       //console.log(res.data);
       //  this.onLoginSuccess(token);
+      setDefaultParam(token);
       this.props.StoreUserAction(res.data);
         this.props.navigation.navigate(res.data.status === 'success' ? 'App' : 'Auth');
       }).catch(err =>{
@@ -48,15 +50,13 @@ class AuthLoadingScreen extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
-  return state;
-}
+
 
 const mapDispatchToProps = {
   StoreUserAction
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(AuthLoadingScreen);
+export default connect(null,mapDispatchToProps)(AuthLoadingScreen);
 
 const styles = StyleSheet.create({
   container : {

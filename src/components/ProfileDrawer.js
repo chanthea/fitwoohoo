@@ -3,6 +3,7 @@ import {Header,Icon, Left, Right, Body, Text, Thumbnail} from 'native-base';
 import {StyleSheet, Image, TouchableOpacity, View, Platform} from 'react-native';
 import { connect } from 'react-redux';
 import Global from '../globals/Globals';
+
 class profileDrawer extends React.Component {
     constructor(props) {
         super(props);
@@ -34,27 +35,6 @@ class profileDrawer extends React.Component {
         );
     }
 }
-// const profileDrawer = (props)=> (
-//     <View style={{ backgroundColor: 'transparent' }}>
-//     <Image
-    
-//         style={styles.backgroundImage}
-//         source={props.userPhoto}
-//         />
-//             <TouchableOpacity>
-//             <Header style={styles.drawerHeader}>
-//                 <Left>
-//                 <Thumbnail square source={require('../images/profile.jpg')}/>
-//                 </Left>
-//                 <Body style={{justifyContent : 'flex-start'}}>
-//                     <Text style={styles.name}>{props.userName}</Text>
-//                     <Text style={styles.viewProfile}>View your profile </Text>
-//                 </Body>
-//             </Header>
-//         </TouchableOpacity>
-//     </View>
-
-// );
 
 
 

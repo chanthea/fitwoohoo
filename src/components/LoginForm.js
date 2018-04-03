@@ -6,6 +6,7 @@ import axios from '../config/axios/axiosNoAuth';
 import {AsyncStorage} from 'react-native';
 import {StoreUserAction} from '../redux/actions/StoreUserAction';
 import {connect} from 'react-redux';
+import setDefaultParam from '../config/axios/setDefaultParam';
  
 class LoginForm extends Component{
     constructor(props) {
@@ -29,6 +30,7 @@ class LoginForm extends Component{
         .then( response => {
           console.log(response.data);
            AsyncStorage.setItem('userToken', response.data.token);
+           setDefaultParam(response.data.token);
            this._StoreUserObject(response.data.token);
        
         }).catch(error =>{
@@ -42,13 +44,13 @@ class LoginForm extends Component{
         });
     }
 
-    _StoreUserObject = (token) =>{
+    _StoreUserObject = async(token) =>{
       axios.get('/auth/getuser?token='+token)
         .then(res =>{
         this.props.StoreUserAction(res.data);
         this.props.loginPressed();
         });
-        this.setState({logging : false});
+       // this.setState({logging : false});
     }
     
     _onDisableButtonLogin = () => {
@@ -122,7 +124,7 @@ class LoginForm extends Component{
                 {this._buttonText()}
                 </Button>
 
-                <Button block onPress = {this.props.loginPressed} transparent light>
+                <Button block onPress = {this.props.resetPasswordFormPressed} transparent light>
                 <Text style={{color :'#95a5a6'}} uppercase={false}>Forgot Password ?</Text>
                 </Button>
               </View>

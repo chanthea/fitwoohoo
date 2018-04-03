@@ -36,20 +36,21 @@ class MenuDrawer extends Component {
     componentDidMount(){
         axios.get('/auth/getuser')
         .then(res => {
-           // console.log(res.data);
+            console.log(res.data);
         }).catch(err => {
            // console.log(err.response.data);
         });
     }
 
-   _onLogout = async() => {
-  // this.props.navigation.navigate('AuthLoading');
+   _onLogout = () => {
+       console.log(123);
+    //this.props.navigation.navigate('AuthLoading');
      axios.get('/auth/logout').then(res => {
-            //console.log(res.data);
+        console.log(res.data);
          AsyncStorage.removeItem('userToken');
-        this.props.navigation.navigate('Auth');
+        this.props.navigation.navigate('AuthLoading')
      }).catch(err => {
-         //console.log(err);
+         console.log(err);
      })
   
    }
