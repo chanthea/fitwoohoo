@@ -8,11 +8,11 @@ const instance = axios.create({
     // },
 
 });
-AsyncStorage.getItem('userToken').then(res =>{
-    instance.defaults.params = {
-        token : res
-    };
-});
+// AsyncStorage.getItem('userToken').then(res =>{
+//     instance.defaults.params = {
+//         token : res
+//     };
+// });
 
 
 

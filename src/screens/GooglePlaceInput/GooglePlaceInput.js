@@ -4,6 +4,8 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { _paddingAndroid } from '../../helpers';
 import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
 import { NavigationActions } from 'react-navigation';
+import { HeaderTab } from '../../components/common';
+
 
 const homePlace = { description: 'Home', geometry: { location: { lat: 48.8152937, lng: 2.4597668 } }};
 const workPlace = { description: 'Work', geometry: { location: { lat: 48.8496818, lng: 2.2940881 } }};
@@ -14,49 +16,38 @@ export default class GooglePlaceInput extends React.Component {
   };
   render(){
     return (
-
-      <Container>
-          {/* <Header style={{ backgroundColor : '#ffffff', marginTop : _paddingAndroid()}}>
-            <Left>
-              <Button onPress={()=>this.props.navigation.navigate('Register')} transparent>
-                <Icon style={{color : 'rgba(0,0,0,0.8)'}} name='arrow-back' />
-              </Button>
-            </Left>
-            <Body>
-              <Title style={{color : 'rgba(0,0,0,0.8)'}}>Set your location</Title>
-            </Body>
-            <Right>
-              <Button transparent>
-                <Icon name='menu' />
-              </Button>
-            </Right>
-          </Header> */}
-          <View style={{flex:1}}>
-          <GooglePlacesAutocomplete
+        <HeaderTab 
+        goBackPressed = {()=>this.props.navigation.goBack()}
+        title='Fill your address'
+        noRight={false}
+        >
+      <GooglePlacesAutocomplete
         placeholder='Search'
         minLength={2} // minimum length of text to search
         autoFocus={false}
         returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
         listViewDisplayed='auto'    // true/false/undefined
         fetchDetails={true}
-        renderDescription={row => row.description} // custom description render
+        renderDescription={(row) => row.description || row.vicinity} // custom description render
         onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-          console.log(data, details);
+          console.log(data,details);
         }}
         
-        getDefaultValue={() => ''}
+        
+        getDefaultValue={() => {
+          return ''; // text input default value
+        }}
         
         query={{
           // available options: https://developers.google.com/places/web-service/autocomplete
           key: 'AIzaSyD-rpxROQJySd9le4EUhR2NWJ7jjmgocJ8',
           language: 'en', // language of the results
-          types: '(cities)' // default: 'geocode'
+          types: 'geocode'/*'(cities)'*/ // default: 
         }}
         
         styles={{
           textInputContainer: {
-            width: '100%',
-            marginTop : _paddingAndroid()
+            width: '100%'
           },
           description: {
             fontWeight: 'bold'
@@ -65,9 +56,20 @@ export default class GooglePlaceInput extends React.Component {
             color: '#1faadb'
           }
         }}
-        
-        currentLocation={false} // Will add a 'Current location' button at the top of the predefined places list
-        // currentLocationLabel="Current location"
+       // nearbyPlacesAPI={'None'}
+       nearbyPlacesAPI={'GoogleReverseGeocoding'}
+      //currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+       // currentLocationLabel="Select my current location"
+          // minLength={2} // minimum length of text to search
+          // autoFocus={false}
+          // listViewDisplayed={false} // true/false/undefined
+          // fetchDetails={true}
+          // renderDescription={(row) => row.description || row.vicinity} // custom description render
+          // onPress={this.props.onPress}
+          // onChangeText={this.props.onFocus}
+          // getDefaultValue={() => {
+          // return ''; // text input default value
+          // }}
         // nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
         // GoogleReverseGeocodingQuery={{
         //   // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
@@ -85,8 +87,28 @@ export default class GooglePlaceInput extends React.Component {
       //   renderLeftButton={()  => <Image source={require('path/custom/left-icon')} />}
       //   renderRightButton={() => <Text>Custom text after the input</Text>}
       />
-          </View>
-        </Container>
+    </HeaderTab>
+      // <Container>
+        
+      //     <Header style={{ backgroundColor : '#ffffff', marginTop : _paddingAndroid()}}>
+      //       <Left>
+      //         <Button onPress={()=>this.props.navigation.navigate('Register')} transparent>
+      //           <Icon style={{color : 'rgba(0,0,0,0.8)'}} name='arrow-back' />
+      //         </Button>
+      //       </Left>
+      //       <Body>
+      //         <Title style={{color : 'rgba(0,0,0,0.8)'}}>Set your location</Title>
+      //       </Body>
+      //       <Right>
+      //         <Button transparent>
+      //           <Icon name='menu' />
+      //         </Button>
+      //       </Right>
+      //     </Header>
+      //     <View style={{flex:1}}>
+          
+      //     </View>
+      //   </Container>
     );
   }
   
