@@ -7,7 +7,7 @@ export * from './Notification/Notification';
 export * from './Setting';
 export * from './HomeWrapper';
 export * from './Fitbit';
-export * from './Profile/Profile';
+export *  from './Profile/Profile';
 export * from './FitnessWellness/FitnessWellness';
 export * from './GeneralSearch';
 export * from './PostPage/PostPage';

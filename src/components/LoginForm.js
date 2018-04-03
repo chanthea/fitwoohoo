@@ -3,8 +3,11 @@ import {StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native
 import {Item, Input, Icon, Button, Spinner, Toast } from 'native-base';
 import Global from '../globals/Globals';
 import axios from '../config/axios/axiosNoAuth';
-
-export default class LoginForm extends Component{
+import {AsyncStorage} from 'react-native';
+import {StoreUserAction} from '../redux/actions/StoreUserAction';
+import {connect} from 'react-redux';
+ 
+class LoginForm extends Component{
     constructor(props) {
       super(props);
       this.state = {
@@ -14,20 +17,38 @@ export default class LoginForm extends Component{
         logging : false
       };
     }
-    _onLoginPressed = ()=>{
+    _onLoginPressed = async()=>{
         this.setState({logging : true});
-        axios.get('/auth/gettoken?email='+this.state.email+'&password='+this.state.password)
+        // axios.get('/auth/gettoken?email='+this.state.email+'&password='+this.state.password)'
+        axios.get('/auth/gettoken',{
+          params : {
+            email : this.state.email,
+            password : this.state.password
+          }
+        })
         .then( response => {
           console.log(response.data);
-          this.setState({logging : false});
+           AsyncStorage.setItem('userToken', response.data.token);
+           this._StoreUserObject(response.data.token);
+       
         }).catch(error =>{
+          //console.log(error);
             this.setState({logging : false});
             Toast.show({
               text: 'Wrong email address or password !',
-              position: 'bottom'
+              position: 'bottom',
+              duration : 5000
             })
-            
         });
+    }
+
+    _StoreUserObject = (token) =>{
+      axios.get('/auth/getuser?token='+token)
+        .then(res =>{
+        this.props.StoreUserAction(res.data);
+        this.props.loginPressed();
+        });
+        this.setState({logging : false});
     }
     
     _onDisableButtonLogin = () => {
@@ -111,7 +132,11 @@ export default class LoginForm extends Component{
         );
     }
 }
+const mapDispatchToProps = {
+  StoreUserAction
+}
 
+export default connect(null,mapDispatchToProps)(LoginForm);
 
 const styles = StyleSheet.create({
     container : {

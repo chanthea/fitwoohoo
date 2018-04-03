@@ -6,16 +6,37 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { connect } from 'react-redux';
+import axios from '../config/axios/axiosNoAuth';
+import {StoreUserAction} from '../redux/actions/StoreUserAction';
 
-export default class AuthLoadingScreen extends React.Component {
+class AuthLoadingScreen extends React.Component {
   constructor(props) {
     super(props);
+    //console.log(this.props);
     this._bootstrapAsync();
   }
 
-  _bootstrapAsync = async () => {
+  _checkValidToken = (token, dispatch) =>{
+    axios.get('/auth/getuser?token='+token)
+      .then(res =>{
+      //console.log(res.data);
+      //  this.onLoginSuccess(token);
+      this.props.StoreUserAction(res.data);
+        this.props.navigation.navigate(res.data.status === 'success' ? 'App' : 'Auth');
+      }).catch(err =>{
+        this.props.navigation.navigate('Auth');
+      });
+  }
+
+  _bootstrapAsync = async (dispatch) => {
     const userToken = await AsyncStorage.getItem('userToken');
-    this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+    if(userToken) {
+      this._checkValidToken(userToken,dispatch);
+      
+    }else{
+      this.props.navigation.navigate('Auth');
+    }
   };
   render() {
     return (
@@ -27,6 +48,16 @@ export default class AuthLoadingScreen extends React.Component {
   }
 }
 
+const mapStateToProps = state => {
+  return state;
+}
+
+const mapDispatchToProps = {
+  StoreUserAction
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(AuthLoadingScreen);
+
 const styles = StyleSheet.create({
   container : {
     flex : 1,
@@ -34,3 +65,4 @@ const styles = StyleSheet.create({
     justifyContent : 'center'
   }
 });
+

@@ -9,7 +9,7 @@ import {
   Request, 
   Setting, 
   Location, 
-  Profile,
+
   FitnessWellness } from '../../containers';
 import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
@@ -19,6 +19,7 @@ import { GeneralSearch, PostPage, Library, ActivityList, ScheduleList, ClassList
 import PhotoDetail from '../PhotoDetail';
 import VideoDetail from '../VideoDetail';
 import AudioDetail from '../AudioDetail';
+import  Profile from '../../containers/Profile/Profile';
 
 
 const RootNavLoggedTab = TabNavigator({

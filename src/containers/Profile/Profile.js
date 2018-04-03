@@ -14,6 +14,7 @@ import FullPost from '../FullPost';
 import { _paddingAndroid } from '../../helpers';
 import Global from '../../globals/Globals';
 import { Header, Left, Body, Right, Button, Icon, Title, List, ListItem, Switch, Text as NBText} from 'native-base';
+import { connect } from 'react-redux';
 import Menu, {
     MenuProvider,
     MenuOptions,
@@ -60,12 +61,15 @@ class Profile extends Component {
 
     constructor(props) {
         super(props);
+       // console.log(this.props);
         this.state = {
           active: false,
           expanded    : false,
           animation   : new Animated.Value(0),
           icon : 'ios-more-outline'
         };
+        const {user} = this.props.user;
+       //console.log(user);
     }
 
     _toggle(){
@@ -124,26 +128,26 @@ class Profile extends Component {
       }
 
     _renderContactHeader = () => {
-        
+        const {user} = this.props.user; 
         return (
           <View style={styles.headerContainer}>
             <View style={styles.coverContainer}>
               <ImageBackground
-               source={require('../../images/cover.jpeg')}
+               source={{uri : Global.PHOTO.COVER+user.cover}}
                 style={styles.coverImage}
               >
                 <View style={styles.coverTitleContainer}>
                   <Text style={styles.coverTitle} />
                 </View>
                 <View style={styles.coverMetaContainer}>
-                  <Text style={styles.coverName}>Chanthea Tai</Text>
-                  <Text style={styles.coverBio}>Trainers</Text>
+                  <Text style={styles.coverName}>{user.name+' '+user.lastname}</Text>
+                  <Text style={styles.coverBio}>{user.role.title}</Text>
                 </View>
               </ImageBackground>
             </View>
             <View style={styles.profileImageContainer}>
               <Image
-               source={require('../../images/profile.jpg')}
+               source={{uri : Global.PHOTO.PROFILE+user.photo}}
                 style={styles.profileImage}
               />
             </View>
@@ -181,6 +185,7 @@ class Profile extends Component {
         );
     }
     _renderAbout = () =>{
+        const {user} = this.props.user;
         const {listItemBody,listItemStyle, listItemIcon, listItemText, animatedView}  = styles;
         return(
                 <View style={{flexDirection : 'column', justifyContent :'center'}}>   
@@ -194,7 +199,7 @@ class Profile extends Component {
                                     <Icon style={listItemIcon} name="ios-quote-outline" />
                                 </Left>
                                 <Body style={listItemBody}>
-                                    <NBText style={listItemText}>Today is really nice </NBText>
+                                    <NBText style={listItemText}>{user.quotes === '' ? 'Say something. It\' your quote' : user.quotes } </NBText>
                                 </Body>
                             </ListItem>
                             <ListItem style={listItemStyle} icon>
@@ -202,7 +207,7 @@ class Profile extends Component {
                                     <Icon style={listItemIcon} name="ios-pin-outline" />
                                 </Left>
                                 <Body style={listItemBody}>
-                                    <NBText style={listItemText}>Chbar Ampov II, Phnom Penh, Cambodia</NBText>
+                                    <NBText style={listItemText}>{user.address}</NBText>
                                 </Body>
                             </ListItem>
                             <ListItem style={listItemStyle} icon>
@@ -210,7 +215,7 @@ class Profile extends Component {
                                     <Icon style={listItemIcon} name="ios-phone-portrait-outline" />
                                 </Left>
                                 <Body style={listItemBody}>
-                                    <NBText style={listItemText}>+855 98 33 97 62</NBText>
+                                    <NBText style={listItemText}>{user.phone}</NBText>
                                 </Body>
                             </ListItem>
                            
@@ -454,4 +459,10 @@ const menuProviderStyles = {
   //menuProviderWrapper: menuProvider.container,
   backdrop: menuProvider.backdrop,
 };
-export  { Profile };
+
+
+const mapStateToProps = state => {
+    return state.user;
+}
+
+export default  connect(mapStateToProps)(Profile);

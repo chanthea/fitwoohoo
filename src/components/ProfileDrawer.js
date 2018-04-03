@@ -1,28 +1,60 @@
 import React from 'react';
 import {Header,Icon, Left, Right, Body, Text, Thumbnail} from 'native-base';
 import {StyleSheet, Image, TouchableOpacity, View, Platform} from 'react-native';
+import { connect } from 'react-redux';
+import Global from '../globals/Globals';
+class profileDrawer extends React.Component {
+    constructor(props) {
+        super(props);
+        //console.log(this.props);
 
-const profileDrawer = ()=> (
-    <View style={{ backgroundColor: 'transparent' }}>
-    <Image
+    }
+
+    render(){
+        const {user} = this.props.user;
+        return(
+            <View style={{ backgroundColor: 'transparent' }}>
+            <Image
+            
+                style={styles.backgroundImage}
+                source={{uri : Global.PHOTO.COVER+user.cover}}
+                />
+                    <TouchableOpacity>
+                    <Header style={styles.drawerHeader}>
+                        <Left>
+                        <Thumbnail square source={{uri :Global.PHOTO.PROFILE+user.photo}}/>
+                        </Left>
+                        <Body style={{justifyContent : 'flex-start'}}>
+                            <Text style={styles.name}>{user.name+' '+user.lastname} </Text>
+                            <Text style={styles.viewProfile}>View your profile </Text>
+                        </Body>
+                    </Header>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+}
+// const profileDrawer = (props)=> (
+//     <View style={{ backgroundColor: 'transparent' }}>
+//     <Image
     
-        style={styles.backgroundImage}
-        source={require('../images/cover.jpeg')}
-        />
-            <TouchableOpacity>
-            <Header style={styles.drawerHeader}>
-                <Left>
-                <Thumbnail square source={require('../images/profile.jpg')}/>
-                </Left>
-                <Body style={{justifyContent : 'flex-start'}}>
-                    <Text style={styles.name}>Emmanuel Niyenzima</Text>
-                    <Text style={styles.viewProfile}>View your profile </Text>
-                </Body>
-            </Header>
-        </TouchableOpacity>
-    </View>
+//         style={styles.backgroundImage}
+//         source={props.userPhoto}
+//         />
+//             <TouchableOpacity>
+//             <Header style={styles.drawerHeader}>
+//                 <Left>
+//                 <Thumbnail square source={require('../images/profile.jpg')}/>
+//                 </Left>
+//                 <Body style={{justifyContent : 'flex-start'}}>
+//                     <Text style={styles.name}>{props.userName}</Text>
+//                     <Text style={styles.viewProfile}>View your profile </Text>
+//                 </Body>
+//             </Header>
+//         </TouchableOpacity>
+//     </View>
 
-);
+// );
 
 
 
@@ -58,4 +90,7 @@ const styles = StyleSheet.create({
   
   })
 
-export default profileDrawer;
+  const mapStateToProps = state => {
+    return state.user;
+  }
+export default connect(mapStateToProps)(profileDrawer);

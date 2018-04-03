@@ -10,4 +10,9 @@ export default {
       LIGHTMAIN : '#6a8936',
       DISABLE_MAIN : 'rgba(85,107,47,0.5)'
     },
+    PHOTO : {
+      PROFILE : 'https://www.fitwoohoo.com/assets/imgs/people/profilephoto/thumb/',
+      COVER :  'https://www.fitwoohoo.com/assets/imgs/people/coverphoto/'
+    }
+    
   };

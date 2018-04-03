@@ -1,6 +1,6 @@
 import React from 'react';
 import { SwitchNavigator  } from 'react-navigation';
-import store from './src/store';
+import store from './src/redux/store';
 import { Provider } from 'react-redux';
 import Expo from "expo";
 import MainDrawer from './src/components/navigations/MainDrawer';

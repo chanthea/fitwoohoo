@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Content, List, ListItem, Text, Left, Right, Body, Switch, Icon, Separator} from 'native-base';
-import {StyleSheet,TouchableOpacity, View} from 'react-native';
+import {StyleSheet,TouchableOpacity, View, AsyncStorage} from 'react-native';
+import axios from '../config/axios/axiosWithToken';
+import { withNavigation } from 'react-navigation';
+
 
 const  items = [
     {background : '#2ecc71', icon : 'user-plus', title : 'Follow Requests', type : 'FontAwesome'},
@@ -26,14 +29,34 @@ const more = [
     {background : '#7f8fa6', icon : 'book', title : 'Terms and Conditions', type : 'FontAwesome'},
     {background : '#7f8fa6', icon : 'ios-power', title : 'Sign out', type : 'Ionicons'},
 ];
+ 
 
+class MenuDrawer extends Component {
 
-export default class MenuDrawer extends Component {
+    componentDidMount(){
+        axios.get('/auth/getuser')
+        .then(res => {
+           // console.log(res.data);
+        }).catch(err => {
+           // console.log(err.response.data);
+        });
+    }
 
+   _onLogout = async() => {
+  // this.props.navigation.navigate('AuthLoading');
+     axios.get('/auth/logout').then(res => {
+            //console.log(res.data);
+         AsyncStorage.removeItem('userToken');
+        this.props.navigation.navigate('Auth');
+     }).catch(err => {
+         //console.log(err);
+     })
+  
+   }
    _getMenuList(objects){
    let menu =  objects.map((item,index)=>{
         return  <TouchableOpacity key={index}>
-            <ListItem icon style={{marginTop:3, marginBottom : 3}}>
+            <ListItem onPress={()=>this._onLogout()} button icon style={{marginTop:3, marginBottom : 3}}>
                 <View style={[styles.iconCircle,{backgroundColor : item.background}]}>
                     <Icon type={item.type} style={styles.listIcon} name={item.icon} />
                 </View>   
@@ -98,3 +121,4 @@ const styles = StyleSheet.create({
     bodyText :{color : 'rgba(0,0,0,0.6)', fontSize : 15},
     listIcon : {color : '#ffffff', fontSize : 18}
 });
+export default withNavigation(MenuDrawer);
