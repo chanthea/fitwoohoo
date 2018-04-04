@@ -33,7 +33,7 @@ const AuthStack = StackNavigator({
       }
       
     },{
-      initialRouteName: 'Welcome',
+      initialRouteName: 'Register',
     },{
       navigationOptions : ({navigation})=>({
         headerStyle : {

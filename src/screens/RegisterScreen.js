@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Image,TouchableOpacity,ImageBackground,KeyboardAvoidingView, Platform } from 'react-native';
+import {StyleSheet, View, Image,TouchableOpacity,ImageBackground,KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { Button, Text } from 'native-base';
-
+import axios from '../config/axios/axiosNoAuth';
 import RegisterForm from '../components/RegisterForm';
 import AuthHeader from './AuthHeader/AuthHeader';
 import Global from '../globals/Globals';
+// import {Loader} from '../components/common';
 
 export default class RegisterScreen extends Component{
     static navigationOptions = {
@@ -17,6 +18,23 @@ export default class RegisterScreen extends Component{
             borderBottomWidth: 0,
           }
       };
+    constructor(props){
+        super(props);
+        this.state = {
+            loading : true,
+            roles : []
+        }   
+
+    }
+   
+    componentDidMount(){
+        axios.get('/role').then(res=>{
+          this.setState({
+            roles : res.data,
+            loading : false
+          });
+       });
+    }
 
     render(){
         return(
@@ -27,10 +45,19 @@ export default class RegisterScreen extends Component{
                     firstLine=' as a Trainer, Nutritionist, Massage' 
                     secondLine='Therapist, GYM admin, Massage/SPA-Business or User' />
                 </View>
+                {/* <Loader loading={this.state.loading} /> */}
                 <View style={{flex : 3}}>
-                    <RegisterForm 
-                    addressPressed = {()=> this.props.navigation.navigate('GooglePlace')}
-                     loginFormPressed = {()=> this.props.navigation.navigate('Login')}/>
+                {this.state.loading ? (
+                    <View style={{flex :1, justifyContent :'center'}}>
+                        <ActivityIndicator size='large'/>
+                    </View>
+                ) :(
+                <RegisterForm 
+                roles ={this.state.roles}
+                addressPressed = {()=> this.props.navigation.navigate('GooglePlace')}
+                 loginFormPressed = {()=> this.props.navigation.navigate('Login')}/>
+                )
+                }
                 </View>
                
             </View>
