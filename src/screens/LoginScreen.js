@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Image,TouchableOpacity,ImageBackground,KeyboardAvoidingView, Platform } from 'react-native';
-import { Button, Text, Root } from 'native-base';
+import { Button, Text } from 'native-base';
 import LoginForm from '../components/LoginForm';
 import AuthHeader from './AuthHeader/AuthHeader';
 import Global from '../globals/Globals';
@@ -32,7 +32,7 @@ class LoginScreen extends Component{
           });
          
         return(
-            <Root>
+
             <View style={styles.container}>
                 <View style={styles.titleContainer}>
                     <AuthHeader 
@@ -62,7 +62,7 @@ class LoginScreen extends Component{
                 </View>
                 
             </View>
-            </Root>
+
         );
     }
     

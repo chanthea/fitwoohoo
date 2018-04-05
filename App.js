@@ -6,6 +6,7 @@ import Expo from "expo";
 import MainDrawer from './src/components/navigations/MainDrawer';
 import AuthStack from './src/components/navigations/AuthStack';
 import AuthLoadingScreen from './src/screens/AuthLoadingScreen';
+import {Root} from 'native-base';
 // import axios from 'axios';
 
 // axios.defaults.baseURL = 'https://jsonplaceholder.typicode.com/';
@@ -60,7 +61,9 @@ export default class App extends React.Component {
     );
     return (
       <Provider store={store}>
-        <RootStack/>
+        <Root>
+          <RootStack/>
+        </Root>
       </Provider>
       
     );

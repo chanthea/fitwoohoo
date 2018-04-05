@@ -14,15 +14,21 @@ export default class GooglePlaceInput extends React.Component {
   static navigationOptions = {
       header : null
   };
+  _goBackWithParams(address,lat,lng){
+    this.props.navigation.state.params.returnData(address, lat,lng);
+    this.props.navigation.goBack();
+  }
+
+ 
   render(){
     return (
         <HeaderTab 
-        goBackPressed = {()=>this.props.navigation.goBack()}
-        title='Fill your address'
+        goBackPressed = {()=>this._goBackWithParams('','','')}
+        title='Select your address'
         noRight={false}
         >
       <GooglePlacesAutocomplete
-        placeholder='Search'
+        placeholder='Search your address...'
         minLength={2} // minimum length of text to search
         autoFocus={false}
         returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -30,7 +36,7 @@ export default class GooglePlaceInput extends React.Component {
         fetchDetails={true}
         renderDescription={(row) => row.description || row.vicinity} // custom description render
         onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-          console.log(data,details);
+        this._goBackWithParams(data.description,details.geometry.location.lat,details.geometry.location.lng)
         }}
         
         

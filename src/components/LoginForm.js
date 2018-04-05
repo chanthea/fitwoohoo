@@ -97,7 +97,7 @@ class LoginForm extends Component{
                   placeholderTextColor = {Global.COLOR.LIGHTGREY}
                     keyboardType="email-address"
                   value={this.state.email}
-                  onSubmitEditing={()=> this.password.focus()}
+                  onSubmitEditing={()=> this.password._root.focus()}
                  onChangeText={email => this._validateEmail(email)}
                   
                   />

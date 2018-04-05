@@ -1,8 +1,9 @@
 import React, { Component} from 'react';
 import {StyleSheet, Text, TextInput, View, TouchableOpacity, Keyboard, KeyboardAvoidingView } from 'react-native';
-import {Item, Input, Icon, Button, Form, Picker, ActivityIndicator} from 'native-base';
+import {Item, Input, Icon, Button, Form, Picker, ActivityIndicator, Toast} from 'native-base';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Global  from '../globals/Globals';
+import { _checkUserRole } from '../helpers';
 
 
 
@@ -21,7 +22,7 @@ export default class LoginForm extends Component{
       selectedAddress: null,
       minDate : new Date(_useDate),
       form : {
-        role_id : null,
+        role_id : 1,
         email : null,
         password : null,
         password_confirmation : null,
@@ -32,28 +33,58 @@ export default class LoginForm extends Component{
         name : null,
         lastname : null,
 
-        lat : null,
-        lng : null,
+        lat : '',
+        lng : '',
         address : null,
         business_name : null
         
       },
       validate : {
-        name : true,
-        lastname : true,
-        password : true,
-        dob : true,
+        name : false,
+        lastname : false,
+        password : false,
+       // dob : false,
         address : true,
-        email : true,
+        email : false,
         business_name : true,
-        phone :true,
-        password_confirmation : true
+        phone :false,
+        password_confirmation : false,
+        day : false,
+        month : false,
+        year : false,
 
-      }
-
+      },
+      validateMessage : {
+        name : 'Required : letters A-Z, maxlength 25',
+        lastname : 'Required : letters A-Z, maxlength 25',
+        password : 'Required : uppercase, lowercase and number',
+        password_confirmation : 'Required : uppercase, lowercase and number',
+        dob : 'Required : required',
+        address : 'Required : required',
+        email : 'Required : valid email address',
+        business_name : 'Required : maxlength 25',
+        phone :'Required : can use +, space and number',
+        day : 'Required ',
+        month : 'Required',
+        year : 'Required',
+      }  
     };
+    this._onSubmit = this._onSubmit.bind(this);
+
   }
 
+
+  componentWillReceiveProps(nextProps){
+    this._setAddressState(nextProps.address)
+  }
+
+  _setAddressState(location){
+     const {address, lat, lng} = location;
+     this.setState({
+       form : {...this.state.form, address : address, lat : lat, lng : lng },
+       validate : {...this.state.validate, address : true, lat : true, lng : true }
+      })
+  }
 
 
   _showDateTimePicker = () => {
@@ -69,29 +100,96 @@ export default class LoginForm extends Component{
       let day = arrDate[1];
       let month = arrDate[0]
       let year = date.getFullYear();
-
-    this.setState({form : {...this.state.form, day : day, month : month, year : year }})
-    
-    this._hideDateTimePicker();
-    this.setState({
-      selectedDate : day+' / '+month+' / '+year,
-      currentDate : date
-    });
-
-
+      this._hideDateTimePicker();
+      this.setState({
+          form : {...this.state.form, day : day, month : month, year : year },
+          validate : {...this.state.validate, day : true, month: true, year : true},
+          selectedDate : day+' / '+month+' / '+year,
+          currentDate : date
+        })
   };
 
-  _handleAddressPicked = () =>{
-    this.setState({selectedAddress : 'Address'});
-  };
 
   _onValueChange(value) {
     this.setState({
-      pickerSelected: value
-    });
+      pickerSelected: value,
+      form : {...this.state.form, role_id : value }}
+    )
   }
+
   _onSubmit(){
-    
+    const {pickerSelected, form} = this.state;
+    let dataSend = {};
+    let currentState = Object.assign({}, form);
+    let removeProp= [];
+
+    userType = _checkUserRole(pickerSelected);
+    if(userType === 'User'){
+      removeProps = ['lat','lng','business_name','address'];
+      for(index in removeProps){ 
+        delete currentState[removeProps[index]]; 
+      }
+    }else if(userType === 'Trainer'){
+      removeProps = ['business_name'];
+      for(index in removeProps){ 
+        delete currentState[removeProps[index]]; 
+      }
+    }else if(userType === 'Business'){
+      removeProps = ['name','lastname']; 
+      for(index in removeProps){ 
+        delete currentState[removeProps[index]]; 
+      }
+    }else{
+      Toast.show({
+        text: 'Please select a valid role',
+        position: 'bottom',
+        duraction: 5000
+      })
+      return false;
+    }
+    this._updateStateDynamicWithValidate(currentState);
+    let HasError = this._hasError(currentState);
+    if(HasError > 1){
+      Toast.show({
+        text: 'Please fill in all required fields',
+        position: 'bottom',
+        buttonText: 'Dismiss',
+        type : 'danger',
+        duration : 5000
+      })
+      return false;
+    }else{
+      console.log(currentState);
+    }
+   
+  //  this._toastErrorValidate(currentState);
+  }
+
+  _updateStateDynamicWithValidate(currentState){
+    let validate = Object.assign({}, this.state.validate);
+    for (let key in currentState) {
+      if (currentState.hasOwnProperty(key)) {      
+       
+         if(currentState[key] === null){
+          validate[key] = false;
+         }else this._validateRegister(this.state.form[key],key);
+      }
+    }
+   this.setState({validate});
+   
+  }
+
+  _hasError(currentState){
+    let error = 0;
+    for (let key in currentState) {
+      if (currentState.hasOwnProperty(key)) {           
+         if(this.state.validate[key] === false){
+            error++;
+         }
+      }
+    }
+    return error;
+
   }
 
   _validateRegister(val,type){
@@ -99,62 +197,58 @@ export default class LoginForm extends Component{
     let mailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     let passReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9#?!@$%^&*-]).{8,}$/;
     let phoneReg = /^(?=.*[0-9])[- +()0-9]+$/;
-      if(type === 'name'){
-        if(nameReg.test(val)){
-          this.setState({validate : {...this.state.validate, name : true }})
-        }else {
-          this.setState({validate : {...this.state.validate, name : false }})
-        }
-        this.setState({form : {...this.state.form, name : val }})
-      }else if(type === 'lastname'){
-        if(nameReg.test(val)){
-          this.setState({validate : {...this.state.validate, lastname : true }})
-        }else {
-          this.setState({validate : {...this.state.validate, lastname : false }})
-        }
-        this.setState({form : {...this.state.form, lastname : val }})
-      }else if(type === 'email'){
-        if(mailReg.test(val)){
-          this.setState({validate : {...this.state.validate, email : true }})
-        }else {
-          this.setState({validate : {...this.state.validate, email : false }})
-        }
-        this.setState({form : {...this.state.form, email : val }})
-      }else if(type === 'password'){
-        if(passReg.test(val)){
-          this.setState({validate : {...this.state.validate, password : true }})
-        }else {
-          this.setState({validate : {...this.state.validate, password : false }})
-        }
-        this.setState({form : {...this.state.form, password : val }})
-      }else if(type === 'password_confirmation'){
-        if(passReg.test(val)){
-          if(this.state.form.password === val){
-            this.setState({validate : {...this.state.validate, password_confirmation : true }})
+    let regex = '';
+
+
+
+      if(type === 'name') regex = nameReg;
+      else if(type === 'lastname') regex = nameReg;
+      else if(type === 'email') regex = mailReg;
+      else if(type === 'password') regex = passReg;
+      else if(type === 'password_confirmation') regex = passReg;
+      else if(type === 'phone') regex=phoneReg
+
+      if(regex !== ''){
+        if(regex.test(val)){
+          if(type === 'password_confirmation'){
+            if(this.state.form.password === val){
+              this.setState({validate : {...this.state.validate, [type] : true }})
+            }else{
+              this.setState({validate : {...this.state.validate, [type] : false }})
+              Toast.show({
+                text: this.state.validateMessage[type],
+                position: 'top',
+                type : 'danger',
+                duration : 2000,
+                style: { marginTop : 24 }
+              })
+            }
           }else{
-            this.setState({validate : {...this.state.validate, password_confirmation : false }})
+            this.setState({validate : {...this.state.validate, [type] : true }})
           }
         }else {
-          this.setState({validate : {...this.state.validate, password_confirmation : false }})
+          this.setState({validate : {...this.state.validate, [type] : false }})
+          Toast.show({
+            text: this.state.validateMessage[type],
+            position: 'top',
+            type : 'danger',
+            duration : 2000,
+            style: { marginTop : 24}
+          })
         }
-        this.setState({form : {...this.state.form, password_confirmation : val }})
-      }else if(type === 'phone'){
-        if(phoneReg.test(val)){
-          this.setState({validate : {...this.state.validate, phone : true }})
-        }else {
-          this.setState({validate : {...this.state.validate, phone : false }})
-        }
-        this.setState({form : {...this.state.form, phone : val }})
       }
+      
+      this.setState({form : {...this.state.form, [type] : val }})
   }
 
 
 
     render(){
       const {inputBox} = styles;
-      //console.log(this.state);
+     
         return(
             <KeyboardAvoidingView behavior='padding' style={styles.container}>
+           
               <View style = {{flexDirection : 'row', justifyContent : 'space-between', alignItems : 'center'}}>
               <Text style={{width : 160, fontSize : 14}}>Select a Role : </Text>
                   <Picker style={{width : 160}}
@@ -183,7 +277,6 @@ export default class LoginForm extends Component{
                     onSubmitEditing={()=> this.lastname._root.focus()}
                     blurOnSubmit={false}
                     />
-                    {!this.state.validate.name &&  <Icon name='close-circle' />}
                 </Item>  
                 <Item style={{width : 160}} error={!this.state.validate.lastname}>
                   <Input  
@@ -196,7 +289,7 @@ export default class LoginForm extends Component{
                     ref={(input) => {this.lastname = input}}
                     onSubmitEditing={()=> this.email._root.focus()}
                     />
-                      {!this.state.validate.lastname &&  <Icon name='close-circle' />}
+                      {/* {!this.state.validate.lastname &&  <Icon name='close-circle' />} */}
                 </Item>
               </View>) :  
                (<Item style={{width : 320}} error={!this.state.validate.business_name}>
@@ -207,10 +300,10 @@ export default class LoginForm extends Component{
                     onChangeText={business_name => this._validateRegister(business_name,'business_name')}
                     maxLength = {25}
                     placeholderTextColor = {Global.COLOR.LIGHTGREY}
-                    ref={(input) => {this.lastname = input}}
+                    ref={(input) => {this.business_name = input}}
                     onSubmitEditing={()=> this.email._root.focus()}
                     />
-                      {!this.state.validate.lastname &&  <Icon name='close-circle' />}
+                      {/* {!this.state.validate.lastname &&  <Icon name='close-circle' />} */}
                 </Item>)
                 }
 
@@ -225,7 +318,7 @@ export default class LoginForm extends Component{
                     ref={(input) => this.email = input}
                     onSubmitEditing={()=> this.phone._root.focus()}
                     />
-                    {!this.state.validate.email &&  <Icon name='close-circle' />}
+                    {/* {!this.state.validate.email &&  <Icon name='close-circle' />} */}
               </Item>
               <Item style={{width : 320}} error={!this.state.validate.phone}>
                   <Input  
@@ -237,7 +330,7 @@ export default class LoginForm extends Component{
                     ref={(input) => this.phone = input}
                     onSubmitEditing={()=> this.password._root.focus()}
                     />
-                     {!this.state.validate.phone &&  <Icon name='close-circle' />}
+                     {/* {!this.state.validate.phone &&  <Icon name='close-circle' />} */}
               </Item>
               <Item style={{width : 320}} error={!this.state.validate.password}>
                 <Input
@@ -250,7 +343,7 @@ export default class LoginForm extends Component{
                   ref={(input) => this.password = input}
                   onSubmitEditing={()=> this.confirmPassword._root.focus()}
                   />
-                  {!this.state.validate.password &&  <Icon name='close-circle' />}
+                  {/* {!this.state.validate.password &&  <Icon name='close-circle' />} */}
               </Item>
               <Item style={{width : 320}} error={!this.state.validate.password_confirmation}>
                 <Input  
@@ -262,16 +355,16 @@ export default class LoginForm extends Component{
                   placeholderTextColor = {Global.COLOR.LIGHTGREY}
                   ref={(input) => this.confirmPassword = input}
                   />
-                   {!this.state.validate.password_confirmation &&  <Icon name='close-circle' />}
+                   {/* {!this.state.validate.password_confirmation &&  <Icon name='close-circle' />} */}
               </Item>
               {this.state.pickerSelected !== 1 &&  
               <TouchableOpacity>
                 <Button 
                 onPress = {this.props.addressPressed}
-                style={styles.selectDate} 
+                style={[styles.selectDate, !this.state.validate.address && styles.error]} 
                 bordered   transparent >
-                  <Text style={{color : this.state.selectedAddress ? '#000000' : '#bdc3c7', paddingLeft : 5 }} >
-                  {(this.state.selectedAddress ? this.state.selectedAddress : 'Address')}
+                  <Text style={{color : this.state.form.address ? '#000000' : '#bdc3c7', paddingLeft : 5 }} >
+                  {(this.state.form.address ? this.state.form.address : 'Address')}
                   </Text>
                 </Button>
               </TouchableOpacity>}
@@ -279,9 +372,10 @@ export default class LoginForm extends Component{
              <TouchableOpacity>
                 <Button 
                 onPress = {this._showDateTimePicker}
-                style={styles.selectDate} 
+                style={[styles.selectDate, 
+                  !this.state.validate.day && !this.state.validate.month && !this.state.validate.year && styles.error]} 
                 bordered   transparent >
-                  <Text style={{color : this.state.selectedDate ? '#000000' : '#bdc3c7', paddingLeft : 5 }} >
+                  <Text style={{color : this.state.selectedDate ? '#000000' : '#bdc3c7', paddingLeft : 5}} >
                   {(this.state.selectedDate ? this.state.selectedDate : 'Select Date of Birth')}
                   </Text>
                 </Button>
@@ -302,6 +396,7 @@ export default class LoginForm extends Component{
                     <Text style={{color :'#95a5a6'}} uppercase={false}>Already have an account ? Sign in Now !</Text>
                 </Button>
               </View>
+              
             
             
   		  </KeyboardAvoidingView>
@@ -336,5 +431,6 @@ const styles = StyleSheet.create({
       borderLeftWidth : 0, 
       borderRightWidth:  0, 
       borderColor : '#bdc3c7'
-    }
+    },
+    error : {borderBottomWidth : 0.7, borderColor : 'red'}
   });

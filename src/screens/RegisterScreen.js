@@ -22,9 +22,13 @@ export default class RegisterScreen extends Component{
         super(props);
         this.state = {
             loading : true,
-            roles : []
+            roles : [],
+            location : {}
         }   
 
+    }
+    _returnData(address, lat, lng) {
+        this.setState({location : {address: address, lat: lat, lng : lng}});
     }
    
     componentDidMount(){
@@ -37,6 +41,7 @@ export default class RegisterScreen extends Component{
     }
 
     render(){
+        
         return(
             <View style={styles.container}>
                 <View style={styles.titleContainer}>
@@ -53,8 +58,10 @@ export default class RegisterScreen extends Component{
                     </View>
                 ) :(
                 <RegisterForm 
+                address = {this.state.location}
                 roles ={this.state.roles}
-                addressPressed = {()=> this.props.navigation.navigate('GooglePlace')}
+                addressPressed = {()=> this.props.navigation.navigate('GooglePlace',{returnData: this._returnData.bind(this)})}
+
                  loginFormPressed = {()=> this.props.navigation.navigate('Login')}/>
                 )
                 }
