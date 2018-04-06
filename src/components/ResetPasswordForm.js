@@ -1,5 +1,5 @@
 import React, { Component} from 'react';
-import {StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import {StyleSheet, Text, TextInput, View, TouchableOpacity, Keyboard } from 'react-native';
 import {Item, Input, Icon, Button, Spinner, Toast} from 'native-base';
 import Global from '../globals/Globals';
 import axios from '../config/axios/axiosNoAuth';
@@ -14,6 +14,7 @@ export default class ResetPasswordForm extends Component{
     }
   }
    _sendResetingLink = async()=>{
+    Keyboard.dismiss();
      this.setState({fetching : true});
       axios.post('/auth/resetpassword',{email :this.state.email})
       .then((res)=>{

@@ -96,12 +96,10 @@ export default class LoginForm extends Component{
   _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
 
   _handleDatePicked = (date) => {
-      let fullDate = date.toLocaleDateString();
-      let arrDate = fullDate.split('/');
-
-      let day = arrDate[1];
-      let month = arrDate[0]
+      let day = date.getDate();
+      let month = date.getMonth()+1;
       let year = date.getFullYear();
+      console.log(day,month,year);
       this._hideDateTimePicker();
       this.setState({
           form : {...this.state.form, day : day, month : month, year : year },
@@ -120,7 +118,7 @@ export default class LoginForm extends Component{
   }
 
   _onSubmit(){
-    
+    Keyboard.dismiss();
     const {pickerSelected, form} = this.state;
     let dataSend = {};
     let currentState = Object.assign({}, form);

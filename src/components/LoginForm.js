@@ -1,5 +1,5 @@
 import React, { Component} from 'react';
-import {StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import {StyleSheet, Text, TextInput, View, TouchableOpacity, Keyboard } from 'react-native';
 import {Item, Input, Icon, Button, Spinner, Toast } from 'native-base';
 import Global from '../globals/Globals';
 import axios from '../config/axios/axiosNoAuth';
@@ -22,6 +22,7 @@ class LoginForm extends Component{
 
     }
     _onLoginPressed = async()=>{
+      Keyboard.dismiss();
       this.setState({logging : true});
       axios.get('/auth/gettoken',{
         params : {
