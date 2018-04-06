@@ -11,7 +11,7 @@ class SearchTab extends Component {
         <Header searchBar rounded 
         style={{
           backgroundColor: Global.COLOR.MAIN, 
-          marginTop : _paddingAndroid(), 
+          marginTop : this.props.hasMargin ? _paddingAndroid() : 0, 
           flexDirection : 'row'}}
         > 
           <Button onPress={this.props.menuPressed} transparent style={[styles.buttonStyle,{marginLeft : -10}]} >

@@ -69,7 +69,7 @@ const RootNavLoggedTab = TabNavigator({
         })
     }
   },{
-    initialRouteName : 'Profile',
+    initialRouteName : 'NewsWall',
       navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
