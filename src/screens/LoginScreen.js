@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Image,TouchableOpacity,ImageBackground,KeyboardAvoidingView, Platform } from 'react-native';
-import { Button, Text } from 'native-base';
+import { Button, Text, Toast } from 'native-base';
 import LoginForm from '../components/LoginForm';
 import AuthHeader from './AuthHeader/AuthHeader';
 import Global from '../globals/Globals';
 import { NavigationActions } from 'react-navigation';
+import RegisterScreen from './RegisterScreen';
 
 class LoginScreen extends Component{
-   
-
     static navigationOptions = {
         headerTransparent:true,
         headerTintColor: 'white',
@@ -19,8 +18,26 @@ class LoginScreen extends Component{
             borderBottomWidth: 0,
           }
       };
-    render(){
 
+    constructor(props){
+        super(props);
+    }
+    componentWillMount(){
+      this._checkRegisterSuccess(this.props.navigation.state.params);
+    }
+    
+    _checkRegisterSuccess(props){
+        if(props !== undefined){
+          Toast.show({
+              text: props.message,
+              position: 'bottom',
+              buttonText: 'OK',
+              type : 'success',
+              duration : 25000
+            });
+        }
+    }
+    render(){
         const resetAction = NavigationActions.reset({
             index: 0,
             actions: [

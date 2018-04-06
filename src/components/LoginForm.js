@@ -18,39 +18,49 @@ class LoginForm extends Component{
         logging : false
       };
     }
+    componentWillReceiveProps(){
+
+    }
     _onLoginPressed = async()=>{
-        this.setState({logging : true});
-        // axios.get('/auth/gettoken?email='+this.state.email+'&password='+this.state.password)'
-        axios.get('/auth/gettoken',{
-          params : {
-            email : this.state.email,
-            password : this.state.password
-          }
+      this.setState({logging : true});
+      axios.get('/auth/gettoken',{
+        params : {
+          email : this.state.email,
+          password : this.state.password
+        }
+      }).then((response) => {
+        AsyncStorage.setItem('userToken', response.data.token);
+        setDefaultParam(response.data.token);
+        this._StoreUserObject(response.data.token);
+      }).catch((error) => {
+        this.setState({logging : false});
+        Toast.show({
+          text: error.response.data.error,
+          position: 'bottom',
+          duration : 5000
         })
-        .then( response => {
-          console.log(response.data);
-           AsyncStorage.setItem('userToken', response.data.token);
-           setDefaultParam(response.data.token);
-           this._StoreUserObject(response.data.token);
-       
-        }).catch(error =>{
-          //console.log(error);
-            this.setState({logging : false});
-            Toast.show({
-              text: 'Wrong email address or password !',
-              position: 'bottom',
-              duration : 5000
-            })
-        });
+      })
+      
+
+    
     }
 
     _StoreUserObject = async(token) =>{
       axios.get('/auth/getuser?token='+token)
-        .then(res =>{
+      .then((res)=>{
         this.props.StoreUserAction(res.data);
         this.props.loginPressed();
-        });
-       // this.setState({logging : false});
+        this.setState({logging : false});
+      }).catch((error)=>{
+        this.setState({logging : false});
+        Toast.show({
+          text: error.response.data.error,
+          position: 'bottom',
+          duration : 5000
+        })
+      })
+   
+
     }
     
     _onDisableButtonLogin = () => {
@@ -86,6 +96,7 @@ class LoginForm extends Component{
       
     
     render(){
+     // this._StoreUserObject();
         return(
             <View style={styles.container}>
             
@@ -98,7 +109,7 @@ class LoginForm extends Component{
                     keyboardType="email-address"
                   value={this.state.email}
                   onSubmitEditing={()=> this.password._root.focus()}
-                 onChangeText={email => this._validateEmail(email)}
+                 onChangeText={email => this._validateEmail(email.trim())}
                   
                   />
               </Item>  

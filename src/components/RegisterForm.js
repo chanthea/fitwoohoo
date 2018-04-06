@@ -1,9 +1,11 @@
 import React, { Component} from 'react';
 import {StyleSheet, Text, TextInput, View, TouchableOpacity, Keyboard, KeyboardAvoidingView } from 'react-native';
-import {Item, Input, Icon, Button, Form, Picker, ActivityIndicator, Toast} from 'native-base';
+import {Item, Input, Icon, Button, Form, Picker, ActivityIndicator, Toast,Spinner} from 'native-base';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Global  from '../globals/Globals';
 import { _checkUserRole } from '../helpers';
+import axios from '../config/axios/axiosWithToken';
+
 
 
 
@@ -15,6 +17,7 @@ export default class LoginForm extends Component{
     let _minYear = xDate.getFullYear() - 10;
     let _useDate = xDate.setFullYear(_minYear);
     this.state = {
+      logging : false,
       pickerSelected: 1,
       currentDate : new Date(_useDate),
       isDateTimePickerVisible: false,
@@ -69,8 +72,7 @@ export default class LoginForm extends Component{
         year : 'Required',
       }  
     };
-    this._onSubmit = this._onSubmit.bind(this);
-
+    this._doRegister = this._doRegister.bind(this);
   }
 
 
@@ -118,6 +120,7 @@ export default class LoginForm extends Component{
   }
 
   _onSubmit(){
+    
     const {pickerSelected, form} = this.state;
     let dataSend = {};
     let currentState = Object.assign({}, form);
@@ -153,23 +156,50 @@ export default class LoginForm extends Component{
       Toast.show({
         text: 'Please fill in all required fields',
         position: 'bottom',
-        buttonText: 'Dismiss',
+       // buttonText: 'Dismiss',
         type : 'danger',
-        duration : 5000
+        duration : 3000
       })
       return false;
     }else{
-      console.log(currentState);
+      //console.log(currentState);
+    return this._doRegister(currentState)
     }
    
-  //  this._toastErrorValidate(currentState);
+   this._toastErrorValidate(currentState);
+  }
+
+  _doRegister = async(currentState)=>{
+    try {
+      this.setState({logging : true});
+      const response = await axios.post('/auth/register',currentState);
+      console.log(response.data);
+      this.props.registerSuccess('Login', {status : 'success',message:'We sent you an activation link. Please kindly check your mail.'});
+      this.setState({logging : false});
+    } catch (error) {
+      let data= error.response.data;
+      let message='';
+      if(data.type === 'validate'){
+       let msgs = data.message;
+        for (let key in msgs) {
+          if (msgs.hasOwnProperty(key)) {           
+            message += key + ' : '+ msgs[key]+"\n";
+         }
+        }
+      }else message = data.message;
+      Toast.show({
+        text: message,
+        position: 'bottom',
+        duration : 3000
+      })
+      this.setState({logging : false});
+    }
   }
 
   _updateStateDynamicWithValidate(currentState){
     let validate = Object.assign({}, this.state.validate);
     for (let key in currentState) {
       if (currentState.hasOwnProperty(key)) {      
-       
          if(currentState[key] === null){
           validate[key] = false;
          }else this._validateRegister(this.state.form[key],key);
@@ -241,11 +271,35 @@ export default class LoginForm extends Component{
       this.setState({form : {...this.state.form, [type] : val }})
   }
 
+  _buttonText = () => {
+    if(this.state.logging){
+      return <Spinner color='white'/>
+    }else{
+      return <Text style={styles.buttonText} uppercase={false}>Register</Text>;
+    }
+  }
 
 
     render(){
       const {inputBox} = styles;
-     
+      // let data = {
+      //     message:  {
+      //       email:  [
+      //         "The email has already been taken.",
+      //       ],
+      //     },
+      //     status: "failed",
+      //     type: "validate",
+      //   }
+      // let msgs = data.message;
+          
+      //   for (let key in msgs) {
+      //     if (msgs.hasOwnProperty(key)) {           
+      //       console.log(key + ' : '+ msgs[key]);
+      //    }
+      //   // message += msgs[key][0];
+      //   }
+
         return(
             <KeyboardAvoidingView behavior='padding' style={styles.container}>
            
@@ -389,8 +443,14 @@ export default class LoginForm extends Component{
               </TouchableOpacity>  
                   
               <View style={{ marginTop : 20}}>
-                <Button onPress ={this._onSubmit} style={styles.button} block>
-                  <Text style={styles.buttonText} >Register</Text>
+                <Button 
+                 disabled={this.state.logging}  
+                onPress ={this._onSubmit.bind(this)} 
+                style={[styles.button,{
+                  backgroundColor: this.state.logging ? Global.COLOR.DISABLE_MAIN : Global.COLOR.MAIN
+                }]}
+                 block>
+                  {this._buttonText()}
                 </Button>
                 <Button block small transparent light onPress = {this.props.loginFormPressed}>
                     <Text style={{color :'#95a5a6'}} uppercase={false}>Already have an account ? Sign in Now !</Text>
@@ -399,7 +459,7 @@ export default class LoginForm extends Component{
               
             
             
-  		  </KeyboardAvoidingView>
+  		    </KeyboardAvoidingView>
         );
     }
 }

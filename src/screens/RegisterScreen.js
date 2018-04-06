@@ -30,6 +30,10 @@ export default class RegisterScreen extends Component{
     _returnData(address, lat, lng) {
         this.setState({location : {address: address, lat: lat, lng : lng}});
     }
+
+    _customNavigationWithParam(routeName,Params){
+        this.props.navigation.navigate(routeName,Params);
+    }
    
     componentDidMount(){
         axios.get('/role').then(res=>{
@@ -58,10 +62,10 @@ export default class RegisterScreen extends Component{
                     </View>
                 ) :(
                 <RegisterForm 
+                registerSuccess = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
                 address = {this.state.location}
                 roles ={this.state.roles}
                 addressPressed = {()=> this.props.navigation.navigate('GooglePlace',{returnData: this._returnData.bind(this)})}
-
                  loginFormPressed = {()=> this.props.navigation.navigate('Login')}/>
                 )
                 }
