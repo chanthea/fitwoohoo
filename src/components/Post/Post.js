@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {StyleSheet, View, TouchableOpacity, Image, Platform} from 'react-native';
+import TimeAgo from 'react-native-timeago';
 import { 
   Container, 
   Header, 
@@ -14,6 +15,10 @@ import {
   Left, 
   Body,
   ListItem } from 'native-base';
+  import Global from '../../globals/Globals';
+  import PhotoGrid from 'react-native-thumbnail-grid';
+  import emojiButtom from './emojiButton';
+
 
 
 const ButtonEmoji = [
@@ -31,7 +36,31 @@ const EmojiCount = [
   {icon : 'ios-chatbubbles-outline', count : 5},
   {icon : 'ios-redo-outline', count : 5}
 ];
-export default class Post extends Component {
+export default class Post extends React.PureComponent {
+
+  constructor(props){
+    super(props)
+    this.state = {
+      images: []
+    }
+  }
+
+  componentWillMount () {
+    const images = [
+      'https://drscdn.500px.org/photo/216465193/m%3D2048_k%3D1_a%3D1/dda61fd7cea5013f8ebe7661b7abea3a',
+      'https://drscdn.500px.org/photo/215467843/m%3D2048_k%3D1_a%3D1/344703e86f31e1fffb2d63effa2cee33',
+      'https://drscdn.500px.org/photo/216340727/m%3D2048_k%3D1_a%3D1/20d583e15467fb39d06d48131767edc2',
+      // 'https://drscdn.500px.org/photo/215498077/m%3D2048_k%3D1_a%3D1/f79e906eb96938807f6f9d758fc652fd',
+      // 'https://drscdn.500px.org/photo/216559713/m%3D2048_k%3D1_a%3D1/393ef5251fa94964fe62cad52a416b7e',
+      // 'https://drscdn.500px.org/photo/214943889/m%3D2048_k%3D1_a%3D1/90bd2e3619dfcaae53fed683561aae1b',
+      // 'https://drscdn.500px.org/photo/216158509/m%3D2048_k%3D1_a%3D1/cf70d51aab6ca4c4a3c1ecc225c69990',
+      // 'https://drscdn.500px.org/photo/216111469/m%3D2048_k%3D1_a%3D1/d2d83296c838258095dbf2bffda70602',
+      // 'https://drscdn.500px.org/photo/216051623/m%3D2048_k%3D1_a%3D1/5a3732bb413f240ad71b8279b038a3ff',
+      // 'https://drscdn.500px.org/photo/216047335/m%3D2048_k%3D1_a%3D1/4237ac4606474f0ec7ccc05ca311772e',
+      // 'https://drscdn.500px.org/photo/216000289/m%3D2048_k%3D1_a%3D1/5ac2a21092f9281feef3ab8484d2b19c'
+    ]
+    this.setState({ images: images })
+  }
 
   _emojiButton = (items) => {
     let buttons = items.map((item, i) =>{
@@ -57,37 +86,48 @@ export default class Post extends Component {
     return buttons;
   };
 
+
+
+  _showImage = (uri) =>{
+    console.log(uri);
+  }
+
+
   render() {
+    const { post } = this.props;
+    const { user} = this.props.post;
+
     return (
           <Card  style={styles.cardStyle}>
             <CardItem>
               <Left>
-                <Thumbnail small  source={require('../images/profile.jpg')} />
+                <Thumbnail small  source={{uri :Global.PHOTO.PROFILE+user.photo}} />
                 <Body>
-                  <Text style={styles.name}>Nguon Lykhim</Text>
+                  <Text style={styles.name}>{user.name + ' '+user.lastname }</Text>
                   <View style={{flexDirection : 'row'}}>
                   <View style={{flexDirection : 'row'}}>
                     <Icon name="ios-globe-outline"
                      style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
                      /> 
-                    <Text note style={styles.time}>Colleagues</Text>
+                    <Text note style={styles.time}>{post.follow_type.type}</Text>
                    </View>
-                    <View style={{flexDirection : 'row'}}>
+                      <View style={{flexDirection : 'row'}}>
                         <Icon name="ios-clock-outline"
                          style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
                          /> 
-                        <Text note style={styles.time}>9 minutes ago</Text>
+                        <Text note style={styles.time}><TimeAgo time={post.created_atISO} /></Text>
                     </View>
                   </View>
                 </Body>
               </Left>
             </CardItem>
             <CardItem cardBody>
-              <Image source={require('../images/cover.jpeg')} style={{height: 200, width: null, flex: 1}}/>
-            </CardItem>
+            <PhotoGrid source={this.state.images} onPressImage={source => this._showImage(source)}/> 
+          </CardItem>
+          {/* onPressImage={source => this._showImage(source.uri)} */}
             <CardItem>
               <Text style={styles.postText}>
-              A React component for displaying different types of images, including network images, static resources, temporary local images, and images from local disk, such as the camera roll.
+              {post.description}
                 </Text>
             </CardItem>
             <ListItem icon style={styles.listItemStyle}>

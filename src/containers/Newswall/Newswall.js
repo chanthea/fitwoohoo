@@ -1,37 +1,35 @@
 import React, {Component} from 'react';
 import { SearchTab, Wrapper } from '../../components/common';
 import { Content, Container, Header, View, Button, Icon, Text } from 'native-base';
-import FullPost from '../../containers/FullPost';
 import Global from '../../globals/Globals';
 import Fab from '../../components/Fab';
-import Post from '../../components/Post';
+import Post from '../../components/Post/Post';
 import {FlatList, StatusBar, StyleSheet, ActivityIndicator, Dimensions} from 'react-native';
 import { Constants } from 'expo';
-//import axios from '../../config/axios/axiosWithToken';
-import axios from 'axios';
+import axios from '../../config/axios/axiosWithToken';
 
 
-class Newswall extends Component {
+class Newswall extends React.PureComponent {
     static navigationOptions ={
         //tabBarVisible :false
     }
     constructor(props) {
         super(props);
         this.state = {
+          firstLoad : true,
           active: false,
           loading: false,
           data: [],
-          page: 1,
-          seed: 1,
+          offset: 0,
+          limit : 4,
           error: null,
           refreshing: false,
         };
     }
     _handleRefresh = ()=>{
         this.setState({
-            page : 1,
+            offset : 0,
             refreshing : true,
-            seed : this.state.seed +1
         }, ()=>{
             this._makeRemoteRequest();
         });
@@ -39,7 +37,7 @@ class Newswall extends Component {
 
     _handleLoadMore = () =>{
         this.setState({
-            page : this.state.page + 1,
+            offset : this.state.offset + this.state.limit,
         }, () => {
             this._makeRemoteRequest();
         });
@@ -52,32 +50,37 @@ class Newswall extends Component {
     };
 
     componentDidMount() {
-        StatusBar.setBackgroundColor('#553A91');
         this._makeRemoteRequest();
     }
 
     _makeRemoteRequest = async() => {
-        const { page, seed } = this.state;
-        const url = `https://randomuser.me/api/?seed=${seed}&page=${page}&results=5`;
+        const { offset } = this.state;
+
         this.setState({ loading: true });
        // setTimeout(() =>{
-            axios.get(url)
+        axios.get('/newswall',{limit : 4,offset : offset})
             .then(res => {
-              //  console.log(res.data);
               this.setState({
-                data: page === 1 ? res.data.results : [...this.state.data, ...res.data.results],
+                data: offset === 0 ? res.data : [...this.state.data, ...res.data],
                 error: res.error || null,
                 loading: false,
-                refreshing: false
+                refreshing: false,
               });
+              if(this.state.firstLoad === true){
+                this.setState({ firstLoad: false });
+              }
+              
             })
             .catch(error => {
-             //   console.log(error.response);
               this.setState({ error, loading: false, refreshing : false });
+              if(this.state.firstLoad === true){
+                this.setState({ firstLoad: false });
+              }
             });
-     //   },3000);
        
       };
+
+      
 
       _renderHeader = ()=>{
             return(
@@ -104,17 +107,21 @@ class Newswall extends Component {
     
 
     render(){
-    
         return(
-            <Wrapper style={{backgroundColor : 'blue'}}>
+            <Wrapper>
                 <View style={styles.statusBar} />
+                {this.state.firstLoad ?
+                    <View style={{flexGrow: 1, backgroundColor : 'white', justifyContent :'center'}}>
+                        <ActivityIndicator size='large'/>
+                        <Text style={{textAlign : 'center'}}>Loading....</Text>
+                    </View> :
                   <FlatList 
                     style={styles.container}
                     data={this.state.data}
                     renderItem={({ item }) => (
-                        <Post  key={item.email}/>
+                        <Post post={item}/>
                     )}
-                    keyExtractor={item => item.email}
+                   keyExtractor={(item, index) => index}
                     ListHeaderComponent={this._renderHeader}
                     ListFooterComponent={this.renderFooter}
                     refreshing={this.state.refreshing}
@@ -122,7 +129,9 @@ class Newswall extends Component {
                     onEndReached={this._handleLoadMore}
                     onEndReachedThreshold={5}
                 
-                />
+                />}
+                
+                
                   {/* <Fab 
               postPressed = {this._onPressPost}
               active = {this.state.active}
@@ -136,7 +145,7 @@ class Newswall extends Component {
 }
 
 let { height } = Dimensions.get("window");
-console.log(height);
+// console.log(height);
 const styles = StyleSheet.create({
     statusBar: {
       backgroundColor: Global.COLOR.DARKMAIN,
