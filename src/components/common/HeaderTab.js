@@ -5,7 +5,7 @@ import { _paddingAndroid } from '../../helpers';
 import Global from '../../globals/Globals';
 import { Header, Left, Body, Right, Button, Icon, Title} from 'native-base';
 
-class HeaderTab extends Component {
+class HeaderTab extends React.PureComponent {
     constructor(props){
         super(props);
 

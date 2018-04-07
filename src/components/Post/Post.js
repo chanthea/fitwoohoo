@@ -49,7 +49,7 @@ export default class Post extends React.PureComponent {
     const images = [
       'https://drscdn.500px.org/photo/216465193/m%3D2048_k%3D1_a%3D1/dda61fd7cea5013f8ebe7661b7abea3a',
       'https://drscdn.500px.org/photo/215467843/m%3D2048_k%3D1_a%3D1/344703e86f31e1fffb2d63effa2cee33',
-      'https://drscdn.500px.org/photo/216340727/m%3D2048_k%3D1_a%3D1/20d583e15467fb39d06d48131767edc2',
+      // 'https://drscdn.500px.org/photo/216340727/m%3D2048_k%3D1_a%3D1/20d583e15467fb39d06d48131767edc2',
       // 'https://drscdn.500px.org/photo/215498077/m%3D2048_k%3D1_a%3D1/f79e906eb96938807f6f9d758fc652fd',
       // 'https://drscdn.500px.org/photo/216559713/m%3D2048_k%3D1_a%3D1/393ef5251fa94964fe62cad52a416b7e',
       // 'https://drscdn.500px.org/photo/214943889/m%3D2048_k%3D1_a%3D1/90bd2e3619dfcaae53fed683561aae1b',
@@ -121,9 +121,16 @@ export default class Post extends React.PureComponent {
                 </Body>
               </Left>
             </CardItem>
-            <CardItem cardBody>
+            {post.type === 'image' ? 
+            (<CardItem cardBody>
             <PhotoGrid source={this.state.images} onPressImage={source => this._showImage(source)}/> 
-          </CardItem>
+            </CardItem>) :  
+            post.type === 'video' &&
+            (<CardItem cardBody>
+              <PhotoGrid isVideo={true} source={this.state.images} onPressImage={source => this._showImage(source)}/> 
+            </CardItem> )
+          }
+            
           {/* onPressImage={source => this._showImage(source.uri)} */}
             <CardItem>
               <Text style={styles.postText}>

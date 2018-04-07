@@ -24,6 +24,7 @@ class Newswall extends React.PureComponent {
           limit : 4,
           error: null,
           refreshing: false,
+          noPost : false,
         };
     }
     _handleRefresh = ()=>{
@@ -58,20 +59,34 @@ class Newswall extends React.PureComponent {
 
         this.setState({ loading: true });
        // setTimeout(() =>{
-        axios.get('/newswall',{limit : 4,offset : offset})
-            .then(res => {
-              this.setState({
-                data: offset === 0 ? res.data : [...this.state.data, ...res.data],
-                error: res.error || null,
-                loading: false,
-                refreshing: false,
-              });
-              if(this.state.firstLoad === true){
-                this.setState({ firstLoad: false });
-              }
-              
+        axios.get('/newswall',{
+            params: {
+                limit : 4,offset : offset
+            }}).then(res => {
+                console.log(res.data);
+              if(res.data.length === 0){
+                if(this.state.firstLoad === true){
+                    this.setState({ firstLoad: false, noPost : true });
+                }
+                this.setState({
+                    loading: false,
+                    refreshing: false,
+                  });
+              }else{
+                this.setState({
+                    data: offset === 0 ? res.data : [...this.state.data, ...res.data],
+                    error: res.error || null,
+                    loading: false,
+                    refreshing: false,
+                  });
+                if(this.state.firstLoad === true){
+                    this.setState({ firstLoad: false});
+                }
+              }  
+             
             })
             .catch(error => {
+                console.log(error.response);
               this.setState({ error, loading: false, refreshing : false });
               if(this.state.firstLoad === true){
                 this.setState({ firstLoad: false });
@@ -90,6 +105,8 @@ class Newswall extends React.PureComponent {
             menuPressed={()=>this.props.navigation.navigate('DrawerOpen')}/>
         );
       }
+      
+     
       _renderFooter = () => {
         if (!this.state.loading) return null;
         return (
@@ -104,17 +121,49 @@ class Newswall extends React.PureComponent {
           </View>
         );
       };
+
+      _renderNoPost = () => {
+        <View style={{flexGrow : 1, backgroundColor :'white' }}>
+            <SearchTab  
+            hasMargin={false}
+            searchPressed ={()=>this.props.navigation.navigate('GeneralSearch')}
+            menuPressed={()=>this.props.navigation.navigate('DrawerOpen')}/>
+           <View style={{flex : 1, backgroundColor : 'white', justifyContent :'center', alignItems : 'center'}}>
+            <Icon name="ios-sad-outline" style={{fontSize : 50, color : 'rgba(0,0,0,0.6)'}}/>
+            <Text style={{textAlign : 'center', color : 'rgba(0,0,0,0.7)'}}>There is no post available</Text>
+            </View>
+        </View>
+      }
     
 
     render(){
+        const renderNoPost = (
+             <View style={{flexGrow : 1, backgroundColor :'white' }}>
+                <SearchTab  
+                hasMargin={false}
+                searchPressed ={()=>this.props.navigation.navigate('GeneralSearch')}
+                menuPressed={()=>this.props.navigation.navigate('DrawerOpen')}/>
+               <View style={{flex : 1, backgroundColor : 'white', justifyContent :'center', alignItems : 'center'}}>
+                <Icon name="ios-sad-outline" style={{fontSize : 50, color : 'rgba(0,0,0,0.6)'}}/>
+                <Text style={{textAlign : 'center', color : 'rgba(0,0,0,0.7)'}}>There is no post available</Text>
+                </View>
+            </View>
+        );
+    
+        const firstLoad =  (
+             <View style={{flexGrow: 1, backgroundColor : 'white', justifyContent :'center'}}>
+            <ActivityIndicator size='large'/>
+            <Text style={{textAlign : 'center'}}>Loading....</Text>
+        </View>
+        );
         return(
             <Wrapper>
                 <View style={styles.statusBar} />
                 {this.state.firstLoad ?
-                    <View style={{flexGrow: 1, backgroundColor : 'white', justifyContent :'center'}}>
-                        <ActivityIndicator size='large'/>
-                        <Text style={{textAlign : 'center'}}>Loading....</Text>
-                    </View> :
+                firstLoad :
+                this.state.noPost === true ?
+                renderNoPost
+                 :
                   <FlatList 
                     style={styles.container}
                     data={this.state.data}
@@ -148,7 +197,7 @@ let { height } = Dimensions.get("window");
 // console.log(height);
 const styles = StyleSheet.create({
     statusBar: {
-      backgroundColor: Global.COLOR.DARKMAIN,
+      backgroundColor: Global.COLOR.MAIN,
       height: Constants.statusBarHeight,
     },
     container : { 
