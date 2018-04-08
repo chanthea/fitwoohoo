@@ -18,6 +18,7 @@ import {
   import Global from '../../globals/Globals';
   import PhotoGrid from 'react-native-thumbnail-grid';
   import emojiButtom from './emojiButton';
+  import _ from 'lodash';
 
 
 
@@ -49,7 +50,7 @@ export default class Post extends React.PureComponent {
     const images = [
       'https://drscdn.500px.org/photo/216465193/m%3D2048_k%3D1_a%3D1/dda61fd7cea5013f8ebe7661b7abea3a',
       'https://drscdn.500px.org/photo/215467843/m%3D2048_k%3D1_a%3D1/344703e86f31e1fffb2d63effa2cee33',
-      // 'https://drscdn.500px.org/photo/216340727/m%3D2048_k%3D1_a%3D1/20d583e15467fb39d06d48131767edc2',
+      'https://drscdn.500px.org/photo/216340727/m%3D2048_k%3D1_a%3D1/20d583e15467fb39d06d48131767edc2',
       // 'https://drscdn.500px.org/photo/215498077/m%3D2048_k%3D1_a%3D1/f79e906eb96938807f6f9d758fc652fd',
       // 'https://drscdn.500px.org/photo/216559713/m%3D2048_k%3D1_a%3D1/393ef5251fa94964fe62cad52a416b7e',
       // 'https://drscdn.500px.org/photo/214943889/m%3D2048_k%3D1_a%3D1/90bd2e3619dfcaae53fed683561aae1b',
@@ -94,12 +95,85 @@ export default class Post extends React.PureComponent {
 
 
   render() {
-    const { post } = this.props;
-    const { user} = this.props.post;
+    let photos = [];
+    let videos = [];
+    let audios = [];
+    let shareUser = [];
+    let user = [];
+    let post = [];
+    const { originalPost } = this.props;
+    if(originalPost.post_type === 'share'){
+       shareUser = originalPost.user;
+        user = originalPost.post.user;
+        post = originalPost.post;
+    }else if(originalPost.post_type === 'post'){
+        user = originalPost.user;
+        post = originalPost;
+    }
+   
+    if(post.type === 'image'){
+      _.each(post.photos, function(val,i) { 
+        val.uri = Global.IMAGE.IMAGE_POST_THUMB+val.path;
+        val.hd_image =  Global.IMAGE.IMAGE_POST+val.path;
+      });
+      photos = post.photos;
+    }else if(post.type === 'video'){
+      _.each(post.videos, function(val,i) { 
+        val.uri = Global.IMAGE.VIDEO_POST+val.thumb;
+      });
+      videos = post.videos;
+    }else if(post.type === 'audio'){
+      _.each(post.audios, function(val,i) { 
+        val.uri = Global.IMAGE.AUDIO_POST;
+      });
+      audios = post.audios;
+    }
+  
+  
+
+
 
     return (
+
           <Card  style={styles.cardStyle}>
+            {originalPost.post_type === 'share' && 
+            <View>
+              <CardItem>
+                <Left style={{flex :3}}>
+                  <Thumbnail small  source={{uri :Global.PHOTO.PROFILE+shareUser.photo}} />
+                  <Body>
+                    <Text style={styles.name}>{shareUser.name + ' '+shareUser.lastname } shared this</Text>
+                    <View style={{flexDirection : 'row'}}>
+                    <View style={{flexDirection : 'row'}}>
+                      <Icon name="ios-globe-outline"
+                      style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
+                      /> 
+                      <Text note style={styles.time}>{originalPost.follow_type.type}</Text>
+                    </View>
+                        <View style={{flexDirection : 'row'}}>
+                          <Icon name="ios-clock-outline"
+                          style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
+                          /> 
+                          <Text note style={styles.time}><TimeAgo time={originalPost.created_atISO} /></Text>
+                      </View>
+                    </View>
+                  </Body>
+                </Left>
+                <Right>
+                    <Button transparent light style={styles.option}>
+                    <Icon name="md-more" type="Ionicons" style={styles.optionButtonIcon}/>
+                  </Button>
+                </Right>
+            </CardItem>
             <CardItem>
+            <Text style={styles.postText}>
+              {originalPost.desc}
+              </Text>
+            </CardItem>
+          </View>
+            
+          }
+            <CardItem style={[originalPost.post_type === 'share' && styles.shareCard]}>
               <Left>
                 <Thumbnail small  source={{uri :Global.PHOTO.PROFILE+user.photo}} />
                 <Body>
@@ -120,18 +194,33 @@ export default class Post extends React.PureComponent {
                   </View>
                 </Body>
               </Left>
+              <Right>
+                <Button transparent light style={styles.option}>
+                <Icon name="md-more" type="Ionicons" style={styles.optionButtonIcon}/>
+              </Button>
+            </Right>
             </CardItem>
             {post.type === 'image' ? 
             (<CardItem cardBody>
-            <PhotoGrid source={this.state.images} onPressImage={source => this._showImage(source)}/> 
+            <PhotoGrid source={photos} 
+            onPressImage={source => this._showImage(source)}
+            /> 
             </CardItem>) :  
-            post.type === 'video' &&
+            post.type === 'video' ?
             (<CardItem cardBody>
-              <PhotoGrid isVideo={true} source={this.state.images} onPressImage={source => this._showImage(source)}/> 
-            </CardItem> )
+              <PhotoGrid isVideo={true} source={videos} 
+               onPressImage={source => this._showImage(source)}
+              /> 
+            </CardItem> ) :
+             post.type === 'audio' &&
+             (<CardItem cardBody>
+              <PhotoGrid  isVideo={true} source={audios} 
+              onPressImage={source => this._showImage(source)}
+              /> 
+              </CardItem>) 
+           
           }
             
-          {/* onPressImage={source => this._showImage(source.uri)} */}
             <CardItem>
               <Text style={styles.postText}>
               {post.description}
@@ -157,6 +246,15 @@ export default class Post extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+    shareCard : {
+      width:'94%', 
+      marginLeft : '3%', 
+      borderWidth : 0.4, 
+      borderBottomWidth : 0, 
+      borderColor : 'rgba(0,0,0,0.3)',
+      borderRadius : 5},
+    optionButton : {height : 30},
+    optionButtonIcon : {color : 'rgba(0,0,0,0.8)', alignSelf :'flex-start', fontSize : 20, paddingTop : 3},
     listView : {flexDirection : 'row'},
     listItemStyle : {
       justifyContent: 'flex-start', 

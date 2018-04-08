@@ -63,7 +63,7 @@ class Newswall extends React.PureComponent {
             params: {
                 limit : 4,offset : offset
             }}).then(res => {
-                console.log(res.data);
+               // console.log(res.data);
               if(res.data.length === 0){
                 if(this.state.firstLoad === true){
                     this.setState({ firstLoad: false, noPost : true });
@@ -86,7 +86,7 @@ class Newswall extends React.PureComponent {
              
             })
             .catch(error => {
-                console.log(error.response);
+              //  console.log(error.response);
               this.setState({ error, loading: false, refreshing : false });
               if(this.state.firstLoad === true){
                 this.setState({ firstLoad: false });
@@ -168,7 +168,7 @@ class Newswall extends React.PureComponent {
                     style={styles.container}
                     data={this.state.data}
                     renderItem={({ item }) => (
-                        <Post post={item}/>
+                        <Post originalPost={item}/>
                     )}
                    keyExtractor={(item, index) => index}
                     ListHeaderComponent={this._renderHeader}

@@ -15,6 +15,12 @@ export default {
     PHOTO : {
       PROFILE : 'https://www.fitwoohoo.com/assets/imgs/people/profilephoto/thumb/',
       COVER :  'https://www.fitwoohoo.com/assets/imgs/people/coverphoto/'
+    },
+    IMAGE : {
+      IMAGE_POST : 'https://www.fitwoohoo.com/assets/imgs/postimage/',
+      IMAGE_POST_THUMB : 'https://www.fitwoohoo.com/assets/imgs/postimage/thumb/',
+      VIDEO_POST : 'https://www.fitwoohoo.com/assets/video/thumb/',
+      AUDIO_POST : 'https://www.fitwoohoo.com/assets/audio/music2.jpg'
     }
     
   };
