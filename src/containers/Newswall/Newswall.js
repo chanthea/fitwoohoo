@@ -168,9 +168,12 @@ class Newswall extends React.PureComponent {
                     style={styles.container}
                     data={this.state.data}
                     renderItem={({ item }) => (
-                        <Post originalPost={item}/>
+                        <Post 
+                        originalPost={item}
+                        customNavigate = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
+                        />
                     )}
-                   keyExtractor={(item, index) => index}
+                   keyExtractor={(item, index) => index+1}
                     ListHeaderComponent={this._renderHeader}
                     ListFooterComponent={this.renderFooter}
                     refreshing={this.state.refreshing}

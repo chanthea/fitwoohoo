@@ -8,6 +8,7 @@ import BaseScreen from './BaseScreen';
 
 export default class VideoDetail extends BaseScreen {
   static navigationOptions = {
+    mode : 'modal',
     tabBarVisible : false,
     drawerLockMode: 'locked-closed',
     swipeEnabled : false,
@@ -21,13 +22,25 @@ export default class VideoDetail extends BaseScreen {
       }
 }
 
+  constructor(props){
+    super(props);
+    this.state = {
+      uri : ''
+    }
+  }
+  componentWillMount(){
+    const navParams = this.props.navigation.state.params;
+    this.setState({
+      uri : navParams.source.source
+    })
+  }
+
   changeRate(rate) {
     this._playbackInstance.setStatusAsync({
       rate: rate,
       shouldCorrectPitch: true,
     });
   }
-
   render() {
     return (
         <ScrollView
@@ -37,8 +50,7 @@ export default class VideoDetail extends BaseScreen {
               shouldPlay: true,
               resizeMode: Video.RESIZE_MODE_CONTAIN,
               source: {
-                uri:
-                  'http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_10mb.mp4',
+                uri: this.state.uri,
               },
               isMuted: false,
               ref: component => {

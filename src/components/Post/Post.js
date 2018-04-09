@@ -37,6 +37,11 @@ const EmojiCount = [
   {icon : 'ios-chatbubbles-outline', count : 5},
   {icon : 'ios-redo-outline', count : 5}
 ];
+
+
+
+
+
 export default class Post extends React.PureComponent {
 
   constructor(props){
@@ -91,6 +96,8 @@ export default class Post extends React.PureComponent {
 
   _showImage = (uri) =>{
     console.log(uri);
+
+ //   this.props.customNavigate('PhotoDetail',{source :uri, images : images});
   }
 
 
@@ -101,6 +108,8 @@ export default class Post extends React.PureComponent {
     let shareUser = [];
     let user = [];
     let post = [];
+    let images = [];
+    let sounds = [];
     const { originalPost } = this.props;
     if(originalPost.post_type === 'share'){
        shareUser = originalPost.user;
@@ -112,23 +121,33 @@ export default class Post extends React.PureComponent {
     }
    
     if(post.type === 'image'){
+     
       _.each(post.photos, function(val,i) { 
         val.uri = Global.IMAGE.IMAGE_POST_THUMB+val.path;
         val.hd_image =  Global.IMAGE.IMAGE_POST+val.path;
+        val.index = i;
+        images.push({
+          source : { uri : Global.IMAGE.IMAGE_POST+val.path }
+        }); 
       });
       photos = post.photos;
     }else if(post.type === 'video'){
       _.each(post.videos, function(val,i) { 
         val.uri = Global.IMAGE.VIDEO_POST+val.thumb;
+        val.source = Global.VIDEO.VIDEO_POST+val.path;
       });
       videos = post.videos;
     }else if(post.type === 'audio'){
       _.each(post.audios, function(val,i) { 
         val.uri = Global.IMAGE.AUDIO_POST;
+        val.index = i;
+        sounds.push({
+          uri : Global.AUDIO.AUDIO_POST+val.path
+        })
       });
       audios = post.audios;
+      console.log(sounds);
     }
-  
   
 
 
@@ -203,19 +222,19 @@ export default class Post extends React.PureComponent {
             {post.type === 'image' ? 
             (<CardItem cardBody>
             <PhotoGrid source={photos} 
-            onPressImage={source => this._showImage(source)}
+            onPressImage={source => this.props.customNavigate('PhotoDetail',{source :source, images : images})}
             /> 
             </CardItem>) :  
             post.type === 'video' ?
             (<CardItem cardBody>
               <PhotoGrid isVideo={true} source={videos} 
-               onPressImage={source => this._showImage(source)}
+               onPressImage={source => this.props.customNavigate('VideoDetail',{source : source})}
               /> 
             </CardItem> ) :
              post.type === 'audio' &&
              (<CardItem cardBody>
               <PhotoGrid  isVideo={true} source={audios} 
-              onPressImage={source => this._showImage(source)}
+              onPressImage={source => this.props.customNavigate('AudioDetail',{source : source, sounds : sounds})}
               /> 
               </CardItem>) 
            
@@ -249,8 +268,9 @@ const styles = StyleSheet.create({
     shareCard : {
       width:'94%', 
       marginLeft : '3%', 
-      borderWidth : 0.4, 
-      borderBottomWidth : 0, 
+      borderLeftWidth : 0.4, 
+      borderTopWidth : 0.4, 
+      borderRightWidth : 0.4, 
       borderColor : 'rgba(0,0,0,0.3)',
       borderRadius : 5},
     optionButton : {height : 30},

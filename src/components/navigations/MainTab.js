@@ -9,7 +9,6 @@ import {
   Request, 
   Setting, 
   Location, 
-
   FitnessWellness } from '../../containers';
 import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
@@ -24,26 +23,43 @@ import  Profile from '../../containers/Profile/Profile';
 
 const RootNavLoggedTab = TabNavigator({
     NewsWall : {screen  : StackNavigator({
-      NewsWallHome : {screen : Newswall},
-      GeneralSearch : {screen :  GeneralSearch,} ,
-      PostPage:  {screen : PostPage}
+      NewsWallHome : {
+        screen : Newswall,
+        navigationOptions: {
+          mode: 'modal',
+          headerMode: 'none',
+          header : null,
+        }
+      },
+      GeneralSearch : {
+        screen :  GeneralSearch,
+        navigationOptions: {
+          mode: 'modal',
+          headerMode: 'none',
+          header : null,
+        }
+      } ,
+      PostPage:  {screen : PostPage,
+        navigationOptions: {
+          mode: 'modal',
+          headerMode: 'none',
+          header : null,
+        }},
+      PhotoDetail : {screen : PhotoDetail},
+      VideoDetail : {screen : VideoDetail},
+      AudioDetail : {screen : AudioDetail},
     },{
-        mode: 'modal',
-        headerMode: 'none',
-        header : null,
         initialRouteName : 'NewsWallHome'
       }
     )
   },
     Location : {screen : Location},
-    // Request : {screen : Request},
     Notification : {screen : Notification},
     FitnessWellness : {screen : FitnessWellness},
-    //Setting : {screen : Setting},
     Profile : {
       screen : StackNavigator({
         ProfileIndex : {
-          screen : Profile/*ActivityList*/,
+          screen : Profile,
           navigationOptions: {
             header: null,
           }

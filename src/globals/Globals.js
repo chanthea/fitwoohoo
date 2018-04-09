@@ -21,6 +21,12 @@ export default {
       IMAGE_POST_THUMB : 'https://www.fitwoohoo.com/assets/imgs/postimage/thumb/',
       VIDEO_POST : 'https://www.fitwoohoo.com/assets/video/thumb/',
       AUDIO_POST : 'https://www.fitwoohoo.com/assets/audio/music2.jpg'
+    },
+    VIDEO :{
+      VIDEO_POST : 'https://www.fitwoohoo.com/assets/video/',
+    }, 
+    AUDIO : {
+      AUDIO_POST :'https://www.fitwoohoo.com/assets/audio/'
     }
     
   };
