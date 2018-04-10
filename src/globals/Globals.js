@@ -20,7 +20,8 @@ export default {
       IMAGE_POST : 'https://www.fitwoohoo.com/assets/imgs/postimage/',
       IMAGE_POST_THUMB : 'https://www.fitwoohoo.com/assets/imgs/postimage/thumb/',
       VIDEO_POST : 'https://www.fitwoohoo.com/assets/video/thumb/',
-      AUDIO_POST : 'https://www.fitwoohoo.com/assets/audio/music2.jpg'
+      AUDIO_POST : 'https://www.fitwoohoo.com/assets/audio/music2.jpg',
+      AUDIO_POST_SONG : 'https://www.fitwoohoo.com/assets/audio/songicon.png'
     },
     VIDEO :{
       VIDEO_POST : 'https://www.fitwoohoo.com/assets/video/',

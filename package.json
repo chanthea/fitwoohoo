@@ -11,6 +11,7 @@
     "react": "16.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz",
     "react-native-af-video-player": "^0.1.7",
+    "react-native-animatable": "^1.2.4",
     "react-native-autogrow-textinput": "^5.1.1",
     "react-native-calendars": "^1.17.7",
     "react-native-dialog": "^3.3.0",

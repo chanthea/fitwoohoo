@@ -19,28 +19,7 @@ import {
   import PhotoGrid from 'react-native-thumbnail-grid';
   import emojiButtom from './emojiButton';
   import _ from 'lodash';
-
-
-
-const ButtonEmoji = [
-  {icon : 'ios-thumbs-up-outline', title : 'Good'},
-  {icon : 'ios-thumbs-down-outline', title : 'Bad'},
-  {icon : 'ios-happy-outline', title : 'Happy'},
-  {icon : 'ios-sad-outline', title : 'Sad'}
-];
-
-const EmojiCount = [
-  {icon : 'ios-thumbs-up-outline', count : 10},
-  {icon : 'ios-thumbs-down-outline', count : 2},
-  {icon : 'ios-happy-outline', count : 3},
-  {icon : 'ios-sad-outline', count : 5},
-  {icon : 'ios-chatbubbles-outline', count : 5},
-  {icon : 'ios-redo-outline', count : 5}
-];
-
-
-
-
+  import * as Animatable from 'react-native-animatable';
 
 export default class Post extends React.PureComponent {
 
@@ -51,57 +30,70 @@ export default class Post extends React.PureComponent {
     }
   }
 
-  componentWillMount () {
-    const images = [
-      'https://drscdn.500px.org/photo/216465193/m%3D2048_k%3D1_a%3D1/dda61fd7cea5013f8ebe7661b7abea3a',
-      'https://drscdn.500px.org/photo/215467843/m%3D2048_k%3D1_a%3D1/344703e86f31e1fffb2d63effa2cee33',
-      'https://drscdn.500px.org/photo/216340727/m%3D2048_k%3D1_a%3D1/20d583e15467fb39d06d48131767edc2',
-      // 'https://drscdn.500px.org/photo/215498077/m%3D2048_k%3D1_a%3D1/f79e906eb96938807f6f9d758fc652fd',
-      // 'https://drscdn.500px.org/photo/216559713/m%3D2048_k%3D1_a%3D1/393ef5251fa94964fe62cad52a416b7e',
-      // 'https://drscdn.500px.org/photo/214943889/m%3D2048_k%3D1_a%3D1/90bd2e3619dfcaae53fed683561aae1b',
-      // 'https://drscdn.500px.org/photo/216158509/m%3D2048_k%3D1_a%3D1/cf70d51aab6ca4c4a3c1ecc225c69990',
-      // 'https://drscdn.500px.org/photo/216111469/m%3D2048_k%3D1_a%3D1/d2d83296c838258095dbf2bffda70602',
-      // 'https://drscdn.500px.org/photo/216051623/m%3D2048_k%3D1_a%3D1/5a3732bb413f240ad71b8279b038a3ff',
-      // 'https://drscdn.500px.org/photo/216047335/m%3D2048_k%3D1_a%3D1/4237ac4606474f0ec7ccc05ca311772e',
-      // 'https://drscdn.500px.org/photo/216000289/m%3D2048_k%3D1_a%3D1/5ac2a21092f9281feef3ab8484d2b19c'
-    ]
-    this.setState({ images: images })
-  }
+  _bounce = (i) => {
+   this.refs['animate'+i].bounceIn(1000).then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
+  };
+ 
 
   _emojiButton = (items) => {
+    IconAnimated = Animatable.createAnimatableComponent(Icon);
     let buttons = items.map((item, i) =>{
         return (
-        <Button key={i} style={styles.buttonStyle} small transparent >
-          <Icon style={styles.icon} name={item.icon} />
-          <Text style={styles.iconText} uppercase={false}>{item.title}</Text>
+        <Button onPress={()=>this._bounce(i)} key={i} style={styles.buttonStyle} small transparent >
+          <IconAnimated ref={"animate"+i}
+           style={styles.icon} 
+           name={item.icon} />
+          <Text style={[styles.iconText,item.title === 'comment' && styles.commentPadding]} uppercase={false}>{item.title}</Text>
         </Button>
         );
+        
     })
     return buttons;
   };
 
-  _emojiButtonCount = (items) => {
-    let buttons = items.map((item, i) =>{
-        return (
-          <View key={i} style={[styles.listView,i !== 0  && {marginLeft : 15}]}>
-                <Icon style={styles.listItemIcon} name={item.icon} />
-                <Text style={styles.listItemText}>{item.count}</Text>
-              </View>
-        );
-    })
-    return buttons;
-  };
-
-
-
-  _showImage = (uri) =>{
-    console.log(uri);
-
- //   this.props.customNavigate('PhotoDetail',{source :uri, images : images});
+  
+  _EmojiCountOject(good,bad,happy,sad,comment,share){
+    return [
+      {icon : 'ios-thumbs-up', color : '#18dcff', count : good},
+      {icon : 'ios-thumbs-down',color : '#ff4d4d', count :bad},
+      {icon : 'ios-happy', color : '#ff9f43',count : happy},
+      {icon : 'ios-sad',color : '#8395a7', count : sad},
+      {icon : 'ios-chatbubbles', color : '#f368e0',count : comment},
+      {icon : 'ios-redo', color : '#01a3a4',count : share}
+    ];
   }
 
+  _EmojiButtonObject(){
+    return  [
+      {icon : 'ios-thumbs-up-outline', title : 'Good'},
+      {icon : 'ios-thumbs-down-outline', title : 'Bad'},
+      {icon : 'ios-happy-outline', title : 'Happy'},
+      {icon : 'ios-sad-outline', title : 'Sad'},
+      {icon : 'ios-chatbubbles-outline', title : 'Comment'},
+      {icon : 'ios-redo-outline', title : 'Share'}
+    ];
+  }
+
+  _emojiButtonCount = (items) => {
+    let allCount = 0;
+    let buttons = items.map((item, i) =>{
+      allCount+=item.count
+      /*item.count !== 0 &&*/ 
+      return <View key={i} style={[styles.listView,i !== 0  && {marginLeft : 15}]}>
+                <View style={[styles.listItemIconContainer,{backgroundColor : item.color}]}>
+                  <Icon style={[styles.listItemIcon]} name={item.icon} />
+                </View>
+                <Text style={[styles.listItemText,{color :  item.color, fontWeight : 'bold'}]}>{item.count}</Text>
+              
+              </View>
+      
+    })
+   // allCount !== 0 && 
+    return <ListItem icon style={styles.listItemStyle}>{buttons}</ListItem>;
+  };
 
   render() {
+    let EmojiCount = [];
     let photos = [];
     let videos = [];
     let audios = [];
@@ -110,16 +102,36 @@ export default class Post extends React.PureComponent {
     let post = [];
     let images = [];
     let sounds = [];
+    let count = {};
     const { originalPost } = this.props;
+
+    ButtonEmoji = this._EmojiButtonObject();
     if(originalPost.post_type === 'share'){
        shareUser = originalPost.user;
         user = originalPost.post.user;
         post = originalPost.post;
+        EmojiCount = this._EmojiCountOject(
+          post.good_emojis_count,
+          post.bad_emojis_count,
+          post.funny_emojis_count,
+          post.sad_emojis_count,
+          post.comments_count,
+          post.shares_count
+        )
+       
     }else if(originalPost.post_type === 'post'){
         user = originalPost.user;
         post = originalPost;
+        EmojiCount = this._EmojiCountOject(
+          originalPost.good_emojis_count,
+          originalPost.bad_emojis_count,
+          originalPost.funny_emojis_count,
+          originalPost.sad_emojis_count,
+          originalPost.comments_count,
+          originalPost.shares_count
+        )
     }
-   
+    
     if(post.type === 'image'){
      
       _.each(post.photos, function(val,i) { 
@@ -146,7 +158,6 @@ export default class Post extends React.PureComponent {
         })
       });
       audios = post.audios;
-      console.log(sounds);
     }
   
 
@@ -245,19 +256,19 @@ export default class Post extends React.PureComponent {
               {post.description}
                 </Text>
             </CardItem>
-            <ListItem icon style={styles.listItemStyle}>
+            
               {this._emojiButtonCount(EmojiCount)}
-            </ListItem>
+   
             <CardItem style={styles.cardButtonStyle}>
                 {this._emojiButton(ButtonEmoji)}
-                <Button style={styles.buttonStyle} small transparent>
+                {/* <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-chatbubbles-outline" />
                   <Text style={[styles.iconText,styles.commentPadding]} uppercase={false}>Comment</Text>
                 </Button>
                 <Button style={styles.buttonStyle} small transparent>
                   <Icon style={styles.icon} name="ios-redo-outline" />
                   <Text style={styles.iconText} uppercase={false}>Share</Text>
-                </Button>
+                </Button> */}
             </CardItem>
           </Card>
     );
@@ -280,13 +291,20 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-start', 
      borderTopWidth : 0.5, 
      borderColor : '#eeeeee',
-     height : 20,
+     height : 22,
      width :'92%',
      marginLeft : '4%'
     },
+    listItemIconContainer : {
+      width : 18, 
+      height : 18, 
+       borderRadius : 9,
+       justifyContent : 'center',
+       alignItems : 'center'
+      },
     listItemIcon : {
-      fontSize : 15, 
-      color : 'rgba(0,0,0,0.3)'
+      fontSize : 13, 
+      color : '#ffffff'
     },
     listItemText : {
       fontSize : 9, 

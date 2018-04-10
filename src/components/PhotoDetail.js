@@ -106,6 +106,11 @@ export default class ImageGallery extends React.PureComponent {
        // console.log(this.props);
         return (
             <View style={{ flex: 1 }} >
+                {this.state.images === null ? 
+                <View style={{flex: 1, backgroundColor : '#000000', justifyContent :'center'}}>
+                <ActivityIndicator size='large'/>
+                <Text style={{textAlign : 'center'}}>Loading....</Text>
+                </View> :
                 <Gallery
                   style={{flex: 1, backgroundColor: '#000000'}}
                   images={this.state.images}
@@ -113,6 +118,7 @@ export default class ImageGallery extends React.PureComponent {
                 //   onPageSelected={this.onChangeImage}
                   initialPage={this.state.index}
                 />
+            }
                 {/* { this.galleryCount }
                 { this.caption } */}
             </View>

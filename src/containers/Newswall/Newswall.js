@@ -156,8 +156,17 @@ class Newswall extends React.PureComponent {
             <Text style={{textAlign : 'center'}}>Loading....</Text>
         </View>
         );
+        // return [
+        //     {icon : 'ios-thumbs-up', color : '#18dcff', count : good},
+        //     {icon : 'ios-thumbs-down',color : '#ff4d4d', count :bad},
+        //     {icon : 'ios-happy', color : '#ff9f43',count : happy},
+        //     {icon : 'ios-sad',color : '#8395a7', count : sad},
+        //     {icon : 'ios-chatbubbles', color : '#f368e0',count : comment},
+        //     {icon : 'ios-redo', color : '#01a3a4',count : share}
+        //   ];
         return(
             <Wrapper>
+             
                 <View style={styles.statusBar} />
                 {this.state.firstLoad ?
                 firstLoad :

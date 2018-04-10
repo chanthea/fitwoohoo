@@ -75,12 +75,15 @@ export default class AudioDetail extends React.PureComponent {
         new PlaylistItem(
         'Track '+i+1,
           val.uri,
-        Global.IMAGE.AUDIO_POST
+        Global.IMAGE.AUDIO_POST_SONG
       )
     )
     });
     PLAYLIST = arr;
    this.index = navParams.source.index;
+  }
+  componentWillUnmount(){
+		this._onStopPressed();  
   }
 
 	componentDidMount() {
@@ -563,10 +566,11 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		minWidth: DEVICE_WIDTH - 40,
-		maxWidth: DEVICE_WIDTH - 40,
+    maxWidth: DEVICE_WIDTH - 40,
+    marginLeft : 5
 	},
 	volumeSlider: {
-		width: DEVICE_WIDTH - 80,
+		width: DEVICE_WIDTH - 70,
 	},
 	buttonsContainerBottomRow: {
 		alignSelf: 'stretch',
