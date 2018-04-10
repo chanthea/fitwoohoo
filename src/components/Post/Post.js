@@ -35,15 +35,25 @@ export default class Post extends React.PureComponent {
   };
  
 
-  _emojiButton = (items) => {
+  _emojiButton = (items, userLike) => {
     IconAnimated = Animatable.createAnimatableComponent(Icon);
     let buttons = items.map((item, i) =>{
         return (
         <Button onPress={()=>this._bounce(i)} key={i} style={styles.buttonStyle} small transparent >
           <IconAnimated ref={"animate"+i}
-           style={styles.icon} 
-           name={item.icon} />
-          <Text style={[styles.iconText,item.title === 'comment' && styles.commentPadding]} uppercase={false}>{item.title}</Text>
+           style={[styles.icon, 
+            userLike.length > 0 && (userLike[0].like === item.id && {color : item.color, fontSize : 18})
+          ]} 
+           name={userLike.length > 0 && userLike[0].like === item.id ? item.NIcon : item.icon} />
+          <Text 
+          style={[
+            styles.iconText,
+            item.title === 'comment' && styles.commentPadding,
+           userLike.length > 0 && (userLike[0].like === item.id && {color : item.color})
+          
+          ]} 
+           
+           uppercase={false}>{item.title}</Text>
         </Button>
         );
         
@@ -54,8 +64,8 @@ export default class Post extends React.PureComponent {
   
   _EmojiCountOject(good,bad,happy,sad,comment,share){
     return [
-      {icon : 'ios-thumbs-up', color : '#18dcff', count : good},
-      {icon : 'ios-thumbs-down',color : '#ff4d4d', count :bad},
+      {icon : 'ios-thumbs-up',  color : '#18dcff', count : good},
+      {icon : 'ios-thumbs-down', color : '#ff4d4d', count :bad},
       {icon : 'ios-happy', color : '#ff9f43',count : happy},
       {icon : 'ios-sad',color : '#8395a7', count : sad},
       {icon : 'ios-chatbubbles', color : '#f368e0',count : comment},
@@ -65,12 +75,12 @@ export default class Post extends React.PureComponent {
 
   _EmojiButtonObject(){
     return  [
-      {icon : 'ios-thumbs-up-outline', title : 'Good'},
-      {icon : 'ios-thumbs-down-outline', title : 'Bad'},
-      {icon : 'ios-happy-outline', title : 'Happy'},
-      {icon : 'ios-sad-outline', title : 'Sad'},
-      {icon : 'ios-chatbubbles-outline', title : 'Comment'},
-      {icon : 'ios-redo-outline', title : 'Share'}
+      {icon : 'ios-thumbs-up-outline', NIcon:'ios-thumbs-up', color : '#18dcff',title : 'Good', id : 1},
+      {icon : 'ios-thumbs-down-outline', NIcon:'ios-thumbs-down', color : '#ff4d4d', title : 'Bad', id : 0},
+      {icon : 'ios-happy-outline', NIcon:'ios-happy', color : '#ff9f43', title : 'Happy', id : 2},
+      {icon : 'ios-sad-outline', NIcon:'ios-sad', color : '#8395a7', title : 'Sad', id : 3},
+      {icon : 'ios-chatbubbles-outline', NIcon:'ios-chatbubbles', color : '#f368e0', title : 'Comment', id : 20},
+      {icon : 'ios-redo-outline', NIcon:'ios-redo', color : '#01a3a4',title : 'Share', id : 10}
     ];
   }
 
@@ -262,19 +272,9 @@ export default class Post extends React.PureComponent {
               {post.description}
                 </Text>
             </CardItem>
-            
               {this._emojiButtonCount(EmojiCount)}
-   
             <CardItem style={styles.cardButtonStyle}>
-                {this._emojiButton(ButtonEmoji)}
-                {/* <Button style={styles.buttonStyle} small transparent>
-                  <Icon style={styles.icon} name="ios-chatbubbles-outline" />
-                  <Text style={[styles.iconText,styles.commentPadding]} uppercase={false}>Comment</Text>
-                </Button>
-                <Button style={styles.buttonStyle} small transparent>
-                  <Icon style={styles.icon} name="ios-redo-outline" />
-                  <Text style={styles.iconText} uppercase={false}>Share</Text>
-                </Button> */}
+                {this._emojiButton(ButtonEmoji,post.user_like_dislike)}
             </CardItem>
           </Card>
     );
