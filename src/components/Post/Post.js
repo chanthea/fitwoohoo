@@ -189,11 +189,14 @@ export default class Post extends React.PureComponent {
                     </View>
                   </Body>
                 </Left>
-                <Right>
-                    <Button transparent light style={styles.option}>
+                {originalPost.is_Owner &&
+                  <Right>
+                  <Button transparent light style={styles.option}>
                     <Icon name="md-more" type="Ionicons" style={styles.optionButtonIcon}/>
                   </Button>
                 </Right>
+                }
+                
             </CardItem>
             <CardItem>
             <Text style={styles.postText}>
@@ -224,11 +227,14 @@ export default class Post extends React.PureComponent {
                   </View>
                 </Body>
               </Left>
-              <Right>
+              {post.is_Owner && 
+               <Right>
                 <Button transparent light style={styles.option}>
                 <Icon name="md-more" type="Ionicons" style={styles.optionButtonIcon}/>
               </Button>
             </Right>
+              }
+             
             </CardItem>
             {post.type === 'image' ? 
             (<CardItem cardBody>
@@ -289,11 +295,11 @@ const styles = StyleSheet.create({
     listView : {flexDirection : 'row'},
     listItemStyle : {
       justifyContent: 'flex-start', 
-     borderTopWidth : 0.5, 
-     borderColor : '#eeeeee',
-     height : 22,
+   //  borderTopWidth : 0.5, 
+   //  borderColor : '#eeeeee',
+     height : 40,
      width :'92%',
-     marginLeft : '4%'
+     marginLeft : '4%',
     },
     listItemIconContainer : {
       width : 18, 

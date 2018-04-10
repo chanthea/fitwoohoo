@@ -83,7 +83,7 @@ export default class AudioDetail extends React.PureComponent {
    this.index = navParams.source.index;
   }
   componentWillUnmount(){
-		this._onStopPressed();  
+	this._onStopPressed();  
   }
 
 	componentDidMount() {
