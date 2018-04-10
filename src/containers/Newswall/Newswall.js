@@ -7,6 +7,7 @@ import Post from '../../components/Post/Post';
 import {FlatList, StatusBar, StyleSheet, ActivityIndicator, Dimensions} from 'react-native';
 import { Constants } from 'expo';
 import axios from '../../config/axios/axiosWithToken';
+import FAB from 'react-native-fab'
 
 
 class Newswall extends React.PureComponent {
@@ -15,6 +16,7 @@ class Newswall extends React.PureComponent {
     }
     constructor(props) {
         super(props);
+        this.scrollPosition = 0;
         this.state = {
           firstLoad : true,
           active: false,
@@ -25,12 +27,14 @@ class Newswall extends React.PureComponent {
           error: null,
           refreshing: false,
           noPost : false,
+          visible : true
         };
     }
     _handleRefresh = ()=>{
         this.setState({
             offset : 0,
             refreshing : true,
+
         }, ()=>{
             this._makeRemoteRequest();
         });
@@ -134,9 +138,20 @@ class Newswall extends React.PureComponent {
             </View>
         </View>
       }
-    
-
+      _hanldeScroll = (event) => {
+        let position = event.nativeEvent.contentOffset.y;
+        if(this.scrollPosition > position){
+            this.setState({visible : true});
+        } else{
+            this.setState({visible : false});
+        }
+       
+      }
+      _hanldeScrollEnd = (event) =>{
+        this.scrollPosition = event.nativeEvent.contentOffset.y;
+      }
     render(){
+    
         const renderNoPost = (
              <View style={{flexGrow : 1, backgroundColor :'white' }}>
                 <SearchTab  
@@ -156,14 +171,6 @@ class Newswall extends React.PureComponent {
             <Text style={{textAlign : 'center'}}>Loading....</Text>
         </View>
         );
-        // return [
-        //     {icon : 'ios-thumbs-up', color : '#18dcff', count : good},
-        //     {icon : 'ios-thumbs-down',color : '#ff4d4d', count :bad},
-        //     {icon : 'ios-happy', color : '#ff9f43',count : happy},
-        //     {icon : 'ios-sad',color : '#8395a7', count : sad},
-        //     {icon : 'ios-chatbubbles', color : '#f368e0',count : comment},
-        //     {icon : 'ios-redo', color : '#01a3a4',count : share}
-        //   ];
         return(
             <Wrapper>
              
@@ -189,15 +196,17 @@ class Newswall extends React.PureComponent {
                     onRefresh={this._handleRefresh}
                     onEndReached={this._handleLoadMore}
                     onEndReachedThreshold={5}
+                    onScroll={this._hanldeScroll}
+                    scrollEventThrottle={16}
+                    onScrollEndDrag={this._hanldeScrollEnd}
                 
                 />}
-                
-                
-                  {/* <Fab 
-              postPressed = {this._onPressPost}
-              active = {this.state.active}
-              longPressed = {() => this.setState({ active: !this.state.active })}
-              />     */}
+                    <FAB 
+                    buttonColor={ Global.COLOR.MAIN}
+                    iconTextColor="#FFFFFF" 
+                    onClickAction={this._onPressPost}
+                    visible={this.state.visible}
+                     iconTextComponent={<Icon name="plus" type="FontAwesome"/>} />
                   
             </Wrapper>
             

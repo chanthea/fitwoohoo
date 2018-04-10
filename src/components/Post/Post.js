@@ -14,7 +14,8 @@ import {
   Right,
   Left, 
   Body,
-  ListItem } from 'native-base';
+  ListItem,
+  ActionSheet } from 'native-base';
   import Global from '../../globals/Globals';
   import PhotoGrid from 'react-native-thumbnail-grid';
   import emojiButtom from './emojiButton';
@@ -31,7 +32,8 @@ export default class Post extends React.PureComponent {
   }
 
   _bounce = (i) => {
-   this.refs['animate'+i].bounceIn(1000).then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
+   this.refs['animate'+i].bounceIn(1000);
+  //  .then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
   };
  
 
@@ -82,6 +84,28 @@ export default class Post extends React.PureComponent {
       {icon : 'ios-chatbubbles-outline', NIcon:'ios-chatbubbles', color : '#f368e0', title : 'Comment', id : 20},
       {icon : 'ios-redo-outline', NIcon:'ios-redo', color : '#01a3a4',title : 'Share', id : 10}
     ];
+  }
+
+  _actionOptions = () => {
+    let BUTTONS = [
+      { text: "Edit Post", icon: "ios-construct-outline",  iconColor: "#3498db" },
+      { text: "Remove Post", icon: "ios-backspace-outline", iconColor: "#e74c3c" },
+      { text: "Cancel", icon: "ios-power-outline", iconColor: "#95a5a6" }
+    ];
+    const DESTRUCTIVE_INDEX = 1;
+    const CANCEL_INDEX = 2;
+    ActionSheet.show(
+      {
+        options: BUTTONS,
+        cancelButtonIndex: CANCEL_INDEX,
+        destructiveButtonIndex: DESTRUCTIVE_INDEX,
+        title: "What you wanna do ?"
+      },
+      buttonIndex => {
+       // console.log(BUTTONS[buttonIndex]);
+       // this.setState({ clicked: BUTTONS[buttonIndex] });
+      }
+    )
   }
 
   _emojiButtonCount = (items) => {
@@ -201,7 +225,7 @@ export default class Post extends React.PureComponent {
                 </Left>
                 {originalPost.is_Owner &&
                   <Right>
-                  <Button transparent light style={styles.option}>
+                  <Button transparent onPress={()=>this._actionOptions(post.id)} light style={styles.optionButton}>
                     <Icon name="md-more" type="Ionicons" style={styles.optionButtonIcon}/>
                   </Button>
                 </Right>
@@ -239,7 +263,7 @@ export default class Post extends React.PureComponent {
               </Left>
               {post.is_Owner && 
                <Right>
-                <Button transparent light style={styles.option}>
+                <Button transparent onPress={()=>this._actionOptions(post.id)} light style={styles.option}>
                 <Icon name="md-more" type="Ionicons" style={styles.optionButtonIcon}/>
               </Button>
             </Right>
@@ -290,8 +314,15 @@ const styles = StyleSheet.create({
       borderRightWidth : 0.4, 
       borderColor : 'rgba(0,0,0,0.3)',
       borderRadius : 5},
-    optionButton : {height : 30},
-    optionButtonIcon : {color : 'rgba(0,0,0,0.8)', alignSelf :'flex-start', fontSize : 20, paddingTop : 3},
+    optionButton : {},
+    optionButtonIcon : {
+      color : 'rgba(0,0,0,0.8)', 
+       alignSelf :'flex-start',
+      textAlign : 'right', 
+      fontSize : 20, 
+      paddingTop : 3, 
+      width : 30
+    },
     listView : {flexDirection : 'row'},
     listItemStyle : {
       justifyContent: 'flex-start', 
