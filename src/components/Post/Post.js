@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet, View, TouchableOpacity, Image, Platform} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Image, Platform, Alert} from 'react-native';
 import TimeAgo from 'react-native-timeago';
 import { 
   Container, 
@@ -21,6 +21,7 @@ import {
   import emojiButtom from './emojiButton';
   import _ from 'lodash';
   import * as Animatable from 'react-native-animatable';
+  import axios from '../../config/axios/axiosWithToken';
 
 export default class Post extends React.PureComponent {
 
@@ -32,9 +33,16 @@ export default class Post extends React.PureComponent {
   }
 
   _bounce = (i) => {
-   this.refs['animate'+i].bounceIn(1000);
-  //  .then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
+   this.refs['animate'+i].bounceIn(1000)
+   .then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
+  //this._onPress(post);
   };
+
+  // _onHandleEmojiClick = async() =>{
+  //   axios.
+  // }
+
+ 
  
 
   _emojiButton = (items, userLike) => {
@@ -86,11 +94,11 @@ export default class Post extends React.PureComponent {
     ];
   }
 
-  _actionOptions = () => {
+  _actionOptions = (post, typePost) => {
     let BUTTONS = [
-      { text: "Edit Post", icon: "ios-construct-outline",  iconColor: "#3498db" },
-      { text: "Remove Post", icon: "ios-backspace-outline", iconColor: "#e74c3c" },
-      { text: "Cancel", icon: "ios-power-outline", iconColor: "#95a5a6" }
+      { text: "Edit Post", icon: "ios-construct-outline", type : "edit",  iconColor: "#3498db" },
+      { text: "Remove Post", icon: "ios-backspace-outline", type : "delete",iconColor: "#e74c3c" },
+      { text: "Cancel", icon: "ios-power-outline", type : "cancel", iconColor: "#95a5a6" }
     ];
     const DESTRUCTIVE_INDEX = 1;
     const CANCEL_INDEX = 2;
@@ -102,11 +110,41 @@ export default class Post extends React.PureComponent {
         title: "What you wanna do ?"
       },
       buttonIndex => {
-       // console.log(BUTTONS[buttonIndex]);
+        let type = BUTTONS[buttonIndex].type;
+        if(type === 'delete'){
+          console.log(post, typePost);
+          Alert.alert(
+            'Are you sure ? ',
+            'You want to remove this '+typePost+ '?',
+            [
+              {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: 'Delete', onPress: () => this._onDelete(post,typePost)},
+            ],
+            { cancelable: false }
+          )
+        // this._onDelete(post, type)
+        }
        // this.setState({ clicked: BUTTONS[buttonIndex] });
+       
       }
     )
   }
+
+  
+
+  _onDelete = async(post, type) => {
+    axios.delete('/post/'+type+'/'+post)
+        .then(res => {
+          console.log(res.data);
+          this._onUpdateList(type,post);
+        }).catch(error =>{
+          console.log(error.response);
+        });
+  }
+
+  _onUpdateList = (type,id) => {
+    this.props.onPressItem(type+'_'+id);
+  };
 
   _emojiButtonCount = (items) => {
     let allCount = 0;
@@ -225,7 +263,7 @@ export default class Post extends React.PureComponent {
                 </Left>
                 {originalPost.is_Owner &&
                   <Right>
-                  <Button transparent onPress={()=>this._actionOptions(post.id)} light style={styles.optionButton}>
+                  <Button transparent onPress={()=>this._actionOptions(originalPost.id, 'share')} light style={styles.optionButton}>
                     <Icon name="md-more" type="Ionicons" style={styles.optionButtonIcon}/>
                   </Button>
                 </Right>
@@ -298,7 +336,7 @@ export default class Post extends React.PureComponent {
             </CardItem>
               {this._emojiButtonCount(EmojiCount)}
             <CardItem style={styles.cardButtonStyle}>
-                {this._emojiButton(ButtonEmoji,post.user_like_dislike)}
+                {this._emojiButton(ButtonEmoji,post.user_like_dislike,originalPost)}
             </CardItem>
           </Card>
     );

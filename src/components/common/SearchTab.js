@@ -18,7 +18,7 @@ class SearchTab extends Component {
                 <Icon style={styles.iconStyle} name="md-options"/>
           </Button>
           <Body>
-            <Title>Newswall</Title>
+            <Title style={{color : '#ffffff'}}>Newswall</Title>
           </Body>
         
           {/* <Button small light transparent block

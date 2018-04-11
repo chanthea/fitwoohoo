@@ -27,7 +27,8 @@ class Newswall extends React.PureComponent {
           error: null,
           refreshing: false,
           noPost : false,
-          visible : true
+          visible : true,
+          selected: null
         };
     }
     _handleRefresh = ()=>{
@@ -104,13 +105,11 @@ class Newswall extends React.PureComponent {
       _renderHeader = ()=>{
             return(
             <SearchTab  
-            hasMargin={false}
+            hasMargin={true}
             searchPressed ={()=>this.props.navigation.navigate('GeneralSearch')}
             menuPressed={()=>this.props.navigation.navigate('DrawerOpen')}/>
         );
       }
-      
-     
       _renderFooter = () => {
         if (!this.state.loading) return null;
         return (
@@ -150,8 +149,14 @@ class Newswall extends React.PureComponent {
       _hanldeScrollEnd = (event) =>{
         this.scrollPosition = event.nativeEvent.contentOffset.y;
       }
-    render(){
+
+      _onPressItem = (id) => {
+        this.setState({
+            selected : id
+        });
+      };
     
+      render(){
         const renderNoPost = (
              <View style={{flexGrow : 1, backgroundColor :'white' }}>
                 <SearchTab  
@@ -164,7 +169,6 @@ class Newswall extends React.PureComponent {
                 </View>
             </View>
         );
-    
         const firstLoad =  (
              <View style={{flexGrow: 1, backgroundColor : 'white', justifyContent :'center'}}>
             <ActivityIndicator size='large'/>
@@ -174,33 +178,40 @@ class Newswall extends React.PureComponent {
         return(
             <Wrapper>
              
-                <View style={styles.statusBar} />
+                {/* <View style={styles.statusBar} /> */}
                 {this.state.firstLoad ?
                 firstLoad :
                 this.state.noPost === true ?
                 renderNoPost
                  :
-                  <FlatList 
-                    style={styles.container}
-                    data={this.state.data}
-                    renderItem={({ item }) => (
-                        <Post 
-                        originalPost={item}
-                        customNavigate = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
-                        />
-                    )}
-                   keyExtractor={(item, index) => index+1}
-                    ListHeaderComponent={this._renderHeader}
-                    ListFooterComponent={this.renderFooter}
-                    refreshing={this.state.refreshing}
-                    onRefresh={this._handleRefresh}
-                    onEndReached={this._handleLoadMore}
-                    onEndReachedThreshold={5}
-                    onScroll={this._hanldeScroll}
-                    scrollEventThrottle={16}
-                    onScrollEndDrag={this._hanldeScrollEnd}
+                    <View>
+                        {this._renderHeader()}
+                        <FlatList 
+                            style={styles.container}
+                            data={this.state.data}
+                            extraData={this.state}
+                            renderItem={({ item }) => (
+                                <Post 
+                                onPressItem={this._onPressItem}
+                                originalPost={item}
+                                customNavigate = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
+                                selected={this.state.selected}
+                                />
+                            )}
+                            keyExtractor={(item, index) => item.post_type === 'share' ? 'share_'+item.id : 'post_'+item.id}
+                            ListFooterComponent={this.renderFooter}
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._handleRefresh}
+                            onEndReached={this._handleLoadMore}
+                            onEndReachedThreshold={5}
+                            onScroll={this._hanldeScroll}
+                            scrollEventThrottle={16}
+                            onScrollEndDrag={this._hanldeScrollEnd}
+                            />
                 
-                />}
+                    </View>
+                  }
+                  
                     <FAB 
                     buttonColor={ Global.COLOR.MAIN}
                     iconTextColor="#FFFFFF" 
