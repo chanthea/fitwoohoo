@@ -7,7 +7,8 @@ import Post from '../../components/Post/Post';
 import {FlatList, StatusBar, StyleSheet, ActivityIndicator, Dimensions} from 'react-native';
 import { Constants } from 'expo';
 import axios from '../../config/axios/axiosWithToken';
-import FAB from 'react-native-fab'
+import FAB from 'react-native-fab';
+import _ from 'lodash';
 
 
 class Newswall extends React.PureComponent {
@@ -68,7 +69,7 @@ class Newswall extends React.PureComponent {
             params: {
                 limit : 4,offset : offset
             }}).then(res => {
-               // console.log(res.data);
+              // console.log(res.data);
               if(res.data.length === 0){
                 if(this.state.firstLoad === true){
                     this.setState({ firstLoad: false, noPost : true });
@@ -150,13 +151,48 @@ class Newswall extends React.PureComponent {
         this.scrollPosition = event.nativeEvent.contentOffset.y;
       }
 
-      _onPressItem = (id) => {
-        this.setState({
-            selected : id
+      _onRemoveItem = (id) =>{
+
+        const {data} = this.state;
+        let newData = data.filter((val, i) => {
+          return val.post_type+'_'+val.id !== id
         });
-      };
+        this.setState({data: newData})
+      }
+
+      _onAddItem = () => {
+
+      }
+
+      _onEditItem = (item) =>{
+        const {data} = this.state;
+        let newData = data.map((val, i) => {
+            if(val.post_type === 'share'){
+                if(item.isShare){
+                    if(val.post_type+'_'+val.id === item.share.id){
+                        val = item.share.val
+                    }else if('post_'+val.post.id === item.post.id){
+                        val.post = item.post.val   
+                    }
+                }else{
+                    if('post_'+val.post.id === item.post.id){
+                        val.post = item.post.val
+                    }
+                }
+                return val;
+            }else{
+                if(val.post_type+'_'+val.id === item.post.id){
+                    val = item.post.val
+                }
+                return val;
+            }
+        });
+        this.setState({data: newData})
+      }
+
     
       render(){
+        //  console.log(this.state.data);
         const renderNoPost = (
              <View style={{flexGrow : 1, backgroundColor :'white' }}>
                 <SearchTab  
@@ -173,11 +209,17 @@ class Newswall extends React.PureComponent {
              <View style={{flexGrow: 1, backgroundColor : 'white', justifyContent :'center'}}>
             <ActivityIndicator size='large'/>
             <Text style={{textAlign : 'center'}}>Loading....</Text>
-        </View>
+            </View>
         );
+
+        // this.state.data.map((val,i) => {
+        //     val.indexId = i;
+        // })
+        // console.log(this.state.data);
+
         return(
+            
             <Wrapper>
-             
                 {/* <View style={styles.statusBar} /> */}
                 {this.state.firstLoad ?
                 firstLoad :
@@ -189,21 +231,22 @@ class Newswall extends React.PureComponent {
                         <FlatList 
                             style={styles.container}
                             data={this.state.data}
-                            extraData={this.state}
+                            //extraData={this.state}
                             renderItem={({ item }) => (
                                 <Post 
-                                onPressItem={this._onPressItem}
+                                // onPressItem={this._onPressItem}
                                 originalPost={item}
                                 customNavigate = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
-                                selected={this.state.selected}
+                                removeItem={this._onRemoveItem}
+                                editItem = {this._onEditItem}
                                 />
                             )}
-                            keyExtractor={(item, index) => item.post_type === 'share' ? 'share_'+item.id : 'post_'+item.id}
+                            keyExtractor={(item, index) => item.post_type+'_'+item.id}
                             ListFooterComponent={this.renderFooter}
                             refreshing={this.state.refreshing}
                             onRefresh={this._handleRefresh}
-                            onEndReached={this._handleLoadMore}
-                            onEndReachedThreshold={5}
+                        //    onEndReached={this._handleLoadMore}
+                        //    onEndReachedThreshold={5}
                             onScroll={this._hanldeScroll}
                             scrollEventThrottle={16}
                             onScrollEndDrag={this._hanldeScrollEnd}
@@ -211,13 +254,13 @@ class Newswall extends React.PureComponent {
                 
                     </View>
                   }
-                  
+                  {!this.state.firstLoad &&
                     <FAB 
                     buttonColor={ Global.COLOR.MAIN}
                     iconTextColor="#FFFFFF" 
                     onClickAction={this._onPressPost}
                     visible={this.state.visible}
-                     iconTextComponent={<Icon name="plus" type="FontAwesome"/>} />
+                     iconTextComponent={<Icon name="plus" type="FontAwesome"/>} /> }
                   
             </Wrapper>
             
@@ -235,7 +278,7 @@ const styles = StyleSheet.create({
     container : { 
         flexGrow: 1, 
         backgroundColor : '#ffffff',
-        height: height - 30
+        height: height - 128
      }
 
   });

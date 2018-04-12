@@ -171,8 +171,10 @@ export default class LoginForm extends Component{
     try {
       this.setState({logging : true});
       const response = await axios.post('/auth/register',currentState);
-      console.log(response.data);
-      this.props.registerSuccess('Login', {status : 'success',message:'We sent you an activation link. Please kindly check your mail.'});
+    //  console.log(response.data);
+      this.props.registerSuccess('Login',
+       {status : 'success',message:'We sent you an activation link. Please kindly check your mail.'}
+      );
       this.setState({logging : false});
     } catch (error) {
       let data= error.response.data;

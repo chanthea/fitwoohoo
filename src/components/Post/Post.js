@@ -15,6 +15,7 @@ import {
   Left, 
   Body,
   ListItem,
+  Toast,
   ActionSheet } from 'native-base';
   import Global from '../../globals/Globals';
   import PhotoGrid from 'react-native-thumbnail-grid';
@@ -26,30 +27,143 @@ import {
 export default class Post extends React.PureComponent {
 
   constructor(props){
+    
     super(props)
     this.state = {
       images: []
     }
   }
 
-  _bounce = (i) => {
-   this.refs['animate'+i].bounceIn(1000)
-   .then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
-  //this._onPress(post);
+  _bounce = (item,i,post) => {
+    //console.log(post.id)
+   this.refs['animate'+i].swing(1000);
+  //  .then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
+    if(item.id !== 'share' && item.id !== 'comment'){
+     this._onHandleEmojiClick(post, item.id);
+    }
   };
 
-  // _onHandleEmojiClick = async() =>{
-  //   axios.
-  // }
+  _onHandleEmojiClick = async(post, emoji_id) =>{
+    let id;
+    let isShare = false;
+    if(post.post_type === 'share'){
+      id = post.post.id;
+      isShare = true;
+    }else{
+      id = post.id
+    }
+    axios.put('/emojis/post/'+id,{ emoji_id : emoji_id })
+    .then(res => {
+      //console.log(res);
+        let data = this._editSingleShare(post,emoji_id);
+       // console.log(data);
+        if(isShare){
+          data.post.post_type = 'post';
+                data = {
+                  share : {
+                    val : data,
+                    id : data.post_type+'_'+data.id
+                  },
+                  post :{
+                    val : data.post,
+                    id : data.post.post_type+'_'+id
+                  },
+                  isShare : isShare
+                }
+                
+        }else{
+            data = {
+              post :{
+                val : data,
+                id : data.post_type+'_'+id
+              },
+              isShare : isShare
+            }
+        }
+        this.props.editItem(data)
+    }).catch(error => {
+        Toast.show({
+          text: 'Server not responding !',
+          position: 'bottom',
+        });
+    })
+  }
+
+  _editSingleShare(data,emoji_id){
+    if(data.post_type === 'share'){
+      post = data.post;
+    }else{
+      post = data;
+    }
+    if(post.user_like_dislike.length === 0){
+        this._increaseEmojiCount(emoji_id,post);
+        post.user_like_dislike[0] = {
+          id_post: post.id,
+          id_user: post.id_user,
+          like: emoji_id,
+        }
+        return data;
+        
+    }else{
+      let likeId = post.user_like_dislike[0].like;
+  
+      if(likeId === emoji_id){
+        post.user_like_dislike.length = 0;
+        this._decreateEmojiCount(emoji_id,post);
+        
+      }else{
+        this._increaseEmojiCount(emoji_id,post);
+        this._decreateEmojiCount(likeId,post);
+        post.user_like_dislike[0].like=emoji_id; 
+      }
+      return data;
+    }
+   
+  }
+
+  _increaseEmojiCount(emoji_id,data){
+    if(data.post_type === 'share'){
+      post = data.post;
+    }else{
+      post = data;
+    }
+    if(emoji_id === 0){
+      post.bad_emojis_count++;
+    }else if(emoji_id === 1){
+      post.good_emojis_count++;
+    }else if(emoji_id === 2){
+      post.funny_emojis_count++;
+    }else if(emoji_id === 3){
+      post.sad_emojis_count++
+    }
+  }
+  _decreateEmojiCount(emoji_id,data){
+    if(data.post_type === 'share'){
+      post = data.post;
+    }else{
+      post = data;
+    }
+    if(emoji_id === 0){
+      post.bad_emojis_count--;
+    }else if(emoji_id === 1){
+      post.good_emojis_count--;
+    }else if(emoji_id === 2){
+      post.funny_emojis_count--;
+    }else if(emoji_id === 3){
+      post.sad_emojis_count--;
+    }
+  }
+
+  
 
  
  
 
-  _emojiButton = (items, userLike) => {
+  _emojiButton = (items, userLike, post) => {
     IconAnimated = Animatable.createAnimatableComponent(Icon);
     let buttons = items.map((item, i) =>{
         return (
-        <Button onPress={()=>this._bounce(i)} key={i} style={styles.buttonStyle} small transparent >
+        <Button onPress={()=>this._bounce(item,i,post)} key={item.id} style={styles.buttonStyle} small transparent >
           <IconAnimated ref={"animate"+i}
            style={[styles.icon, 
             userLike.length > 0 && (userLike[0].like === item.id && {color : item.color, fontSize : 18})
@@ -60,9 +174,7 @@ export default class Post extends React.PureComponent {
             styles.iconText,
             item.title === 'comment' && styles.commentPadding,
            userLike.length > 0 && (userLike[0].like === item.id && {color : item.color})
-          
           ]} 
-           
            uppercase={false}>{item.title}</Text>
         </Button>
         );
@@ -86,11 +198,11 @@ export default class Post extends React.PureComponent {
   _EmojiButtonObject(){
     return  [
       {icon : 'ios-thumbs-up-outline', NIcon:'ios-thumbs-up', color : '#18dcff',title : 'Good', id : 1},
-      {icon : 'ios-thumbs-down-outline', NIcon:'ios-thumbs-down', color : '#ff4d4d', title : 'Bad', id : 0},
-      {icon : 'ios-happy-outline', NIcon:'ios-happy', color : '#ff9f43', title : 'Happy', id : 2},
+      {icon : 'ios-thumbs-down-outline', NIcon:'ios-thumbs-down', color : '#ff4d4d', title : 'Disfavor', id : 0},
+      {icon : 'ios-happy-outline', NIcon:'ios-happy', color : '#ff9f43', title : 'Funny', id : 2},
       {icon : 'ios-sad-outline', NIcon:'ios-sad', color : '#8395a7', title : 'Sad', id : 3},
-      {icon : 'ios-chatbubbles-outline', NIcon:'ios-chatbubbles', color : '#f368e0', title : 'Comment', id : 20},
-      {icon : 'ios-redo-outline', NIcon:'ios-redo', color : '#01a3a4',title : 'Share', id : 10}
+      {icon : 'ios-chatbubbles-outline', NIcon:'ios-chatbubbles', color : '#f368e0', title : 'Comment', id : 'comment'},
+      {icon : 'ios-redo-outline', NIcon:'ios-redo', color : '#01a3a4',title : 'Share', id : 'share'}
     ];
   }
 
@@ -112,7 +224,7 @@ export default class Post extends React.PureComponent {
       buttonIndex => {
         let type = BUTTONS[buttonIndex].type;
         if(type === 'delete'){
-          console.log(post, typePost);
+         // console.log(post, typePost);
           Alert.alert(
             'Are you sure ? ',
             'You want to remove this '+typePost+ '?',
@@ -135,33 +247,32 @@ export default class Post extends React.PureComponent {
   _onDelete = async(post, type) => {
     axios.delete('/post/'+type+'/'+post)
         .then(res => {
-          console.log(res.data);
-          this._onUpdateList(type,post);
+         // console.log(res.data);
+          this.props.removeItem(type+'_'+post);
         }).catch(error =>{
-          console.log(error.response);
+        //  console.log(error.response);
         });
   }
 
-  _onUpdateList = (type,id) => {
-    this.props.onPressItem(type+'_'+id);
-  };
 
   _emojiButtonCount = (items) => {
     let allCount = 0;
     let buttons = items.map((item, i) =>{
       allCount+=item.count
       /*item.count !== 0 &&*/ 
-      return <View key={i} style={[styles.listView,i !== 0  && {marginLeft : 15}]}>
+      return item.count !== 0 && <View key={i} style={[styles.listView]}>
                 <View style={[styles.listItemIconContainer,{backgroundColor : item.color}]}>
                   <Icon style={[styles.listItemIcon]} name={item.icon} />
                 </View>
-                <Text style={[styles.listItemText,{color :  item.color, fontWeight : 'bold'}]}>{item.count}</Text>
+                <Text style={[styles.listItemText,
+                  {color :  item.color, fontWeight : 'bold', marginRight : 15}]}>
+                {item.count}</Text>
               
               </View>
       
     })
    // allCount !== 0 && 
-    return <ListItem icon style={styles.listItemStyle}>{buttons}</ListItem>;
+    return allCount !== 0 && <ListItem icon style={styles.listItemStyle}>{buttons}</ListItem>;
   };
 
   render() {
@@ -176,7 +287,6 @@ export default class Post extends React.PureComponent {
     let sounds = [];
     let count = {};
     const { originalPost } = this.props;
-
     ButtonEmoji = this._EmojiButtonObject();
     if(originalPost.post_type === 'share'){
        shareUser = originalPost.user;
@@ -301,7 +411,7 @@ export default class Post extends React.PureComponent {
               </Left>
               {post.is_Owner && 
                <Right>
-                <Button transparent onPress={()=>this._actionOptions(post.id)} light style={styles.option}>
+                <Button transparent onPress={()=>this._actionOptions(post.id,'post')} light style={styles.option}>
                 <Icon name="md-more" type="Ionicons" style={styles.optionButtonIcon}/>
               </Button>
             </Right>
