@@ -33,7 +33,6 @@ class CommentList extends React.PureComponent {
           marginBottom : 0,
           height : 40
         };
-       
       }
   
   componentWillReceiveProps(nextProps){

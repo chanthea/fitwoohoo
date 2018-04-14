@@ -82,7 +82,7 @@ class Newswall extends React.PureComponent {
                     refreshing: false,
                   });
               }else{
-                  this._openComment(res.data[0]);
+               //   this._openComment(res.data[0]);
                 this.setState({
                     data: offset === 0 ? res.data : [...this.state.data, ...res.data],
                     error: res.error || null,

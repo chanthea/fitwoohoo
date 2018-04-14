@@ -15,25 +15,26 @@ export default class CommentInput extends React.PureComponent{
         super();
         this.state = {
               textValue: '',
-              marginBottom : 0,
+              marginBottom : 22,
               height : 40
             };
         
     }
-    componentDidMount(){
-        //this._onCheckKeyboard();
-    }
-
-    _onCheckKeyboard(){
-        Keyboard.addListener('keyboardDidShow',(frames)=>{
+    componentDidMount () {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ()=>{
             this.setState({marginBottom: 22});
         });
-        Keyboard.addListener('keyboardDidHide',(frames)=>{
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide',()=>{
             this.setState({marginBottom:0});
         });
-    }
+      }
     
+    componentWillUnmount () {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
   _onChange(event) {
+    this._onCheckKeyboard()
     this.setState({ textValue: event.nativeEvent.text || '' });
   }
 
@@ -50,6 +51,7 @@ export default class CommentInput extends React.PureComponent{
                 onContentSizeChange={(event) => {
                     this.setState({ height: event.nativeEvent.contentSize.height })
                 }}
+                onSubmitEditing={Keyboard.dismiss}
                 maxHeight={70}
                 minHeight={40}
                 autoCorrect={false}
