@@ -18,18 +18,26 @@ import { GeneralSearch, PostPage, Library, ActivityList, ScheduleList, ClassList
 import PhotoDetail from '../PhotoDetail';
 import VideoDetail from '../VideoDetail';
 import AudioDetail from '../AudioDetail';
+import CommentDetail from '../../components/Comment/Comment';
 import  Profile from '../../containers/Profile/Profile';
+
+
 
 
 const RootNavLoggedTab = TabNavigator({
     NewsWall : {screen  : StackNavigator({
       NewsWallHome : {
         screen : Newswall,
-        navigationOptions: {
-          mode: 'modal',
-          headerMode: 'none',
-          header : null,
-        }
+        navigationOptions: ({ navigation }) => {
+        
+            const newFormRoute = navigation.state;
+              return {
+                mode: 'modal',
+                headerMode: 'none',
+                header : null,
+                tabBarVisible: newFormRoute.params && newFormRoute.params.tabBarVisible,
+              }
+          }
       },
       GeneralSearch : {
         screen :  GeneralSearch,
@@ -48,6 +56,7 @@ const RootNavLoggedTab = TabNavigator({
       PhotoDetail : {screen : PhotoDetail},
       VideoDetail : {screen : VideoDetail},
       AudioDetail : {screen : AudioDetail},
+      Comment : {screen : CommentDetail} 
     },{
         initialRouteName : 'NewsWallHome'
       }

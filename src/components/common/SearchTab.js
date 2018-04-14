@@ -5,7 +5,7 @@ import { _paddingAndroid } from '../../helpers';
 import Global from '../../globals/Globals';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
-class SearchTab extends Component {
+class SearchTab extends React.PureComponent {
   render() {
     return (
         <Header searchBar rounded 

@@ -35,15 +35,20 @@ export default class Post extends React.PureComponent {
   }
 
   _bounce = (item,i,post) => {
-    //console.log(post.id)
-   this.refs['animate'+i].swing(1000);
-  //  .then(endState => console.log(endState.finished ? 'bounce finished' : 'bounce cancelled'));
-    if(item.id !== 'share' && item.id !== 'comment'){
-     this._onHandleEmojiClick(post, item.id);
-    }
+    console.log('item touch')
+   this.refs['animate'+i].bounceIn(1000)
+    .then(endState =>{
+      if(item.id !== 'share' && item.id !== 'comment'){
+        this._onHandleEmojiClick(post, item.id);
+       }else if(item.id === 'comment'){
+        // this.props.customNavigate('Comment');
+        this.props.commentOpen();
+       }
+    });
+   
   };
 
-  _onHandleEmojiClick = async(post, emoji_id) =>{
+  _onHandleEmojiClick = (post, emoji_id) =>{
     let id;
     let isShare = false;
     if(post.post_type === 'share'){
@@ -52,41 +57,40 @@ export default class Post extends React.PureComponent {
     }else{
       id = post.id
     }
-    axios.put('/emojis/post/'+id,{ emoji_id : emoji_id })
-    .then(res => {
-      //console.log(res);
-        let data = this._editSingleShare(post,emoji_id);
-       // console.log(data);
-        if(isShare){
-          data.post.post_type = 'post';
-                data = {
-                  share : {
-                    val : data,
-                    id : data.post_type+'_'+data.id
-                  },
-                  post :{
-                    val : data.post,
-                    id : data.post.post_type+'_'+id
-                  },
-                  isShare : isShare
-                }
-                
-        }else{
-            data = {
-              post :{
-                val : data,
-                id : data.post_type+'_'+id
-              },
-              isShare : isShare
-            }
-        }
-        this.props.editItem(data)
-    }).catch(error => {
+    try{
+      axios.put('/emojis/post/'+id,{ emoji_id : emoji_id });
+      let data = this._editSingleShare(post,emoji_id);
+      if(isShare){
+        data.post.post_type = 'post';
+              data = {
+                share : {
+                  val : data,
+                  id : data.post_type+'_'+data.id
+                },
+                post :{
+                  val : data.post,
+                  id : data.post.post_type+'_'+id
+                },
+                isShare : isShare
+              }
+              
+      }else{
+          data = {
+            post :{
+              val : data,
+              id : data.post_type+'_'+id
+            },
+            isShare : isShare
+          }
+      }
+       
+      this.props.editItem(data)
+      }catch(error) {
         Toast.show({
           text: 'Server not responding !',
           position: 'bottom',
         });
-    })
+    }
   }
 
   _editSingleShare(data,emoji_id){
@@ -172,7 +176,7 @@ export default class Post extends React.PureComponent {
           <Text 
           style={[
             styles.iconText,
-            item.title === 'comment' && styles.commentPadding,
+            // item.title === 'comment' && styles.commentPadding,
            userLike.length > 0 && (userLike[0].like === item.id && {color : item.color})
           ]} 
            uppercase={false}>{item.title}</Text>
@@ -234,10 +238,7 @@ export default class Post extends React.PureComponent {
             ],
             { cancelable: false }
           )
-        // this._onDelete(post, type)
         }
-       // this.setState({ clicked: BUTTONS[buttonIndex] });
-       
       }
     )
   }
@@ -247,10 +248,12 @@ export default class Post extends React.PureComponent {
   _onDelete = async(post, type) => {
     axios.delete('/post/'+type+'/'+post)
         .then(res => {
-         // console.log(res.data);
           this.props.removeItem(type+'_'+post);
         }).catch(error =>{
-        //  console.log(error.response);
+          // Toast.show({
+          //   text: error.response,
+          //   position: 'bottom',
+          // });
         });
   }
 
@@ -343,7 +346,7 @@ export default class Post extends React.PureComponent {
     }
   
 
-
+    const CardAnimated = Animatable.createAnimatableComponent(CardItem);
 
     return (
 
@@ -445,9 +448,9 @@ export default class Post extends React.PureComponent {
                 </Text>
             </CardItem>
               {this._emojiButtonCount(EmojiCount)}
-            <CardItem style={styles.cardButtonStyle}>
+            <CardAnimated /*animation='pulse' /*iterationCount={1}*/ style={styles.cardButtonStyle}>
                 {this._emojiButton(ButtonEmoji,post.user_like_dislike,originalPost)}
-            </CardItem>
+            </CardAnimated>
           </Card>
     );
   }
@@ -473,7 +476,7 @@ const styles = StyleSheet.create({
     },
     listView : {flexDirection : 'row'},
     listItemStyle : {
-      justifyContent: 'flex-start', 
+    justifyContent: 'flex-start', 
    //  borderTopWidth : 0.5, 
    //  borderColor : '#eeeeee',
      height : 40,
@@ -527,13 +530,13 @@ const styles = StyleSheet.create({
         paddingBottom : 10,
     },
     cardButtonStyle :{
-        justifyContent: 'space-between', 
+       justifyContent: 'center', 
+       flexDirection : 'row',
         borderTopWidth : 0.5, 
         borderColor : '#eeeeee',
         paddingBottom : 5,
         paddingTop : 5,
-        marginLeft : -10,
-        marginRight : -10
+      //  backgroundColor: 'red'
       
     },
     commentPadding : {paddingLeft : 3, paddingRight : 3},

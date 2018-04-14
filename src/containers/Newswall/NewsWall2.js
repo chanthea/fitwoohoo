@@ -146,3 +146,40 @@ singlePost().then(res => {
   this.props.editItem(data)
 })
 }
+
+
+axios.put('/emojis/post/'+id,{ emoji_id : emoji_id })
+.then(res => {
+  //console.log(res);
+    let data = this._editSingleShare(post,emoji_id);
+   // console.log(data);
+    if(isShare){
+      data.post.post_type = 'post';
+            data = {
+              share : {
+                val : data,
+                id : data.post_type+'_'+data.id
+              },
+              post :{
+                val : data.post,
+                id : data.post.post_type+'_'+id
+              },
+              isShare : isShare
+            }
+            
+    }else{
+        data = {
+          post :{
+            val : data,
+            id : data.post_type+'_'+id
+          },
+          isShare : isShare
+        }
+    }
+    this.props.editItem(data)
+}).catch(error => {
+    Toast.show({
+      text: 'Server not responding !',
+      position: 'bottom',
+    });
+})

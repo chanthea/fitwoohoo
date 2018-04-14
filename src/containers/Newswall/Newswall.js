@@ -5,19 +5,20 @@ import Global from '../../globals/Globals';
 import Fab from '../../components/Fab';
 import Post from '../../components/Post/Post';
 import {FlatList, StatusBar, StyleSheet, ActivityIndicator, Dimensions} from 'react-native';
+import {OptimizedFlatList} from 'react-native-optimized-flatlist'
 import { Constants } from 'expo';
 import axios from '../../config/axios/axiosWithToken';
 import FAB from 'react-native-fab';
 import _ from 'lodash';
+import CommentList from '../../components/Comment/CommentList';
+import {NavigationActions} from 'react-navigation';
 
 
 class Newswall extends React.PureComponent {
-    static navigationOptions ={
-        //tabBarVisible :false
-    }
     constructor(props) {
         super(props);
-        this.scrollPosition = 0;
+        this.CommentListRef;
+        this.scrollPosition = 200;
         this.state = {
           firstLoad : true,
           active: false,
@@ -29,9 +30,11 @@ class Newswall extends React.PureComponent {
           refreshing: false,
           noPost : false,
           visible : true,
-          selected: null
+          selected: null,
+          isModalOpen : false
         };
     }
+    
     _handleRefresh = ()=>{
         this.setState({
             offset : 0,
@@ -79,6 +82,7 @@ class Newswall extends React.PureComponent {
                     refreshing: false,
                   });
               }else{
+                  this._openComment(res.data[0]);
                 this.setState({
                     data: offset === 0 ? res.data : [...this.state.data, ...res.data],
                     error: res.error || null,
@@ -86,7 +90,10 @@ class Newswall extends React.PureComponent {
                     refreshing: false,
                   });
                 if(this.state.firstLoad === true){
-                    this.setState({ firstLoad: false});
+                    this.setState({
+                        selected : res.data[0],
+                        firstLoad: false
+                    });
                 }
               }  
              
@@ -113,15 +120,16 @@ class Newswall extends React.PureComponent {
       }
       _renderFooter = () => {
         if (!this.state.loading) return null;
+        console.log(this.state.loading);
         return (
           <View
             style={{
-              paddingVertical: 20,
-              borderTopWidth: 1,
-              borderColor: "#CED0CE"
+              paddingVertical: 10,
+              //borderTopWidth: 1,
+             // borderColor: "#CED0CE"
             }}
           >
-            <ActivityIndicator animating size="large" />
+            <ActivityIndicator  size="large" />
           </View>
         );
       };
@@ -138,17 +146,24 @@ class Newswall extends React.PureComponent {
             </View>
         </View>
       }
-      _hanldeScroll = (event) => {
-        let position = event.nativeEvent.contentOffset.y;
-        if(this.scrollPosition > position){
-            this.setState({visible : true});
-        } else{
-            this.setState({visible : false});
-        }
+    //   _hanldeScroll = (event) => {
+
+    //     const scrollOffsetY = event.nativeEvent.contentOffset.y;
+    //     const shouldShowTabBar = scrollOffsetY > this.scrollPosition ? false : true;
+    //     this.setState({visible : shouldShowTabBar});
+    //     this.props.navigation.setParams({ tabBarVisible: shouldShowTabBar });
+    //     this.scrollPosition = scrollOffsetY;
        
-      }
+    //   }
       _hanldeScrollEnd = (event) =>{
-        this.scrollPosition = event.nativeEvent.contentOffset.y;
+        const scrollOffsetY = event.nativeEvent.contentOffset.y;
+     
+        const shouldShowTabBar = scrollOffsetY > this.scrollPosition ? false : true;
+        this.setState({
+            visible : shouldShowTabBar
+        });
+        this.props.navigation.setParams({ tabBarVisible: shouldShowTabBar });
+        this.scrollPosition = scrollOffsetY;
       }
 
       _onRemoveItem = (id) =>{
@@ -187,14 +202,38 @@ class Newswall extends React.PureComponent {
                 return val;
             }
         });
-        this.setState({data: newData})
+        this.setState({...data,  data : newData})
+      }
+      _hanldeRefComment = (ref)=>{
+          this.CommentListRef = ref;
+      }
+      
+      _openComment = (item) => {
+        this.props.navigation.setParams({ tabBarVisible: false });
+        this.setState({selected : item});
+        this.CommentListRef.open();
+        
       }
 
-    
-      render(){
-        //  console.log(this.state.data);
-        const renderNoPost = (
-             <View style={{flexGrow : 1, backgroundColor :'white' }}>
+      _closeModal = () => {
+        this.CommentListRef.close();
+       //this.props.navigation.setParams({ tabBarVisible: true });
+        
+       
+      }
+
+      _renderItem = ({item}) => (
+                <Post 
+            originalPost={item}
+            customNavigate = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
+            removeItem={this._onRemoveItem}
+            editItem = {this._onEditItem}
+            commentOpen = {()=>this._openComment(item)}
+            />
+      );
+
+      _renderNoPost = () => (
+        <View style={{flexGrow : 1, backgroundColor :'white' }}>
                 <SearchTab  
                 hasMargin={false}
                 searchPressed ={()=>this.props.navigation.navigate('GeneralSearch')}
@@ -204,64 +243,59 @@ class Newswall extends React.PureComponent {
                 <Text style={{textAlign : 'center', color : 'rgba(0,0,0,0.7)'}}>There is no post available</Text>
                 </View>
             </View>
-        );
-        const firstLoad =  (
-             <View style={{flexGrow: 1, backgroundColor : 'white', justifyContent :'center'}}>
-            <ActivityIndicator size='large'/>
-            <Text style={{textAlign : 'center'}}>Loading....</Text>
-            </View>
-        );
+      );
 
-        // this.state.data.map((val,i) => {
-        //     val.indexId = i;
-        // })
-        // console.log(this.state.data);
+      _firstLoad = () => (
+        <View style={{flexGrow: 1, backgroundColor : 'white', justifyContent :'center'}}>
+        <ActivityIndicator size='large'/>
+        <Text style={{textAlign : 'center'}}>Loading....</Text>
+        </View>
+      );
 
+      render(){
         return(
-            
+        
             <Wrapper>
                 {/* <View style={styles.statusBar} /> */}
                 {this.state.firstLoad ?
-                firstLoad :
+                this._firstLoad() :
                 this.state.noPost === true ?
-                renderNoPost
+                this._renderNoPost()
                  :
                     <View>
-                        {this._renderHeader()}
-                        <FlatList 
-                            style={styles.container}
+                         {this._renderHeader()} 
+                        <OptimizedFlatList 
+                            style={[styles.container]}
                             data={this.state.data}
-                            //extraData={this.state}
-                            renderItem={({ item }) => (
-                                <Post 
-                                // onPressItem={this._onPressItem}
-                                originalPost={item}
-                                customNavigate = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
-                                removeItem={this._onRemoveItem}
-                                editItem = {this._onEditItem}
-                                />
-                            )}
+                           // extraData={this.state}
+                            renderItem={this._renderItem}
                             keyExtractor={(item, index) => item.post_type+'_'+item.id}
-                            ListFooterComponent={this.renderFooter}
+                            ListFooterComponent={this._renderFooter}
+                            maxToRenderPerBatch={1}
                             refreshing={this.state.refreshing}
                             onRefresh={this._handleRefresh}
-                        //    onEndReached={this._handleLoadMore}
-                        //    onEndReachedThreshold={5}
-                            onScroll={this._hanldeScroll}
-                            scrollEventThrottle={16}
+                            onEndReached={this._handleLoadMore}
+                            onEndReachedThreshold={1}
+                          // onScroll={this._hanldeScroll}
+                          // maxToRenderPerBatch={1}
+                        //  scrollEventThrottle={50}
                             onScrollEndDrag={this._hanldeScrollEnd}
                             />
                 
                     </View>
-                  }
+                   }
                   {!this.state.firstLoad &&
-                    <FAB 
-                    buttonColor={ Global.COLOR.MAIN}
-                    iconTextColor="#FFFFFF" 
-                    onClickAction={this._onPressPost}
-                    visible={this.state.visible}
-                     iconTextComponent={<Icon name="plus" type="FontAwesome"/>} /> }
-                  
+                     <FAB 
+                     buttonColor={ Global.COLOR.MAIN}
+                     iconTextColor="#FFFFFF" 
+                     onClickAction={this._onPressPost}
+                     visible={this.state.visible}
+                      iconTextComponent={<Icon name="plus" type="FontAwesome"/>} />}
+                  <CommentList 
+                    item = {this.state.selected}
+                    closeModal = {this._closeModal}
+                    setRef = {this._hanldeRefComment}
+                  /> 
             </Wrapper>
             
         );
@@ -278,7 +312,7 @@ const styles = StyleSheet.create({
     container : { 
         flexGrow: 1, 
         backgroundColor : '#ffffff',
-        height: height - 128
+        height : height - 75
      }
 
   });
