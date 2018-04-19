@@ -18,7 +18,7 @@ import { GeneralSearch, PostPage, Library, ActivityList, ScheduleList, ClassList
 import PhotoDetail from '../PhotoDetail';
 import VideoDetail from '../VideoDetail';
 import AudioDetail from '../AudioDetail';
-import CommentDetail from '../../components/Comment/Comment';
+import Comment from '../../components/Comment/Comment';
 import  Profile from '../../containers/Profile/Profile';
 
 
@@ -56,7 +56,7 @@ const RootNavLoggedTab = TabNavigator({
       PhotoDetail : {screen : PhotoDetail},
       VideoDetail : {screen : VideoDetail},
       AudioDetail : {screen : AudioDetail},
-      Comment : {screen : CommentDetail} 
+      Comment : {screen : Comment} 
     },{
         initialRouteName : 'NewsWallHome'
       }

@@ -10,7 +10,6 @@ import { Constants } from 'expo';
 import axios from '../../config/axios/axiosWithToken';
 import FAB from 'react-native-fab';
 import _ from 'lodash';
-import CommentList from '../../components/Comment/CommentList';
 import {NavigationActions} from 'react-navigation';
 
 
@@ -82,7 +81,7 @@ class Newswall extends React.PureComponent {
                     refreshing: false,
                   });
               }else{
-               //   this._openComment(res.data[0]);
+             //   this._openComment(res.data[0]);
                 this.setState({
                     data: offset === 0 ? res.data : [...this.state.data, ...res.data],
                     error: res.error || null,
@@ -120,7 +119,7 @@ class Newswall extends React.PureComponent {
       }
       _renderFooter = () => {
         if (!this.state.loading) return null;
-        console.log(this.state.loading);
+     //   console.log(this.state.loading);
         return (
           <View
             style={{
@@ -208,12 +207,9 @@ class Newswall extends React.PureComponent {
           this.CommentListRef = ref;
       }
       
-      _openComment = (item) => {
-        this.props.navigation.setParams({ tabBarVisible: false });
-        this.setState({selected : item});
-        this.CommentListRef.open();
-        
-      }
+    //   _openComment = (item) => {
+    //     this.props.navigaiton.navigate('Comment',{item : item});
+    //   }
 
       _closeModal = () => {
         this.CommentListRef.close();
@@ -228,7 +224,7 @@ class Newswall extends React.PureComponent {
             customNavigate = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
             removeItem={this._onRemoveItem}
             editItem = {this._onEditItem}
-            commentOpen = {()=>this._openComment(item)}
+          //  commentOpen = {()=>this._openComment(item)}
             />
       );
 
@@ -291,11 +287,11 @@ class Newswall extends React.PureComponent {
                      onClickAction={this._onPressPost}
                      visible={this.state.visible}
                       iconTextComponent={<Icon name="plus" type="FontAwesome"/>} />}
-                  <CommentList 
+                  {/* <CommentList 
                     item = {this.state.selected}
                     closeModal = {this._closeModal}
                     setRef = {this._hanldeRefComment}
-                  /> 
+                  />  */}
             </Wrapper>
             
         );

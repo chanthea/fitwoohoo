@@ -41,8 +41,7 @@ export default class Post extends React.PureComponent {
       if(item.id !== 'share' && item.id !== 'comment'){
         this._onHandleEmojiClick(post, item.id);
        }else if(item.id === 'comment'){
-        // this.props.customNavigate('Comment');
-        this.props.commentOpen();
+         this.props.customNavigate('Comment', {post : post});
        }
     });
    

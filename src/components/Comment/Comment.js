@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
-import { 
-    // Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, 
-    Text as NBText,
-    Button,
-} from 'native-base';
 import Modal from 'react-native-modalbox';
+import { Text as NBText, Header, Left, Body, Right, Button, Icon, Title, Item, Input, List } from 'native-base';
 import {
     Text,
     StyleSheet,
@@ -12,155 +8,205 @@ import {
     View,
     Dimensions,
     TextInput,
-    Slider
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ActivityIndicator
+    
   } from 'react-native';
-  let screen = Dimensions.get('window');
-export default class Comment extends Component {
-    static navigationOptions = {
-        tabBarVisible : false,
-        drawerLockMode: 'locked-closed',
-        swipeEnabled : false,
-        headerTransparent:true,
-        headerTintColor: 'white',
-        headerStyle : {
-            elevation: 0,
-            shadowOpacity: 0,
-            shadowColor: 'transparent',
-            borderBottomWidth: 0,
-          }
-    }
-    constructor() {
-        super();
+import { StatusBar } from '../common';
+import Global from '../../globals/Globals';
+import { _paddingAndroid } from '../../helpers';
+import CommentListItem from './CommentListItem';
+import CommentInput from './CommentInput';
+import {OptimizedFlatList} from 'react-native-optimized-flatlist'
+import { connect } from 'react-redux';
+import axios from '../../config/axios/axiosWithToken';
+
+let screen = Dimensions.get('window');
+
+class Comment extends Component {
+
+  static navigationOptions = {
+    mode : 'modal',
+    header : null,
+    tabBarVisible : false,
+    drawerLockMode: 'locked-closed',
+    swipeEnabled : false
+}
+
+    constructor(props) {
+      super(props);
+        this.item = {};
         this.state = {
-          isOpen: false,
+          data : [],
           isDisabled: false,
-          swipeToClose: true,
-          sliderValue: 0.3
+          textValue: '',
+          marginBottom : 0,
+          height : 40,
+          loading : false,
+          firstLoad : true,
+          refreshing: false,
+          item : {},
+          limit : 7,
+          offset : 0,
+          noComment : false
         };
       }
-    
-  onClose() {
-    console.log('Modal just closed');
-  }
-
-  onOpen() {
-    console.log('Modal just openned');
-  }
-
-  onClosingState(state) {
-    console.log('the open/close of the swipeToClose just changed');
-  }
-
-  renderList() {
-    let list = [];
-
-    for (let i=0;i<50;i++) {
-      list.push(<Text style={styles.text} key={i}>Elem {i}</Text>);
+  componentDidMount(){
+    const { params } = this.props.navigation.state;
+    if(params.post.post_type === 'share'){
+      post = params.post.post;
+    }else{
+      post = params.post;
     }
-
-    return list;
+    if(post.comments.length === 0){
+      this.setState({noComment :true});
+    }else{
+      this._getComments(post.id);
+    }
   }
 
-  render() {
-    let BContent = 
-    (<Button onPress={() => this.setState({isOpen: false})} style={[styles.btn, styles.btnModal]}>
-        <NBText>X</NBText>
-    </Button>);
+  _getComments =  (post_id) => {
+    const { offset } = this.state;
+    this.setState({loading : true})
+    axios.get('/comment/post/'+post_id, {
+      params : {
+        limit : this.state.limit,
+        offset : this.state.offset
+      }
+    }).then(res=>{  
+      if(res.data.length === 0){
+        this.setState({
+          loading: false,
+          refreshing: false,
+          firstLoad: false
+        });
+      }else{
+        this.setState({
+          data: offset === 0 ? res.data : [...this.state.data, ...res.data],
+          loading: false,
+          refreshing: false,
+          firstLoad: false
+        });
+      }
+    }).catch(error => {
+      this.setState({ loading: false, refreshing : false,  firstLoad : false });
+    });
+  }
+  _renderList = ({item})=>(
+    <CommentListItem item={item}/>
+    
+  );
 
-    return (
-      <View style={styles.wrapper}>
-        <Button onPress={() => this.refs.modal1.open()} style={styles.btn}><NBText>Basic modal</NBText></Button>
-        <Button onPress={() => this.refs.modal2.open()} style={styles.btn}><NBText>Position top</NBText></Button>
-        <Button onPress={() => this.refs.modal3.open()} style={styles.btn}><NBText>Position centered + backdrop + disable</NBText></Button>
-        <Button onPress={() => this.refs.modal4.open()} style={styles.btn}><NBText>Position bottom + backdrop + slider</NBText></Button>
-        <Button onPress={() => this.setState({isOpen: true})} style={styles.btn}><NBText>Backdrop + backdropContent</NBText></Button>
-        <Button onPress={() => this.refs.modal6.open()} style={styles.btn}><NBText>Position bottom + ScrollView</NBText></Button>
-        <Button onPress={() => this.refs.modal7.open()} style={styles.btn}><NBText>Modal with keyboard support</NBText></Button>
+  _firstLoad = () => (
+    <View style={{flexGrow: 1, backgroundColor : 'white', justifyContent :'center'}}>
+    <ActivityIndicator size='large'/>
+    </View>
+  );
 
-        <Modal
-          style={[styles.modal, styles.modal1]}
-          ref={"modal1"}
-          swipeToClose={this.state.swipeToClose}
-          onClosed={this.onClose}
-          onOpened={this.onOpen}
-          onClosingState={this.onClosingState}>
-            <Text style={styles.text}>Basic modal</Text>
-            <Button onPress={() => this.setState({swipeToClose: !this.state.swipeToClose})} style={styles.btn}>
-            <NBText>Disable swipeToClose({this.state.swipeToClose ? "true" : "false"})</NBText>
-            </Button>
-        </Modal>
-
-        <Modal style={[styles.modal, styles.modal2]} backdrop={false}  position={"top"} ref={"modal2"}>
-          <Text style={[styles.text, {color: "white"}]}>Modal on top</Text>
-        </Modal>
-
-        <Modal style={[styles.modal, styles.modal3]} position={"center"} ref={"modal3"} isDisabled={this.state.isDisabled}>
-          <Text style={styles.text}>Modal centered</Text>
-          <Button onPress={() => this.setState({isDisabled: !this.state.isDisabled})} style={styles.btn}>
-          <NBText> Disable ({this.state.isDisabled ? "true" : "false"})</NBText>
-         </Button>
-        </Modal>
-
-        <Modal style={[styles.modal, styles.modal4]} position={"bottom"} ref={"modal4"}>
-          <Text style={styles.text}>Modal on bottom with backdrop</Text>
-          <Slider style={{width: 200}} value={this.state.sliderValue} onValueChange={(value) => this.setState({sliderValue: value})} />
-        </Modal>
-
-        <Modal isOpen={this.state.isOpen} onClosed={() => this.setState({isOpen: false})} style={[styles.modal, styles.modal4]} position={"center"} backdropContent={BContent}>
-          <Text style={styles.text}>Modal with backdrop content</Text>
-        </Modal>
-
-        <Modal style={[styles.modal, styles.modal4]} position={"bottom"} ref={"modal6"} swipeArea={20}>
-          <ScrollView>
-            <View style={{width: screen.width, paddingLeft: 10}}>
-              {this.renderList()}
-            </View>
-          </ScrollView>
-        </Modal>
-
-        <Modal ref={"modal7"} style={[styles.modal, styles.modal4]} position={"center"}>
-          <View>
-            <TextInput style={{height: 50, width: 200, backgroundColor: '#DDDDDD'}}/>
-          </View>
-        </Modal>
+  _noComment = () => (
+    <View style={{flex : 1, backgroundColor : 'white', justifyContent :'center', alignItems : 'center'}}>
+      <Icon name="ios-sad-outline" style={{fontSize : 50, color : 'rgba(0,0,0,0.6)'}}/>
+      <Text style={{textAlign : 'center', color : 'rgba(0,0,0,0.7)'}}>There is no comment available</Text>
       </View>
+  );
+  
+  render() {
+    const {user} = this.props.user;
+    const { params } = this.props.navigation.state;
+    console.log(this.state);
+    return (
+    
+      <View style={{flex :1}}>
+            <StatusBar />
+                  <Header
+                  style={{
+                    backgroundColor : '#ffffff'
+                    }}>
+                    <Left>
+                        <Button  transparent>
+                        <Image style={styles.profile} source={{uri :Global.PHOTO.PROFILE+user.photo}}/>
+                        </Button>
+                    </Left> 
+                    
+                    <Body style={{justifyContent : 'center', alignContent : 'center'}}>
+                        <Text style={styles.name}>{user.name + ' ' + user.lastname}</Text>
+                    </Body>
+                    <Right>
+                        <Button onPress={() => this.props.navigation.goBack()} transparent>
+                        <Icon name='md-close' style={styles.icon} />
+                        </Button>
+                    </Right>
+                    </Header>
+                    {this.state.firstLoad === true ?
+                    this._firstLoad() :
+                    this.state.noComment === true ?
+                    this._noComment() :
+                      <KeyboardAvoidingView style={{flex: 1}}  behavior='padding'>
+                            <OptimizedFlatList 
+                               style={{backgroundColor : 'white'}}
+                                data={this.state.data}
+                              // extraData={this.state}
+                                renderItem={this._renderList}
+                                keyExtractor={(item, index) => item.id}
+                                // ListHeaderComponent={}
+                              // ListFooterComponent={}
+                              // maxToRenderPerBatch={1}
+                                // refreshing={this.state.refreshing}
+                                // onRefresh={this._handleRefresh}
+                                // onEndReached={this._handleLoadMore}
+                                // onEndReachedThreshold={1}
+                                // onScrollEndDrag={this._hanldeScrollEnd}
+                                />
+                          <CommentInput/>
+                    </KeyboardAvoidingView>        
+                  }
+      </View>
+    
     );
   }
 }
 
-const styles = StyleSheet.create({
+const mapStateToProps = state => {
+  return state.user;
+}
+export default connect(mapStateToProps)(Comment);
 
-    wrapper: {
-      paddingTop: 50,
-      flex: 1
-    },
+
+let { height, width } = Dimensions.get("window");
+const IsIOS = Platform.OS === 'ios';
+const styles = StyleSheet.create({
   
+  icon : {
+    color : 'rgba(0,0,0,0.7)',
+    paddingRight : 10
+  },
+  name  : {
+    color : 'rgba(0,0,0,0.7)',
+    textAlign : 'center',
+    fontSize : 16
+  },
+  role : {
+    color : 'rgba(0,0,0,0.7)',
+    textAlign : 'center',
+    fontSize: 14
+  },
+  profile : {
+    height : 30,
+    width : 30,
+    borderRadius: 3
+  },
+  container : { 
+    height : height - 130
+ },
     modal: {
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+      backgroundColor : 'white',
+      height : height -24,
+      zIndex : 50
     },
-  
-    modal2: {
-      height: 230,
-      backgroundColor: "#3B5998"
-    },
-  
-    modal3: {
-      height: 300,
-      width: 300
-    },
-  
-    modal4: {
-      height: 300
-    },
-  
-    btn: {
-      margin: 10,
-      backgroundColor: "#3B5998",
-      color: "white",
-      padding: 10
-    },
-  
     btnModal: {
       position: "absolute",
       top: 0,
@@ -169,69 +215,15 @@ const styles = StyleSheet.create({
       height: 50,
       backgroundColor: "transparent"
     },
-  
+    btn: {
+        margin: 10,
+        backgroundColor: "#3B5998",
+        color: "white",
+        padding: 10
+    },
     text: {
       color: "black",
       fontSize: 22
     }
   
   });
-
-// import React from 'react';
-// import {Button} from 'native-base';
-// import Modal from 'react-native-modalbox';
-
-// import {
-//   Text,
-//   StyleSheet,
-//   ScrollView,
-//   View,
-//   Dimensions,
-//   TextInput,
-//   Slider
-// } from 'react-native';
-
-// var screen = Dimensions.get('window');
-
-// class Comment extends React.Component {
-
-//   constructor() {
-//     super();
-//     this.state = {
-//       isOpen: false,
-//       isDisabled: false,
-//       swipeToClose: true,
-//       sliderValue: 0.3
-//     };
-//   }
-
-//   onClose() {
-//     console.log('Modal just closed');
-//   }
-
-//   onOpen() {
-//     console.log('Modal just openned');
-//   }
-
-//   onClosingState(state) {
-//     console.log('the open/close of the swipeToClose just changed');
-//   }
-
-//   renderList() {
-//     var list = [];
-
-//     for (var i=0;i<50;i++) {
-//       list.push(<Text style={styles.text} key={i}>Elem {i}</Text>);
-//     }
-
-//     return list;
-//   }
-
-//   render() {
-   
-//   }
-
-// }
-// export default Comment;
-
-

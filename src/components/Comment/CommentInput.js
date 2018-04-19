@@ -15,26 +15,26 @@ export default class CommentInput extends React.PureComponent{
         super();
         this.state = {
               textValue: '',
-              marginBottom : 22,
+             // marginBottom : 22,
               height : 40
             };
         
     }
     componentDidMount () {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ()=>{
-            this.setState({marginBottom: 22});
-        });
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide',()=>{
-            this.setState({marginBottom:0});
-        });
+        // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ()=>{
+        //     this.setState({marginBottom: 22});
+        // });
+        // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide',()=>{
+        //     this.setState({marginBottom:0});
+        // });
       }
     
-    componentWillUnmount () {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
-    }
+    // componentWillUnmount () {
+    //     this.keyboardDidShowListener.remove();
+    //     this.keyboardDidHideListener.remove();
+    // }
   _onChange(event) {
-    this._onCheckKeyboard()
+   // this._onCheckKeyboard()
     this.setState({ textValue: event.nativeEvent.text || '' });
   }
 

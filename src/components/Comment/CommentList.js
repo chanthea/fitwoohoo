@@ -10,7 +10,8 @@ import {
     TextInput,
     Image,
     KeyboardAvoidingView,
-    Platform
+    Platform,
+    ActivityIndicator
     
   } from 'react-native';
 import { StatusBar } from '../common';
@@ -20,37 +21,101 @@ import CommentListItem from './CommentListItem';
 import CommentInput from './CommentInput';
 import {OptimizedFlatList} from 'react-native-optimized-flatlist'
 import { connect } from 'react-redux';
+import axios from '../../config/axios/axiosWithToken';
 
 let screen = Dimensions.get('window');
 
-class CommentList extends React.PureComponent {
-    constructor() {
-        super();
+class CommentList extends Component {
+    constructor(props) {
+      super(props);
+        this.item = {};
         this.state = {
+          data : [],
           isDisabled: false,
           swipeToClose: true,
           textValue: '',
           marginBottom : 0,
-          height : 40
+          height : 40,
+          loading : false,
+          firstLoad : true,
+          refreshing: false,
+          item : {},
+          limit : 7,
+          offset : 0,
+          noComment : false
         };
       }
   
   componentWillReceiveProps(nextProps){
- //   console.log(nextProps);
+    const { item } = nextProps;
+    this.item = item;
+ 
+    // if(item.post_type === 'share'){
+    //     this._getComments(item.post.id);
+    // }else{
+    //     this._getComments(item.id);
+    // }
+  
+
   } 
+  componentDidMount(){
+    console.log(this.item);
+    //console.log(this.state.item);
+  }
+
+  _getComments =  (post_id) => {
+   // console.log(post_id);
+    this.setState({loading : true})
+    axios.get('/comment/post/'+post_id, {
+      params : {
+        limit : this.state.limit,
+        offset : this.state.offset
+      }
+    }).then(res=>{
+    
+        if(res.data.length === 0){
+          if(this.state.firstLoad){
+            this.setState({
+                firstLoad : false,
+                noComment : true
+            })
+          }
+          this.setState({
+            loading: false,
+            refreshing: false,
+          });
+        }else{
+          this.setState({
+            data: offset === 0 ? res.data : [...this.state.data, ...res.data],
+            loading: false,
+            refreshing: false,
+          });
+          if(this.state.firstLoad === true){
+            this.setState({
+                firstLoad: false
+            });
+        }}
+       
+    }).catch(error => {
+      this.setState({ loading: false, refreshing : false,  firstLoad : false, });
+      if(this.state.firstLoad){
+        this.setState({ firstLoad: false });
+      }
+    });
+  }
 
   onClose() {
-    console.log('Modal just closed');
+   // console.log('Modal just closed');
   }
 
   onOpen() {
    
-    console.log('Modal just openned');
+  //  console.log('Modal just openned');
     //this.setState({isOpen: true});
   }
 
   onClosingState(state) {
-    console.log('the open/close of the swipeToClose just changed');
+   // console.log('the open/close of the swipeToClose just changed');
   }
 
   renderList() {
@@ -61,16 +126,33 @@ class CommentList extends React.PureComponent {
     return list;
   }
   _renderList = ({item})=>(
-    <CommentListItem/>
+    <CommentListItem item={item}/>
     
   );
+
+  _firstLoad = () => (
+    <View style={{flexGrow: 1, backgroundColor : 'white', justifyContent :'center'}}>
+    <ActivityIndicator size='large'/>
+    </View>
+  );
+
+  _noComment = () => (
+    <View style={{flexGrow : 1, backgroundColor :'white' }}>
+    <View style={{flex : 1, backgroundColor : 'white', justifyContent :'center', alignItems : 'center'}}>
+      <Icon name="ios-sad-outline" style={{fontSize : 50, color : 'rgba(0,0,0,0.6)'}}/>
+      <Text style={{textAlign : 'center', color : 'rgba(0,0,0,0.7)'}}>There is no comment available</Text>
+      </View>
+  </View>
+  );
+  
   render() {
+    console.log(this.state.data);
     const {user} = this.props.user;
     let post = {};
     const  item  = this.props.item;
     post =  item !== null &&  item.post_type ==='share' ? item.post : item; 
    
-    console.log(this.state.height)
+ //   console.log(post)
     return (
       item !== null &&
      
@@ -109,23 +191,29 @@ class CommentList extends React.PureComponent {
                         </Right>
                         </Header>
                   
-                  <List style={styles.container}>
-                  <OptimizedFlatList 
-                        data={[{a: 2},{a: 2},{a: 2},{a: 2},{a: 2},{a: 2},{a: 2},{a: 2},{a: 2},{a: 2},]}
-                      // extraData={this.state}
-                        renderItem={this._renderList}
-                        keyExtractor={(item, index) => index}
-                        // ListHeaderComponent={}
-                      // ListFooterComponent={}
-                      // maxToRenderPerBatch={1}
-                        // refreshing={this.state.refreshing}
-                        // onRefresh={this._handleRefresh}
-                        // onEndReached={this._handleLoadMore}
-                        // onEndReachedThreshold={1}
-                        // onScrollEndDrag={this._hanldeScrollEnd}
-                        />
-                    
-                  </List>
+                  {this.state.firstLoad ?
+                    this._firstLoad() :
+                    this.state.noComment ?
+                    this._noComment() :
+                    <List style={styles.container}>
+                      <OptimizedFlatList 
+                          data={this.state.data}
+                        // extraData={this.state}
+                          renderItem={this._renderList}
+                          keyExtractor={(item, index) => index}
+                          // ListHeaderComponent={}
+                        // ListFooterComponent={}
+                        // maxToRenderPerBatch={1}
+                          // refreshing={this.state.refreshing}
+                          // onRefresh={this._handleRefresh}
+                          // onEndReached={this._handleLoadMore}
+                          // onEndReachedThreshold={1}
+                          // onScrollEndDrag={this._hanldeScrollEnd}
+                          />
+                      
+                    </List>
+                  }
+                  
                 </View>
                 <View style={{width : screen.width}}>
                   <CommentInput/>
