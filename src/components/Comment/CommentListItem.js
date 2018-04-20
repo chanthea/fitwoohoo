@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { ListItem, Left, Body, Right, Thumbnail, Text, Icon, ActionSheet } from 'native-base';
-import { View, StyleSheet, Platform, Linking } from 'react-native';
+import { ListItem, Left, Body, Right, Thumbnail, Text, Icon, ActionSheet, Toast } from 'native-base';
+import { View, StyleSheet, Platform, Linking, Alert } from 'react-native';
 import Global from '../../globals/Globals';
 
 import ParsedText from 'react-native-parsed-text';
 import { Constants, WebBrowser } from 'expo';
 import TimeAgo from 'react-native-timeago';
+import axios from '../../config/axios/axiosWithToken';
 
 let BUTTONS = [
   { text: "Edit comment", icon: "ios-construct-outline", type : "edit",  iconColor: "#3498db" },
@@ -50,19 +51,53 @@ export default class CommentListItem extends React.PureComponent {
   }
 
   _optionComment = (item) => {
-    console.log(item);
-      console.log('longpressed');
+    // console.log(item);
+    //   console.log('longpressed');
     ActionSheet.show(
       {
         options: BUTTONS,
         title: "What\'s you wanna do ?"
       },
       buttonIndex => {
-        console.log(BUTTONS[buttonIndex]);
+        if(BUTTONS[buttonIndex].type === 'delete'){
+          Alert.alert(
+            'Are you sure ? ',
+            'You want to remove this comment ?',
+            [
+              {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: 'Delete', onPress: () =>  this._deleteComment(item.id)},
+            ],
+            { cancelable: false }
+          )
+        }else if(BUTTONS[buttonIndex].type === 'edit'){
+          console.log(BUTTONS[buttonIndex].type);
+          this.props.customNavigate('EditComment',{editcomment : this._editComment, item : item});
+          // this._editComment(item.id);
+        }
        // this.setState({ clicked: BUTTONS[buttonIndex] });
       }
     )
   };
+
+  _editComment = (comment_id,comment) => {
+
+  }
+
+  _deleteComment = (comment_id) => {
+    axios.delete('/comment/'+comment_id)
+      .then(res => {
+        
+        this.props.removeItem(comment_id);
+          Toast.show({
+            text : 'Comment deleted',
+           });
+      }).catch(error => {
+        Toast.show({
+          text : 'Server not responding',
+          type : 'danger'
+         });
+      });
+  }
 
 
   render() {

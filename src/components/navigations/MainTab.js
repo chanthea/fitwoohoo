@@ -20,6 +20,7 @@ import VideoDetail from '../VideoDetail';
 import AudioDetail from '../AudioDetail';
 import Comment from '../../components/Comment/Comment';
 import  Profile from '../../containers/Profile/Profile';
+import EditComment from '../../components/Comment/EditComment';
 
 
 
@@ -56,7 +57,8 @@ const RootNavLoggedTab = TabNavigator({
       PhotoDetail : {screen : PhotoDetail},
       VideoDetail : {screen : VideoDetail},
       AudioDetail : {screen : AudioDetail},
-      Comment : {screen : Comment} 
+      Comment : {screen : Comment},
+      EditComment : {screen : EditComment} 
     },{
         initialRouteName : 'NewsWallHome'
       }

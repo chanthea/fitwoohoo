@@ -38,7 +38,6 @@ class Newswall extends React.PureComponent {
         this.setState({
             offset : 0,
             refreshing : true,
-
         }, ()=>{
             this._makeRemoteRequest();
         });
@@ -119,15 +118,8 @@ class Newswall extends React.PureComponent {
       }
       _renderFooter = () => {
         if (!this.state.loading) return null;
-     //   console.log(this.state.loading);
         return (
-          <View
-            style={{
-              paddingVertical: 10,
-              //borderTopWidth: 1,
-             // borderColor: "#CED0CE"
-            }}
-          >
+          <View style={{paddingVertical: 10,}}>
             <ActivityIndicator  size="large" />
           </View>
         );

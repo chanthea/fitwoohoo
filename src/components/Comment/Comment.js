@@ -37,7 +37,7 @@ class Comment extends Component {
 
     constructor(props) {
       super(props);
-        this.item = {};
+        this.post = {};
         this.state = {
           data : [],
           isDisabled: false,
@@ -50,22 +50,44 @@ class Comment extends Component {
           item : {},
           limit : 7,
           offset : 0,
-          noComment : false
+          noComment : false,
+          ableLoadMore : false,
+          
         };
       }
   componentDidMount(){
     const { params } = this.props.navigation.state;
     if(params.post.post_type === 'share'){
-      post = params.post.post;
+      this.post = params.post.post;
     }else{
-      post = params.post;
+      this.post = params.post;
     }
-    if(post.comments.length === 0){
-      this.setState({noComment :true});
+    if(this.post.comments.length === 0){
+      this.setState({noComment : true, firstLoad : false});
     }else{
-      this._getComments(post.id);
+      this._getComments(this.post.id);
     }
   }
+
+  _handleRefresh = ()=>{
+    this.setState({
+        offset : 0,
+        refreshing : true,
+    }, ()=>{
+        this._getComments(this.post.id);
+    });
+  }
+
+  _handleLoadMore = () =>{
+    if(this.state.ableLoadMore === true && this.state.loading === false){
+      this.setState({
+         offset : this.state.offset + this.state.limit,
+      }, () => {
+        this._getComments(this.post.id);
+      });
+    }
+   
+}
 
   _getComments =  (post_id) => {
     const { offset } = this.state;
@@ -80,22 +102,33 @@ class Comment extends Component {
         this.setState({
           loading: false,
           refreshing: false,
-          firstLoad: false
+          firstLoad: false,
+          ableLoadMore : false
         });
       }else{
         this.setState({
           data: offset === 0 ? res.data : [...this.state.data, ...res.data],
           loading: false,
           refreshing: false,
-          firstLoad: false
+          firstLoad: false,
+          ableLoadMore : res.data.length ===  this.state.limit ? true : false
         });
       }
     }).catch(error => {
-      this.setState({ loading: false, refreshing : false,  firstLoad : false });
+      this.setState({ 
+        loading: false,
+         refreshing : false,  
+         firstLoad : false,
+         ableLoadMore : false
+         });
     });
   }
   _renderList = ({item})=>(
-    <CommentListItem item={item}/>
+    <CommentListItem 
+    item={item}
+    removeItem={this._onRemoveItem}
+    customNavigate = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
+    />
     
   );
 
@@ -109,13 +142,35 @@ class Comment extends Component {
     <View style={{flex : 1, backgroundColor : 'white', justifyContent :'center', alignItems : 'center'}}>
       <Icon name="ios-sad-outline" style={{fontSize : 50, color : 'rgba(0,0,0,0.6)'}}/>
       <Text style={{textAlign : 'center', color : 'rgba(0,0,0,0.7)'}}>There is no comment available</Text>
-      </View>
+    </View>
   );
+
+  _renderFooter = () => {
+    if (!this.state.loading) return null;
+    return (
+      <View style={{paddingVertical: 10,}}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  };
+
+  _onRemoveItem = (id) =>{
+
+    const {data} = this.state;
+    let newData = data.filter((val, i) => {
+      return val.id !== id
+    });
+    this.setState({data: newData})
+  }
+
+  
+
+  
   
   render() {
     const {user} = this.props.user;
     const { params } = this.props.navigation.state;
-    console.log(this.state);
+    console.log(this.state.offset, this.state.ableLoadMore);
     return (
     
       <View style={{flex :1}}>
@@ -141,26 +196,27 @@ class Comment extends Component {
                     </Header>
                     {this.state.firstLoad === true ?
                     this._firstLoad() :
-                    this.state.noComment === true ?
-                    this._noComment() :
-                      <KeyboardAvoidingView style={{flex: 1}}  behavior='padding'>
+                      (<KeyboardAvoidingView style={{flex: 1}}  behavior='padding'>
+                        {  this.state.noComment === true ?
+                            this._noComment() : 
                             <OptimizedFlatList 
                                style={{backgroundColor : 'white'}}
                                 data={this.state.data}
                               // extraData={this.state}
                                 renderItem={this._renderList}
                                 keyExtractor={(item, index) => item.id}
-                                // ListHeaderComponent={}
+                                ListFooterComponent={this._renderFooter}
                               // ListFooterComponent={}
                               // maxToRenderPerBatch={1}
-                                // refreshing={this.state.refreshing}
-                                // onRefresh={this._handleRefresh}
-                                // onEndReached={this._handleLoadMore}
-                                // onEndReachedThreshold={1}
+                                refreshing={this.state.refreshing}
+                                onRefresh={this._handleRefresh}
+                                onEndReached={this._handleLoadMore}
+                               onEndReachedThreshold={0}
                                 // onScrollEndDrag={this._hanldeScrollEnd}
                                 />
+                              }
                           <CommentInput/>
-                    </KeyboardAvoidingView>        
+                      </KeyboardAvoidingView>)        
                   }
       </View>
     

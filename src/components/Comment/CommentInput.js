@@ -51,7 +51,7 @@ export default class CommentInput extends React.PureComponent{
                 onContentSizeChange={(event) => {
                     this.setState({ height: event.nativeEvent.contentSize.height })
                 }}
-                onSubmitEditing={Keyboard.dismiss}
+                //onSubmitEditing={Keyboard.dismiss}
                 maxHeight={70}
                 minHeight={40}
                 autoCorrect={false}
@@ -68,7 +68,6 @@ export default class CommentInput extends React.PureComponent{
             30
             }} 
             transparent>
-                {/* <NBText style={{color : Global.COLOR.MAIN, paddingRight : 0}}>Comment</NBText> */}
                 <Icon name='send' type="FontAwesome" style={{color : Global.COLOR.MAIN  }} />
             </Button>
             }
