@@ -9,7 +9,7 @@ import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import {Button, Icon, Text as NBText} from 'native-base';
 import Global from '../../globals/Globals';
 
-export default class EditComment extends React.Component{
+export default class EditPost extends React.Component{
     static navigationOptions = {
         title : 'Edit comment',
         tabBarVisible : false,

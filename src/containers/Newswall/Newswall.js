@@ -279,11 +279,6 @@ class Newswall extends React.PureComponent {
                      onClickAction={this._onPressPost}
                      visible={this.state.visible}
                       iconTextComponent={<Icon name="plus" type="FontAwesome"/>} />}
-                  {/* <CommentList 
-                    item = {this.state.selected}
-                    closeModal = {this._closeModal}
-                    setRef = {this._hanldeRefComment}
-                  />  */}
             </Wrapper>
             
         );
@@ -291,7 +286,6 @@ class Newswall extends React.PureComponent {
 }
 
 let { height } = Dimensions.get("window");
-// console.log(height);
 const styles = StyleSheet.create({
     statusBar: {
       backgroundColor: Global.COLOR.MAIN,

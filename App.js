@@ -64,8 +64,7 @@ export default class App extends React.Component {
         <Root>
           <RootStack/>
         </Root>
-      </Provider>
-      
+        </Provider>
     );
   }
 }

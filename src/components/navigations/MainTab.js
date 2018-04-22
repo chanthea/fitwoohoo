@@ -14,23 +14,22 @@ import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Global from '../../globals/Globals';
-import { GeneralSearch, PostPage, Library, ActivityList, ScheduleList, ClassList } from '../../containers';
+import { GeneralSearch, Library, ActivityList, ScheduleList, ClassList } from '../../containers';
+import PostPage from '../../containers/PostPage/PostPage';
 import PhotoDetail from '../PhotoDetail';
 import VideoDetail from '../VideoDetail';
 import AudioDetail from '../AudioDetail';
 import Comment from '../../components/Comment/Comment';
 import  Profile from '../../containers/Profile/Profile';
 import EditComment from '../../components/Comment/EditComment';
-
-
-
+import PostFollowType from '../../components/Post/PostFollowType';
+import PostSubFollowType from '../../components/Post/PostSubFollowType';
 
 const RootNavLoggedTab = TabNavigator({
     NewsWall : {screen  : StackNavigator({
       NewsWallHome : {
         screen : Newswall,
         navigationOptions: ({ navigation }) => {
-        
             const newFormRoute = navigation.state;
               return {
                 mode: 'modal',
@@ -58,9 +57,26 @@ const RootNavLoggedTab = TabNavigator({
       VideoDetail : {screen : VideoDetail},
       AudioDetail : {screen : AudioDetail},
       Comment : {screen : Comment},
-      EditComment : {screen : EditComment} 
+      EditComment : {screen : EditComment},
+      PostFollowType : {
+        screen : PostFollowType,
+        navigationOptions : {
+          mode : 'modal',
+          headerMode : 'none',
+          header : null,
+        }
+      },
+      PostSubFollowType : {
+        screen : PostSubFollowType,
+        navigationOptions : {
+          mode : 'modal',
+          headerMode : 'none',
+          header : null,
+        }
+      },
+
     },{
-        initialRouteName : 'NewsWallHome'
+        initialRouteName : 'PostPage'
       }
     )
   },

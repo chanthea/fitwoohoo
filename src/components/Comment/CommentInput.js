@@ -7,8 +7,9 @@ import {
     Keyboard
 } from 'react-native';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
-import {Button, Icon} from 'native-base';
+import {Button, Icon, Toast} from 'native-base';
 import Global from '../../globals/Globals';
+import axios from '../../config/axios/axiosWithToken';
 
 export default class CommentInput extends React.PureComponent{
     constructor(){
@@ -20,22 +21,27 @@ export default class CommentInput extends React.PureComponent{
             };
         
     }
-    componentDidMount () {
-        // this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ()=>{
-        //     this.setState({marginBottom: 22});
-        // });
-        // this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide',()=>{
-        //     this.setState({marginBottom:0});
-        // });
-      }
-    
-    // componentWillUnmount () {
-    //     this.keyboardDidShowListener.remove();
-    //     this.keyboardDidHideListener.remove();
-    // }
+   
   _onChange(event) {
-   // this._onCheckKeyboard()
     this.setState({ textValue: event.nativeEvent.text || '' });
+  }
+
+  _addComment = (comment,id_post) => {
+    axios.post('/comment',{
+      id_post: id_post,
+      comment : comment
+    }).then(res =>{
+      this.props.addItem(res.data);
+      this.setState({textValue : ''});
+      Toast.show({
+        text : 'Comment posted',
+       });
+    }).catch(error => {
+        Toast.show({
+          text : 'Server not responding',
+          type : 'danger'
+         });
+      });
   }
 
 
@@ -61,7 +67,9 @@ export default class CommentInput extends React.PureComponent{
                 ref={(r) => { this._textInput = r; }}
             />
             {this.state.textValue.length > 0 &&
-            <Button style={{height : 40, 
+            <Button 
+            onPress={()=>this._addComment(this.state.textValue,this.props.postId)}
+            style={{height : 40, 
             marginTop : 
             this.state.height < 40 ? 0 : 
             this.state.height-40 < 30 ? this.state.height-40 :

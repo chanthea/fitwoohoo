@@ -4,6 +4,8 @@ import { Wrapper } from '../../components/common';
 import { _paddingAndroid } from '../../helpers';
 import Global from '../../globals/Globals';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
+import { connect } from 'react-redux';
+import MultiSelect from 'react-native-multiple-select';
 import { 
     Header, 
     Left, 
@@ -19,9 +21,13 @@ import {
     Content, 
     Footer, 
     FooterTab,
+    Picker,
+    Form
      } from 'native-base';
-     
+import axios from '../../config/axios/axiosWithToken';
 import { NavigationActions } from 'react-navigation';
+
+
 class PostPage extends Component {
     static navigationOptions = {
         tabBarVisible : false,
@@ -30,24 +36,64 @@ class PostPage extends Component {
     }
     constructor(props){
         super(props);
+        this.subFollowType = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27];
         this.state = {
-            textValue: null
+            textValue: null,
+            followType : {
+                id : 1,
+                type : 'Public'
+            },
+            subFollowType : this.subFollowType
         }
+
+       
     }
+    onSelectedItemsChange = selectedItems => {
+        this.setState({ selectedItems });
+    };
 
     
     _onChange(event) {
         this.setState({ textValue: event.nativeEvent.text || '' });
-      }
+    }
     
-      _resetTextInput() {
+    _resetTextInput() {
         this._textInput.clear();
         this._textInput.resetHeightToMin();
-      }
-    render(){
+    }
 
+    _setFollowTypeState = (id,type) => {
+        this.setState({followType :{ ...this.state.followType, id: id, type : type}});
+    }
+
+    _setSubFollowTypeState = (id) => {
+        if(id.length === 0){
+            id = this.subFollowType;
+        }
+        this.setState({
+            subFollowType : id
+        })
+    }
+
+    _getFollowType = () => {
+        this.props.navigation.navigate('PostFollowType', {
+            setFollowType : this._setFollowTypeState,
+            followType : this.state.followType
+        });
+    }
+
+
+    _getSubFollowType = () => {
+        this.props.navigation.navigate('PostSubFollowType',{
+            setSubFollowType : this._setSubFollowTypeState,
+            subFollowType : this.state.subFollowType
+        })
+    }
+    
+    render(){
+        const {user} = this.props.user;
+        const { selectedItems, followType, subFollowType } = this.state;
         return(
-            
             <Wrapper>
             <Header style={{marginTop : _paddingAndroid(), backgroundColor : Global.COLOR.MAIN}}>
             <Left>
@@ -68,15 +114,32 @@ class PostPage extends Component {
                 <List >
                     <ListItem avatar>
                     <Left>
-                        <Thumbnail small source={require('../../images/profile.jpg')} />
+                        <Thumbnail small source={{uri : Global.PHOTO.PROFILE+user.photo}} />
                     </Left>
                     <Body style={{borderColor : 'transparent'}}>
-                        <Text style={styles.name}>Gguon Lykhim</Text>
+                        <Text style={styles.name}>{user.name+' '+user.lastname}</Text>
                         <View style={{flexDirection : 'row'}}>
-                            <Icon name="ios-globe-outline"
-                            style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
-                            /> 
-                            <Text note style={styles.privacy}>Colleagues</Text>
+                            <Button onPress={this._getFollowType} transparent style={{height : 25, justifyContent : 'flex-start'}}>
+                                <Icon name="ios-globe-outline"
+                                style={styles.iconSmall} 
+                                /> 
+                                <Text note style={styles.privacy} uppercase={false}>{followType.type}</Text>
+                            </Button>
+                            {this.state.followType.type == 'Family' &&
+                            <Button onPress={this._getSubFollowType} transparent style={{height : 25}}>
+                                <Icon name="ios-pricetags-outline"
+                                style={styles.iconSmall} 
+                                /> 
+                                <Text note style={styles.privacy} uppercase={false}>
+                                {
+                                    subFollowType.length === 0  ?
+                                  "All family's follow types selected" : 
+                                  subFollowType.length+" family's follow types selected"
+                                }
+                              
+                                </Text>
+                            </Button>
+                            }
                         </View>
                     </Body>
                     </ListItem>
@@ -148,15 +211,21 @@ const styles = StyleSheet.create({
     iconSmall : {
         fontSize : 11, 
         color : 'rgba(0,0,0,0.6)', 
-        paddingRight : 2, 
-       
+        marginLeft : 0, 
+        marginRight : 5,
+        fontFamily : 'System',
+        marginTop : Platform.OS === 'android' ? 2 : 0
     },
     privacy : {
-        fontSize : 10
+        fontSize : 10,
+        paddingLeft : 0
     },
     name : {
         fontSize : 14
     },
   });
 
-export  { PostPage };
+  const mapStateToProps = state => {
+      return state.user;
+  }
+export default connect(mapStateToProps)(PostPage);

@@ -10,7 +10,7 @@ export * from './Fitbit';
 export *  from './Profile/Profile';
 export * from './FitnessWellness/FitnessWellness';
 export * from './GeneralSearch';
-export * from './PostPage/PostPage';
+// export * from './PostPage/PostPage';
 export * from './Library';
 export * from './ActivityList/ActivityList';
 export * from './ScheduleList/ScheduleList';

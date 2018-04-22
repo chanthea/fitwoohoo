@@ -127,6 +127,7 @@ class Comment extends Component {
     <CommentListItem 
     item={item}
     removeItem={this._onRemoveItem}
+    editItem = {this._onEditItem}
     customNavigate = {(routeName,Param={})=>this.props.navigation.navigate(routeName,Param)}
     />
     
@@ -163,37 +164,56 @@ class Comment extends Component {
     this.setState({data: newData})
   }
 
-  
+  _onEditItem = (comment_id, comment) => {
+    const {data} = this.state;
+    let newData = data.map((val, i) => {
+        if(val.id === comment_id){
+          val.comment = comment;
+        }
+        return val;
+    });
+  this.setState({...data,  data : newData})
+  }
 
+  _onAddItem = (comment) => {
+    const {data} = this.state;
+   let newData = data.slice();
+    newData.unshift(comment);
+    this.setState({
+      noComment : false,
+      ...data,  data : newData
+    });
+  }
   
-  
-  render() {
+  _renderHeader = () => {
     const {user} = this.props.user;
+    return (<Header
+      style={{
+        backgroundColor : '#ffffff',
+        }}>
+        <Left>
+            <Button  transparent>
+            <Image style={styles.profile} source={{uri :Global.PHOTO.PROFILE+user.photo}}/>
+            </Button>
+        </Left> 
+        
+        <Body style={{justifyContent : 'center', alignContent : 'center'}}>
+            <Text style={styles.name}>{user.name+' '+user.lastname}</Text>
+        </Body>
+        <Right>
+            <Button onPress={() => this.props.navigation.goBack()} transparent>
+            <Icon name='md-close' style={styles.icon} />
+            </Button>
+        </Right>
+        </Header>)
+  }
+  render() {
+  
     const { params } = this.props.navigation.state;
-    console.log(this.state.offset, this.state.ableLoadMore);
     return (
-    
       <View style={{flex :1}}>
             <StatusBar />
-                  <Header
-                  style={{
-                    backgroundColor : '#ffffff'
-                    }}>
-                    <Left>
-                        <Button  transparent>
-                        <Image style={styles.profile} source={{uri :Global.PHOTO.PROFILE+user.photo}}/>
-                        </Button>
-                    </Left> 
-                    
-                    <Body style={{justifyContent : 'center', alignContent : 'center'}}>
-                        <Text style={styles.name}>{user.name + ' ' + user.lastname}</Text>
-                    </Body>
-                    <Right>
-                        <Button onPress={() => this.props.navigation.goBack()} transparent>
-                        <Icon name='md-close' style={styles.icon} />
-                        </Button>
-                    </Right>
-                    </Header>
+            {this._renderHeader()}
                     {this.state.firstLoad === true ?
                     this._firstLoad() :
                       (<KeyboardAvoidingView style={{flex: 1}}  behavior='padding'>
@@ -202,20 +222,17 @@ class Comment extends Component {
                             <OptimizedFlatList 
                                style={{backgroundColor : 'white'}}
                                 data={this.state.data}
-                              // extraData={this.state}
                                 renderItem={this._renderList}
                                 keyExtractor={(item, index) => item.id}
                                 ListFooterComponent={this._renderFooter}
-                              // ListFooterComponent={}
-                              // maxToRenderPerBatch={1}
+                                maxToRenderPerBatch={5}
                                 refreshing={this.state.refreshing}
                                 onRefresh={this._handleRefresh}
                                 onEndReached={this._handleLoadMore}
-                               onEndReachedThreshold={0}
-                                // onScrollEndDrag={this._hanldeScrollEnd}
+                                onEndReachedThreshold={0}
                                 />
                               }
-                          <CommentInput/>
+                          <CommentInput postId={this.post.id} addItem = {this._onAddItem}/>
                       </KeyboardAvoidingView>)        
                   }
       </View>

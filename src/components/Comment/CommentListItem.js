@@ -12,6 +12,7 @@ let BUTTONS = [
   { text: "Edit comment", icon: "ios-construct-outline", type : "edit",  iconColor: "#3498db" },
   { text: "Remove comment", icon: "ios-backspace-outline", type : "delete",iconColor: "#e74c3c" },
 ];
+var CANCEL_INDEX = 4;
 export default class CommentListItem extends React.PureComponent {
   constructor(){
     super();
@@ -23,12 +24,12 @@ export default class CommentListItem extends React.PureComponent {
     if (!url.match(/^[a-zA-Z]+:\/\//)){
       url = 'https://' + url;
     }
-    console.log(url);
+   // console.log(url);
 
     Linking.canOpenURL(url).then(supported => {
       
       if (!supported) {
-        console.log('Can\'t handle url: ' + url);
+      //  console.log('Can\'t handle url: ' + url);
       } else {
         this._handleOpenWithLinking(url);
       }
@@ -47,46 +48,55 @@ export default class CommentListItem extends React.PureComponent {
   }
 
   _handlePhonePress = (phone) =>{
-    console.log(phone)
+  //  console.log(phone)
   }
 
   _optionComment = (item) => {
-    // console.log(item);
-    //   console.log('longpressed');
     ActionSheet.show(
       {
         options: BUTTONS,
         title: "What\'s you wanna do ?"
       },
       buttonIndex => {
-        if(BUTTONS[buttonIndex].type === 'delete'){
-          Alert.alert(
-            'Are you sure ? ',
-            'You want to remove this comment ?',
-            [
-              {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-              {text: 'Delete', onPress: () =>  this._deleteComment(item.id)},
-            ],
-            { cancelable: false }
-          )
-        }else if(BUTTONS[buttonIndex].type === 'edit'){
-          console.log(BUTTONS[buttonIndex].type);
-          this.props.customNavigate('EditComment',{editcomment : this._editComment, item : item});
-          // this._editComment(item.id);
+        if(buttonIndex !== undefined){
+          if(BUTTONS[buttonIndex].type === 'delete'){
+            Alert.alert(
+              'Are you sure ? ',
+              'You want to remove this comment ?',
+              [
+                {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+                {text: 'Delete', onPress: () =>  this._deleteComment(item.id)},
+              ],
+              { cancelable: false }
+            )
+          }else if(BUTTONS[buttonIndex].type === 'edit'){
+            this.props.customNavigate('EditComment',{editcomment : this._editComment, item : item});
+          }
         }
-       // this.setState({ clicked: BUTTONS[buttonIndex] });
+        
       }
     )
   };
 
   _editComment = (comment_id,comment) => {
-
+      //console.log(comment_id, comment);
+      axios.put('/comment/'+comment_id, {comment : comment})
+        .then(res => {
+          this.props.editItem(comment_id, comment);
+          Toast.show({
+            text : 'Comment edited',
+           });
+        }).catch(error => {
+          Toast.show({
+            text : 'Server not responding',
+            type : 'danger'
+          });
+        });
   }
 
   _deleteComment = (comment_id) => {
     axios.delete('/comment/'+comment_id)
       .then(res => {
-        
         this.props.removeItem(comment_id);
           Toast.show({
             text : 'Comment deleted',
@@ -98,6 +108,8 @@ export default class CommentListItem extends React.PureComponent {
          });
       });
   }
+
+  
 
 
   render() {

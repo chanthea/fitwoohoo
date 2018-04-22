@@ -50,14 +50,6 @@ class AuthLoadingScreen extends React.Component {
   }
 }
 
-
-
-const mapDispatchToProps = {
-  StoreUserAction
-}
-
-export default connect(null,mapDispatchToProps)(AuthLoadingScreen);
-
 const styles = StyleSheet.create({
   container : {
     flex : 1,
@@ -65,4 +57,10 @@ const styles = StyleSheet.create({
     justifyContent : 'center'
   }
 });
+
+const mapDispatchToProps = {
+  StoreUserAction
+}
+
+export default connect(null,mapDispatchToProps)(AuthLoadingScreen);
 
