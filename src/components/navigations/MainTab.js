@@ -8,8 +8,8 @@ import {
   Notification, 
   Request, 
   Setting, 
-  Location, 
   FitnessWellness } from '../../containers';
+import MyLocation from '../../containers/MyLocation/MyLocation';
 import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -76,11 +76,11 @@ const RootNavLoggedTab = TabNavigator({
       },
 
     },{
-        initialRouteName : 'PostPage'
+        initialRouteName : 'NewsWallHome'
       }
     )
   },
-    Location : {screen : Location},
+    Location : {screen : MyLocation},
     Notification : {screen : Notification},
     FitnessWellness : {screen : FitnessWellness},
     Profile : {

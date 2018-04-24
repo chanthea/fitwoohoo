@@ -1,6 +1,6 @@
 
 export * from './Chat';
-export * from './Location/Location';
+//export * from './MyLocation/MyLocation';
 export * from './Newswall/Newswall';
 export * from './Request/Request';
 export * from './Notification/Notification';

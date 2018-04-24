@@ -28,6 +28,9 @@ export default {
     }, 
     AUDIO : {
       AUDIO_POST :'https://www.fitwoohoo.com/assets/audio/'
+    },
+    MARKER : {
+      BASE_URL : 'https://www.fitwoohoo.com/assets/imgs/marker-icon/'
     }
     
   };

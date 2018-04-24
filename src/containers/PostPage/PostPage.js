@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Platform, TouchableOpacity}  from 'react-native';
+import { View, StyleSheet, Platform, TouchableOpacity, ScrollView, Image}  from 'react-native';
 import { Wrapper } from '../../components/common';
 import { _paddingAndroid } from '../../helpers';
 import Global from '../../globals/Globals';
@@ -22,10 +22,13 @@ import {
     Footer, 
     FooterTab,
     Picker,
-    Form
+    Form,
      } from 'native-base';
 import axios from '../../config/axios/axiosWithToken';
 import { NavigationActions } from 'react-navigation';
+import { ImagePicker } from 'expo';
+import { FileSystem } from 'expo';
+import ImageBrowser from '../../components/CameraRoll/ImageBrowser';
 
 
 class PostPage extends Component {
@@ -43,16 +46,15 @@ class PostPage extends Component {
                 id : 1,
                 type : 'Public'
             },
-            subFollowType : this.subFollowType
+            subFollowType : this.subFollowType,
+            image: null,
+            imageBrowserOpen: false,
+            photos: [],
+            maxPhoto : 10,
+            postType : 'image',
+            uri : null
         }
-
-       
     }
-    onSelectedItemsChange = selectedItems => {
-        this.setState({ selectedItems });
-    };
-
-    
     _onChange(event) {
         this.setState({ textValue: event.nativeEvent.text || '' });
     }
@@ -90,9 +92,87 @@ class PostPage extends Component {
         })
     }
     
+    _pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          aspect: [4, 3],
+        });
+        this.setState({uri: result.uri});
+        console.log(result);
+      };
+      renderImage(item, i) {
+        return(
+          <Image
+            style={styles.ImageStyle}
+            source={{uri: item.file}}
+            key={i}
+          />
+        )
+      }
+    imageBrowserCallback = (callback) => {
+        callback.then((photos) => {
+         // console.log(photos)
+          this.setState({
+            imageBrowserOpen: false,
+            photos
+          })
+        }).catch((e) => console.log(e))
+      }
+
+    _updateNewPost = () => {
+
+        const {textValue , photos, followType, postType, subFollowType, uri} = this.state;
+        let bodyFormData  = new FormData();
+        bodyFormData.append('type', postType);
+        bodyFormData.append('description', textValue);
+        bodyFormData.append('ftype', followType.id);
+        bodyFormData.append('sub_ftype', subFollowType);
+        let uriParts = uri.split('.');
+        let fileType = uriParts[uriParts.length - 1];
+        bodyFormData.append('images', {
+            uri,
+            name: `photo.${fileType}`,
+            type: 'image/jpeg',
+        });
+      //  console.log(bodyFormData);
+        // let api = 'https://www.fitwoohoo.com/api/m/post?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHBzOi8vd3d3LmZpdHdvb2hvby5jb20vYXBpL20vYXV0aC9nZXR0b2tlbiIsImlhdCI6MTUyMzM2MTc5MCwiZXhwIjoxNTI1OTUzNzkwLCJuYmYiOjE1MjMzNjE3OTAsImp0aSI6IkVvalRkcEtWbFpWS0lVd2MifQ.-nxB0mMrQx0TrRTpjG8EYJkxmDIExdx9Y3UdoScKFOk';
+        // fetch(api, {  
+        //     method: 'POST',
+        //     body: bodyFormData,
+        //     headers: {
+        //        Accept: 'application/json',
+        //       'Content-Type': 'multipart/form-data'
+        //     },
+        //   }).then((responseJson) => {
+        //     console.log(responseJson);
+    
+        //   }).catch(error => {
+        //     console.log(error);
+        //   })
+
+
+        axios.post('/post',bodyFormData ).then(res=> {
+            console.log(res)
+        }).catch(err => {
+            console.log(err);
+        })
+        // axios.post('/post',{
+        //     type : postType,
+        //     description : textValue,
+        //     ftype : followType.id,
+        //     sub_ftype : subFollowType, 
+        
+        // },).then(res => {
+        //     console.log(res.data)
+        // }).catch(error => {
+        //     console.log(error.response.data);
+        // })
+    }
     render(){
         const {user} = this.props.user;
         const { selectedItems, followType, subFollowType } = this.state;
+        if (this.state.imageBrowserOpen) {
+            return(<ImageBrowser max={this.state.maxPhoto} callback={this.imageBrowserCallback}/>);
+          }
         return(
             <Wrapper>
             <Header style={{marginTop : _paddingAndroid(), backgroundColor : Global.COLOR.MAIN}}>
@@ -105,8 +185,8 @@ class PostPage extends Component {
                 <Title style={{color : '#ffffff', fontSize: 17}}>Update new status</Title>
             </Body>
             <Right>
-                <Button small iconRight transparent style={{borderColor : '#ffffff'}} onPress={this.props.menuPressed}>
-                    <Text style={{color : '#ffffff', fontSize : 15, paddingRight:0}} uppercase={false}>Post</Text>
+                <Button transparent onPress={this._updateNewPost}>
+                <Icon name='send-o' style={{color : 'white'}} type='FontAwesome'/>
                 </Button>
             </Right>
             </Header>
@@ -158,9 +238,20 @@ class PostPage extends Component {
                     ref={(r) => { this._textInput = r; }}
                 />
                 </View>
+                <View style={styles.scrollViewContainer}>
+                    <ScrollView 
+                    style={styles.scrollView}
+                    horizontal={true}>
+                    {this.state.photos.map((item,i) => this.renderImage(item,i))}
+                    </ScrollView>
+                </View>
+                
                 <Footer >
                     <FooterTab style={{backgroundColor : Global.COLOR.MAIN}}>
-                        <Button vertical>
+                        <Button 
+                         //onPress={() => this.setState({imageBrowserOpen: true})}
+                           onPress={this._pickImage}
+                            vertical>
                         <Icon style={{color:'white'}} name="ios-images" />
                         <Text style={{color:'white'}}>Photos</Text>
                         </Button>
@@ -174,6 +265,7 @@ class PostPage extends Component {
                         </Button>
                     </FooterTab>
                 </Footer>   
+                
             </View>
             
         </Wrapper>
@@ -183,6 +275,14 @@ class PostPage extends Component {
 }
 const IsIOS = Platform.OS === 'ios';
 const styles = StyleSheet.create({
+    scrollViewContainer : {width : '100%', height : 100},
+    scrollView : {flexDirection : 'row', flex : 1},
+    ImageStyle :{
+        width : 100,
+        height : 100,
+        borderColor : 'white',
+        borderWidth : 1
+    },
     container: {
       flex: 1,
       alignItems: 'center',
@@ -192,7 +292,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       paddingLeft: 8,
       paddingRight: 8,
-      flex: 3
+      flex: 4,
     },
     textInput: {
       paddingLeft: 10,
