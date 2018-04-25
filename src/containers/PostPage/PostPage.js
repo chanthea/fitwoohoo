@@ -133,7 +133,7 @@ class PostPage extends Component {
             name: `photo.${fileType}`,
             type: 'image/jpeg',
         });
-      //  console.log(bodyFormData);
+        //  console.log(bodyFormData);
         // let api = 'https://www.fitwoohoo.com/api/m/post?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImlzcyI6Imh0dHBzOi8vd3d3LmZpdHdvb2hvby5jb20vYXBpL20vYXV0aC9nZXR0b2tlbiIsImlhdCI6MTUyMzM2MTc5MCwiZXhwIjoxNTI1OTUzNzkwLCJuYmYiOjE1MjMzNjE3OTAsImp0aSI6IkVvalRkcEtWbFpWS0lVd2MifQ.-nxB0mMrQx0TrRTpjG8EYJkxmDIExdx9Y3UdoScKFOk';
         // fetch(api, {  
         //     method: 'POST',
@@ -148,8 +148,6 @@ class PostPage extends Component {
         //   }).catch(error => {
         //     console.log(error);
         //   })
-
-
         axios.post('/post',bodyFormData ).then(res=> {
             console.log(res)
         }).catch(err => {

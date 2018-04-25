@@ -1,5 +1,5 @@
 import React from 'react';
-import { TabNavigator,TabBarBottom, StackNavigator } from 'react-navigation';
+import { TabNavigator,TabBarBottom, StackNavigator, SwitchNavigator } from 'react-navigation';
 import {Icon} from 'native-base';
 import IconBadge from 'react-native-icon-badge';
 import {
@@ -9,6 +9,8 @@ import {
   Request, 
   Setting, 
   FitnessWellness } from '../../containers';
+import LocationLoading from '../../containers/MyLocation/Index';
+import TrainerLocation from '../../containers/MyLocation/TrainerLocation';
 import MyLocation from '../../containers/MyLocation/MyLocation';
 import {Search} from '../common';
 import {View, StatusBar, Text}  from 'react-native';
@@ -24,6 +26,7 @@ import  Profile from '../../containers/Profile/Profile';
 import EditComment from '../../components/Comment/EditComment';
 import PostFollowType from '../../components/Post/PostFollowType';
 import PostSubFollowType from '../../components/Post/PostSubFollowType';
+import GooglePlaceScreen from '../../screens/GooglePlaceInput/GooglePlaceInput';
 
 const RootNavLoggedTab = TabNavigator({
     NewsWall : {screen  : StackNavigator({
@@ -80,7 +83,48 @@ const RootNavLoggedTab = TabNavigator({
       }
     )
   },
-    Location : {screen : MyLocation},
+    // Location : { screen : StackNavigator({
+    //     LocationIndex : {
+    //       screen : Location,
+    //       navigationOptions : {
+    //         header : null
+    //       }
+    //     },
+    //     GooglePlace : {screen : GooglePlaceScreen},
+    //     MyLocation : {screen : MyLocation}
+    //   },{
+    //     initialRouteName : 'LocationIndex'
+    //   }),
+    // },
+    Location : {
+      screen : SwitchNavigator({
+          LocationLoading: LocationLoading,
+          MyLocation: { screen : StackNavigator({
+                LocationIndex : {
+                  screen : MyLocation,
+                  navigationOptions : {
+                    header : null
+                  }
+                },
+                GooglePlace : {screen : GooglePlaceScreen},
+              },{
+                initialRouteName : 'LocationIndex'
+              }),
+            },
+          TrainerLocation: { screen : StackNavigator({
+            LocationTrainerIndex : {
+              screen : TrainerLocation,
+              navigationOptions : {
+                header : null
+              }
+            },
+            GooglePlace : {screen : GooglePlaceScreen},
+            },{
+              initialRouteName : 'LocationTrainerIndex'
+            }),
+          }
+        })
+    },
     Notification : {screen : Notification},
     FitnessWellness : {screen : FitnessWellness},
     Profile : {
@@ -167,14 +211,5 @@ const RootNavLoggedTab = TabNavigator({
     animationEnabled: true,
     swipeEnabled: true,
   });
-
-//   const  RootNavLoggedStack = StackNavigator({
-//     Nice : {
-//         screen : RootNavLoggedTab,
-//         navigationOptions: {
-//           header :<Search />
-//         },
-//       }
-//   });
 
 export default RootNavLoggedTab;

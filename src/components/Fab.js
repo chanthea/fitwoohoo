@@ -25,32 +25,30 @@ class FabButton extends Component {
         const navigateAction = NavigationActions.navigate({
             routeName: 'Profile',
             params: {name : 'Profile'},
-            // action: NavigationActions.navigate({ routeName: 'Profile' }),
           });
         return(
-           
-                    <Fab
-                        active={this.props.active}
-                        direction="up"
-                        style={{ backgroundColor: Global.COLOR.LIGHTMAIN }}
-                        position="bottomRight"
-                        onPress={this.props.postPressed}
-                        onLongPress={this.props.longPressed}>
-                        <Icon name="plus" type='FontAwesome'/>
-                        <Button style={{ backgroundColor: '#95a5a6' }}>
-                        <Icon name="ios-paper-outline" />
-                        </Button>
-                        <Button style={{ backgroundColor: '#2980b9' }}>
-                        <Icon name="ios-image" />
-                        </Button>
-                        <Button style={{ backgroundColor: '#27ae60' }}>
-                        <Icon name="ios-videocam" />
-                        </Button>
-                        <Button  style={{ backgroundColor: '#e67e22' }}>
-                        <Icon name="ios-musical-notes" />
-                        </Button>
-                        
-                    </Fab>
+            <Fab
+                active={this.props.active}
+                direction="up"
+                style={{ backgroundColor: Global.COLOR.LIGHTMAIN }}
+                position="bottomRight"
+                onPress={this.props.postPressed}
+                onLongPress={this.props.longPressed}>
+                <Icon name="plus" type='FontAwesome'/>
+                <Button style={{ backgroundColor: '#95a5a6' }}>
+                <Icon name="ios-paper-outline" />
+                </Button>
+                <Button style={{ backgroundColor: '#2980b9' }}>
+                <Icon name="ios-image" />
+                </Button>
+                <Button style={{ backgroundColor: '#27ae60' }}>
+                <Icon name="ios-videocam" />
+                </Button>
+                <Button  style={{ backgroundColor: '#e67e22' }}>
+                <Icon name="ios-musical-notes" />
+                </Button>
+                
+            </Fab>
         );
     }
 }

@@ -24,12 +24,6 @@ import {Root} from 'native-base';
 // }, error => {
 //   return Promise.reject(error);
 // });
-
-
-
-
-
-
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -46,6 +40,8 @@ export default class App extends React.Component {
   }
 
   render() {
+    // reactRootView.removeAllViews();
+    // reactRootView.setId(View.NO_ID);
     if (this.state.loadingFont) {
       return <Expo.AppLoading />;
     }

@@ -12,7 +12,10 @@ const workPlace = { description: 'Work', geometry: { location: { lat: 48.8496818
 
 export default class GooglePlaceInput extends React.Component {
   static navigationOptions = {
-      header : null
+      header : null,
+      tabBarVisible : false,
+      drawerLockMode: 'locked-closed',
+      swipeEnabled : false
   };
   _goBackWithParams(address,lat,lng){
     this.props.navigation.state.params.returnData(address, lat,lng);
@@ -21,10 +24,12 @@ export default class GooglePlaceInput extends React.Component {
 
  
   render(){
+    const { params } = this.props.navigation.state;
+    
     return (
         <HeaderTab 
         goBackPressed = {()=>this._goBackWithParams('','','')}
-        title='Select your address'
+        title={ params.title ? params.title : 'Select your address'}
         noRight={false}
         >
       <GooglePlacesAutocomplete

@@ -31,6 +31,7 @@ export default {
     },
     MARKER : {
       BASE_URL : 'https://www.fitwoohoo.com/assets/imgs/marker-icon/'
-    }
+    },
+    GOOGLE_API_KEY : 'AIzaSyAFPZkOMbaMRr55ZRUQO8RT6PdfWvMGSMs'
     
   };

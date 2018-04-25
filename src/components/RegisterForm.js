@@ -282,24 +282,6 @@ export default class LoginForm extends Component{
 
     render(){
       const {inputBox} = styles;
-      // let data = {
-      //     message:  {
-      //       email:  [
-      //         "The email has already been taken.",
-      //       ],
-      //     },
-      //     status: "failed",
-      //     type: "validate",
-      //   }
-      // let msgs = data.message;
-          
-      //   for (let key in msgs) {
-      //     if (msgs.hasOwnProperty(key)) {           
-      //       console.log(key + ' : '+ msgs[key]);
-      //    }
-      //   // message += msgs[key][0];
-      //   }
-
         return(
             <KeyboardAvoidingView behavior='padding' style={styles.container}>
            

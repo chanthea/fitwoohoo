@@ -9,24 +9,6 @@ import axios from '../../config/axios/axiosWithToken';
 import Global from '../../globals/Globals';
 import { duration } from 'moment';
 
-let ICONS = {
-    trainer : require('../../images/marker-icon/z-trainer.png'),
-    gym : require('../../images/marker-icon/z-gym.png'),
-    massage : require('../../images/marker-icon/z-massage.png'),
-    nutrition : require('../../images/marker-icon/z-nutrition.png'),
-    spa : require('../../images/marker-icon/z-spa.png'),
-    yoga : require('../../images/marker-icon/z-yoga.png')
-}
-
-let BUTTONS = [
-        { text: "Option 0", icon: "american-football", iconColor: "#2c8ef4" },
-        { text: "Option 1", icon: "analytics", iconColor: "#f42ced" },
-        { text: "Option 2", icon: "aperture", iconColor: "#ea943b" },
-        { text: "Delete", icon: "trash", iconColor: "#fa213b" },
-        { text: "Cancel", icon: "close", iconColor: "#25de5b" }
-      ];
-const DESTRUCTIVE_INDEX = 3;
-const CANCEL_INDEX = 4;
 
 const deltas = {
     latitudeDelta: 0.0922,
@@ -40,27 +22,24 @@ const deltas = {
     longitudeDelta: 0.0521
   }
 const { height } = Dimensions.get("window");
-class MyLocation extends Component {
+class TrainerLocation extends Component {
 
     static navigationOptions = {
         tabBarVisible : false,
-        header : null
     }
 
     constructor(props) {
         super(props);
-        this.map;
+        this.marker;
         this.state = {
             region : region,
-            markers : [],
             loading : true,
             active: true,
             currentMarker : null
           };
       }
       componentDidMount() {
-        this._getLocationAsync();
-       
+        this._getSaveLocation();
       }
 
       _handleMapRegionChange = mapRegion => {
@@ -76,138 +55,107 @@ class MyLocation extends Component {
           });
        }
        let location = await Location.getCurrentPositionAsync({enableHighAccuracy : true});
-        this._getNearByLocation(location.coords.latitude,location.coords.longitude);  
+       this._setState(location.coords.latitude,location.coords.longitude);
      };
-     
-     _getNearByLocation = (lat,lng) => {
-        axios.get('/marker/nearby', {
-            params : {
-                lat : lat,
-                lng : lng,
-                mile : 100
-            }
-        }).then(res=>{
-            const region = {
-                latitude: lat,
-                longitude: lng,
-                ...deltas
-                };
-             this.setState({
-                region,
-                currentMarker : {
-                    coords: { latitude: lat, longitude: lng}
-                },
-                markers : res.data,
-                loading : false
-            });
-            setTimeout(this._zoomAllLocations, 5000)
-        }).catch(error => {
+
+     _getSaveLocation = () => {
+         axios.get('/marker').then(res=>{
+            this._setState(res.data.lat, res.data.lng);
+         }).catch(error => {
             Toast.show({
                 text: "Server is not responding",
                 position: "bottom"
               });
               this.setState({
                 loading : false
-            });
+                });
         })
-   }
+     }
 
+    
    
-   _renderMarkers = () => {
-
-       let result;
-        let marker = this.state.markers.map((val,i)=>{
-        result = this._getIconName(val.role);
-         return  <MapView.Marker
-        key={val.id_user}
-        coordinate={{ latitude: parseFloat(val.lat), longitude: parseFloat(val.lng)}}
-        title={val.role}
-        description={"Name : "+val.name+' '+val.lastname}
-        onLoad={() => this.forceUpdate()}
-        onLayout={() => this.forceUpdate()}
-        image = {result.icon}
-        >
-        {/* <Image source={result.icon}
-        style={{width : result.size.width, height : result.size.height}}
-        /> */}
-        </MapView.Marker>
-       })
-   
-      return  marker;
-   }
-
-   _getIconName = (role) => {
-       let icon = '';
-       let size = {};
-    if(role === 'Trainer'){
-        icon = ICONS.trainer
-        size = {
-            width : 31,
-            height :41
-        }
-    }else if(role === 'Gym'){
-        icon = ICONS.gym
-        size = {
-            width : 30,
-            height :41
-        }
-    }else if(role === 'Nutritionist'){
-        icon = ICONS.nutrition
-        size = {
-            width : 30,
-            height :35
-        }
-    }else if(role === 'M-Therapist'){
-        icon = ICONS.massage
-        size = {
-            width : 30,
-            height :35
-        }
-    }else if(role ==='Yoga-Inst'){
-        icon = ICONS.yoga
-        size = {
-            width : 30,
-            height :35
-        }
-    }else if(role === 'Massage/SPA-Business'){
-        icon = ICONS.spa
-        size = {
-            width : 30,
-            height :35
-        }
-    }
-    return {
-        icon : icon,
-        size : size
-    };
-   }
-
    _reRenderFindLocation = () => {
     Toast.show({
         text: "Searching current location...",
         position: "bottom",
-        duration : 2000
+        duration : 1500
       });
     this._getLocationAsync();   
    }
-
-   _zoomAllLocations = () => {
-    this.map.fitToElements(true)
-    Toast.show({
-        text: "Zooming all locations",
-        position: "bottom",
-        duration : 2000
-      });
-    
-   }
-
    _reSearchLocation(address, lat, lng) {
        if(lat !== '' && lng !== ''){
-           this._getNearByLocation(lat,lng);
+            this._setState(lat,lng);
        }
-    
     }
+
+    _setState = (lat,lng) => {
+        lat = parseFloat(lat);
+        lng = parseFloat(lng);
+        fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + lat + ',' + lng + '&key=' + Global.GOOGLE_API_KEY)
+        .then((response) => response.json())
+        .then((res) => {
+            //console.log('ADDRESS GEOCODE is BACK!! => ' + res.results[0].formatted_address);
+            const region = {
+                latitude: lat,
+                longitude: lng,
+                ...deltas
+                };
+            this.setState({
+                region,
+                currentMarker : {
+                    coords: { latitude: lat, longitude: lng},
+                    address : res.results[0].formatted_address
+                },
+                loading : false
+            });
+        })
+
+      
+     }
+
+     
+
+     _saveLocation = () =>{
+         const {currentMarker} = this.state;
+         if(currentMarker === null){
+            Toast.show({
+                text: "Location is invalid...!",
+                position: "bottom",
+            });
+         }else{
+
+         
+        Toast.show({
+            text: "Saving location...",
+            position: "bottom",
+        });
+          axios.post('marker',{
+            address : currentMarker.address,
+            lat : currentMarker.coords.latitude,
+            lng : currentMarker.coords.longitude,
+          }).then(res=>{
+            Toast.show({
+                text: "Location saved successfully !",
+                position: "bottom",
+                duration : 3000
+              });
+          }).catch(error => {
+            Toast.show({
+                text: "Server is not responding",
+                position: "bottom",
+                duration : 3000
+              });
+          })
+         }
+          
+     }
+     _onDragEnd = (e) => {
+         let coordinate = e.nativeEvent.coordinate;
+         this._setState(coordinate.latitude, coordinate.longitude);
+     }
+
     render(){
+       // console.log(this.state.region);
         return(
             <HeaderTab 
             goBackPressed = {()=>this.props.navigation.navigate('NewsWall')}
@@ -217,29 +165,28 @@ class MyLocation extends Component {
             >
                 <View style={styles.container}>
                     <MapView
-                    ref={ref => { this.map = ref }}
                     style={{ alignSelf: 'stretch', height : '100%'}}
                     region ={this.state.region}
                     onRegionChangeComplete={this._handleMapRegionChange}
-                    //showsUserLocation
-                   // showsMyLocationButton
-                    //onLayout={() => this.mapRef.fitToCoordinates(this.state.markers, { edgePadding: { top: 50, right: 10, bottom: 10, left: 10 }, animated: false })} >
                     >
-                       {this._renderMarkers()}
                        {this.state.currentMarker !== null &&
                         <MapView.Marker
+                        ref={ref=>{this.marker = ref}}
+                        onDragEnd = {(e) => this._onDragEnd(e)}
                         coordinate={this.state.currentMarker.coords}
                         title={this.props.user.user.name + ' ' + this.props.user.user.lastname}
-                       // description={"Name : "+val.name+' '+val.lastname}
+                        description = {this.state.currentMarker.address}
                         onLoad={() => this.forceUpdate()}
+                        onLayout={() => this.forceUpdate()}
+                        draggable
                         >
                             <Image source={{uri : Global.PHOTO.PROFILE+this.props.user.user.photo}}
                             style={{
-                                width : 20, 
-                                height : 20, 
-                                borderRadius : 20/2, 
+                                width : 35, 
+                                height : 35, 
+                                borderRadius : 35/2, 
                                 borderWidth :2, 
-                                borderColor : 'rgba(0,0,0,0.3)'
+                                borderColor : 'white'
                             }}
                             />
                         </MapView.Marker>
@@ -247,9 +194,9 @@ class MyLocation extends Component {
                     </MapView>
                     <Button 
                     style={styles.button}
-                    onPress={this._zoomAllLocations}
+                    onPress={this._getSaveLocation}
                     >
-                    <Icon style={styles.buttonIcon} name='location-searching' type='MaterialIcons' />
+                    <Icon style={styles.buttonIcon} name='logo-buffer' />
                     </Button>
                      {this.state.loading === true &&
                     <View 
@@ -265,6 +212,7 @@ class MyLocation extends Component {
                     position="bottomRight"
                     onPress={() => this.setState({ active: !this.state.active })}>
                     <Icon name="align-center" type="FontAwesome" />
+
                     <Button onPress={this._reRenderFindLocation} style={{ backgroundColor: 'white' }}>
                     <Icon style={{color : Global.COLOR.MAIN}} name='rss' type='FontAwesome' />
                     </Button>
@@ -276,9 +224,11 @@ class MyLocation extends Component {
                     >
                     <Icon style={{color : Global.COLOR.MAIN}} name="search" type='FontAwesome'/>
                     </Button>
-                    {/* <Button disabled style={{ backgroundColor: 'white' }}>
-                    <Icon style={{color : Global.COLOR.MAIN}} name="mail" />
-                    </Button> */}
+                    <Button 
+                    onPress={this._saveLocation} 
+                    style={{ backgroundColor: 'white' }}>
+                    <Icon style={{color : Global.COLOR.MAIN}} name="save" type='FontAwesome' />
+                    </Button>
                 </Fab>
             </HeaderTab>
         
@@ -325,4 +275,4 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
     return state.user 
 }
-export default connect(mapStateToProps)(MyLocation);
+export default connect(mapStateToProps)(TrainerLocation);
