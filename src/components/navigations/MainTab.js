@@ -156,7 +156,7 @@ const RootNavLoggedTab = TabNavigator({
         })
     }
   },{
-    initialRouteName : 'NewsWall',
+    initialRouteName : 'Notification',
       navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;

@@ -110,7 +110,7 @@ class PostPage extends Component {
       }
     imageBrowserCallback = (callback) => {
         callback.then((photos) => {
-         // console.log(photos)
+          console.log(photos)
           this.setState({
             imageBrowserOpen: false,
             photos
@@ -148,7 +148,9 @@ class PostPage extends Component {
         //   }).catch(error => {
         //     console.log(error);
         //   })
-        axios.post('/post',bodyFormData ).then(res=> {
+        axios.post('/post',bodyFormData 
+    
+    ).then(res=> {
             console.log(res)
         }).catch(err => {
             console.log(err);
@@ -247,8 +249,8 @@ class PostPage extends Component {
                 <Footer >
                     <FooterTab style={{backgroundColor : Global.COLOR.MAIN}}>
                         <Button 
-                         //onPress={() => this.setState({imageBrowserOpen: true})}
-                           onPress={this._pickImage}
+                         onPress={() => this.setState({imageBrowserOpen: true})}
+                           //onPress={this._pickImage}
                             vertical>
                         <Icon style={{color:'white'}} name="ios-images" />
                         <Text style={{color:'white'}}>Photos</Text>

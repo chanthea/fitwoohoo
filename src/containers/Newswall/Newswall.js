@@ -61,7 +61,7 @@ class Newswall extends React.PureComponent {
         this._makeRemoteRequest();
     }
 
-    _makeRemoteRequest = async() => {
+    _makeRemoteRequest = () => {
         const { offset } = this.state;
 
         this.setState({ loading: true });

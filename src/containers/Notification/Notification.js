@@ -1,88 +1,145 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, Platform}  from 'react-native';
+import {Text, View, StyleSheet, Platform, ActivityIndicator}  from 'react-native';
 import { HeaderTab } from '../../components/common';
 import { Icon, Thumbnail, Left, Right, List, ListItem, Body } from 'native-base';
-
-
+import {Loading } from '../../components/common';
+import {OptimizedFlatList} from 'react-native-optimized-flatlist'
+import axios from '../../config/axios/axiosWithToken';
+import NotificationList from './NotificationList';
 
 class Notification extends Component {
+    static navigationOptions = {
+        tabBarVisible : false
+    }
+    constructor(props){
+        super(props);
+        this.state = {
+            offset : 0,
+            limit : 15,
+            loading : false,
+            refreshing: false,
+            data : [],
+            firstLoad : true,
+            noNotification : false,
+            ableLoadMore : false,
+        }
+    }
+
+    componentDidMount(){
+        this._getNotificaitonList();
+        
+    }
+
+    _getNotificaitonList = () => {
+        this.setState({ loading: true });
+        axios.get('/notifications',{
+            params:{
+                offset : this.state.offset,
+                limit : this.state.limit
+            }
+        })
+        .then(res=> {
+         
+            if(this.state.firstLoad === true){
+                this.setState({
+                    firstLoad: false
+                });
+            }
+            if(res.data.length === 0){
+                this.setState({
+                    loading: false,
+                    refreshing: false,
+                    firstLoad: false,
+                    ableLoadMore : false
+                });
+            }else{
+                this.setState({
+                    data: this.state.offset === 0 ? res.data : [...this.state.data, ...res.data],
+                    loading: false,
+                    refreshing: false,
+                    firstLoad: false,
+                    ableLoadMore : res.data.length ===  this.state.limit ? true : false
+                });
+            }
+        }).catch(error => {
+            this.setState({ 
+                loading: false,
+                 refreshing : false,  
+                 firstLoad : false,
+                 ableLoadMore : false
+            });
+        })
+    }
+
+    _handleLoadMore = () =>{
+        if(this.state.ableLoadMore === true && this.state.loading === false){
+            this.setState({
+                offset : this.state.offset + this.state.limit,
+            }, () => {
+                this._getNotificaitonList();
+            });
+        }   
+    }
+
+    _handleRefresh = ()=>{
+        this.setState({
+            offset : 0,
+            refreshing : true,
+        }, ()=>{
+            this._getNotificaitonList();
+        });
+    }
+
+    _renderNoNotification = () => {
+        <View style={{flex : 1, backgroundColor : 'white', justifyContent :'center', alignItems : 'center'}}>
+        <Icon name="ios-sad-outline" style={{fontSize : 50, color : 'rgba(0,0,0,0.6)'}}/>
+        <Text style={{textAlign : 'center', color : 'rgba(0,0,0,0.7)'}}>There is no post available</Text>
+        </View>
+      }
+
+      _renderFooter = () => {
+        if (!this.state.loading) return null;
+        return (
+          <View style={{paddingVertical: 10,}}>
+            <ActivityIndicator  size="large" />
+          </View>
+        );
+      };
+
+      _renderItem = ({item}) => (
+          <NotificationList
+          item = {items}
+          />
+      );
+     
     render(){
+     //   console.log(this.state)
         return(
             <HeaderTab 
             goBackPressed = {()=>this.props.navigation.goBack()}
             menuPressed = {()=>this.props.navigation.navigate('DrawerOpen')}
             title='Notifications'
             >
-                <List style={{flex :1}}>
-                    <ListItem button onPress={()=>console.log(123)} avatar style={[styles.listItemStyle, styles.unRead]}>
-                        <Left>
-                            <Thumbnail small source={require('../../images/profile.jpg')} />
-                        </Left>
-                        <Body style={styles.bodyStyle}>
-                            <View style={{flexDirection : 'row'}}>
-                                <Text style={styles.name}>Gguon Lykhim</Text>
-                                <Text style={styles.description}> just opened a new class</Text>
-                            </View>
-                            <View style={{flexDirection : 'row'}}>
-                                <Icon name="ios-clock-outline"
-                                style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
-                                /> 
-                                <Text note style={styles.time}>3 minutes ago</Text>
-                            </View>
-                        </Body>
-                    </ListItem>
-                    <ListItem avatar button onPress={()=>console.log(123)} style={[styles.listItemStyle]}>
-                        <Left>
-                            <Thumbnail small source={require('../../images/profile.jpg')} />
-                        </Left>
-                        <Body style={styles.bodyStyle}>
-                            <View style={{flexDirection : 'row'}}>
-                                <Text style={styles.name}>Gguon Lykhim</Text>
-                                <Text style={styles.description}> accepted your follow request</Text>
-                            </View>
-                            <View style={{flexDirection : 'row'}}>
-                                <Icon name="ios-clock-outline"
-                                style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
-                                /> 
-                                <Text note style={styles.time}>3 minutes ago</Text>
-                            </View>
-                        </Body>
-                    </ListItem>
-                    <ListItem avatar onPress={()=>console.log(123)} style={[styles.listItemStyle]}>
-                        <Left>
-                            <Thumbnail small source={require('../../images/profile.jpg')} />
-                        </Left>
-                        <Body style={styles.bodyStyle}>
-                            <View style={{flexDirection : 'row'}}>
-                                <Text style={styles.name}>Gguon Lykhim</Text>
-                                <Text style={styles.description}> just created a new package</Text>
-                            </View>
-                            <View style={{flexDirection : 'row'}}>
-                                <Icon name="ios-clock-outline"
-                                style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
-                                /> 
-                                <Text note style={styles.time}>3 minutes ago</Text>
-                            </View>
-                        </Body>
-                    </ListItem>
-                    <ListItem avatar onPress={()=>console.log(123)} style={[styles.listItemStyle]}>
-                        <Left>
-                            <Thumbnail small source={require('../../images/profile.jpg')} />
-                        </Left>
-                        <Body style={styles.bodyStyle}>
-                            <View style={{flexDirection : 'row'}}>
-                                <Text style={styles.name}>Gguon Lykhim</Text>
-                                <Text style={styles.description}> invited you to join his / her class</Text>
-                            </View>
-                            <View style={{flexDirection : 'row'}}>
-                                <Icon name="ios-clock-outline"
-                                style={[styles.iconSmall,{ marginTop : Platform.OS === 'android' ? 2 : 0 }]} 
-                                /> 
-                                <Text note style={styles.time}>3 minutes ago</Text>
-                            </View>
-                        </Body>
-                    </ListItem>
-                </List>
+                {this.state.firstLoad ?
+                <Loading /> :
+                this.state.noNotification ?
+                this._renderNoNotification()
+                 :
+                    <List style={{flex :1}}>   
+                        <OptimizedFlatList 
+                            style={[styles.container]}
+                            data={this.state.data}
+                            renderItem={this._renderItem}
+                            keyExtractor={(item, index) => item.id}
+                            ListFooterComponent={this._renderFooter}
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._handleRefresh}
+                            onEndReached={this._handleLoadMore}
+                            onEndReachedThreshold={3}
+                            />
+                    </List>     
+                   }
+                
             </HeaderTab>
         );
     }

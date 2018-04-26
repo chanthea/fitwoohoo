@@ -98,6 +98,7 @@ class Comment extends Component {
         offset : this.state.offset
       }
     }).then(res=>{  
+      console.log('re render');
       if(res.data.length === 0){
         this.setState({
           loading: false,
@@ -208,7 +209,6 @@ class Comment extends Component {
         </Header>)
   }
   render() {
-  
     const { params } = this.props.navigation.state;
     return (
       <View style={{flex :1}}>
@@ -225,11 +225,11 @@ class Comment extends Component {
                                 renderItem={this._renderList}
                                 keyExtractor={(item, index) => item.id}
                                 ListFooterComponent={this._renderFooter}
-                                maxToRenderPerBatch={5}
+                                // maxToRenderPerBatch={5}
                                 refreshing={this.state.refreshing}
                                 onRefresh={this._handleRefresh}
                                 onEndReached={this._handleLoadMore}
-                                onEndReachedThreshold={0}
+                                onEndReachedThreshold={1}
                                 />
                               }
                           <CommentInput postId={this.post.id} addItem = {this._onAddItem}/>
