@@ -108,7 +108,7 @@ class Notification extends Component {
 
       _renderItem = ({item}) => (
           <NotificationList
-          item = {items}
+          item = {item}
           />
       );
      
